@@ -105,12 +105,12 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 
 	private final Set<String> activeProfiles = new LinkedHashSet<>();
 
-	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles());
+	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles()); // 默认的profile为default
 
 	private final MutablePropertySources propertySources = new MutablePropertySources();
 
 	private final ConfigurablePropertyResolver propertyResolver =
-			new PropertySourcesPropertyResolver(this.propertySources);
+			new PropertySourcesPropertyResolver(this.propertySources); // 属性解析器
 
 
 	/**
@@ -235,7 +235,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	protected Set<String> doGetActiveProfiles() {
 		synchronized (this.activeProfiles) {
 			if (this.activeProfiles.isEmpty()) {
-				String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME);
+				String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME); // 读取spring.profiles.active属性
 				if (StringUtils.hasText(profiles)) {
 					setActiveProfiles(StringUtils.commaDelimitedListToStringArray(
 							StringUtils.trimAllWhitespace(profiles)));

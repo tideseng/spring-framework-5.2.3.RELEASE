@@ -124,13 +124,13 @@ public final class SpringFactoriesLoader {
 
 	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
 		MultiValueMap<String, String> result = cache.get(classLoader);
-		if (result != null) {
+		if (result != null) { // 防止重复加载
 			return result;
 		}
 
 		try {
 			Enumeration<URL> urls = (classLoader != null ?
-					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
+					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) : // 在classpath下读取META-INF/spring.factories文件
 					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
 			result = new LinkedMultiValueMap<>();
 			while (urls.hasMoreElements()) {
