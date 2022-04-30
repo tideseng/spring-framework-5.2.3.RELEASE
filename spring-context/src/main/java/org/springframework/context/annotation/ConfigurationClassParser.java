@@ -302,7 +302,7 @@ class ConfigurationClassParser {
 		}
 
 		// Process any @Import annotations
-		processImports(configClass, sourceClass, getImports(sourceClass), true);
+		processImports(configClass, sourceClass, getImports(sourceClass), true); // 创建类上@Import导入的相关类，再进行实例化处理（这里是Spring Boot自动装配导入类AutoConfigurationImportSelector的实例化入口）
 
 		// Process any @ImportResource annotations
 		AnnotationAttributes importResource =
