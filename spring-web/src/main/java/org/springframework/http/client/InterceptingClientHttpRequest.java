@@ -74,7 +74,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 	@Override
 	protected final ClientHttpResponse executeInternal(HttpHeaders headers, byte[] bufferedOutput) throws IOException {
 		InterceptingRequestExecution requestExecution = new InterceptingRequestExecution();
-		return requestExecution.execute(this, bufferedOutput);
+		return requestExecution.execute(this, bufferedOutput); // 真正的execute执行方法
 	}
 
 
@@ -90,7 +90,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
 			if (this.iterator.hasNext()) {
 				ClientHttpRequestInterceptor nextInterceptor = this.iterator.next();
-				return nextInterceptor.intercept(request, body, this);
+				return nextInterceptor.intercept(request, body, this); // 调用LoadBalancerInterceptor拦截器的intercept方法
 			}
 			else {
 				HttpMethod method = request.getMethod();

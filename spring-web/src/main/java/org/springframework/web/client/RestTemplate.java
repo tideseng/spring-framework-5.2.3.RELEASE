@@ -315,7 +315,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
 		HttpMessageConverterExtractor<T> responseExtractor =
 				new HttpMessageConverterExtractor<>(responseType, getMessageConverters(), logger);
-		return execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables);
+		return execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables); // 主线
 	}
 
 	@Override
@@ -674,7 +674,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 			@Nullable ResponseExtractor<T> responseExtractor, Object... uriVariables) throws RestClientException {
 
 		URI expanded = getUriTemplateHandler().expand(url, uriVariables);
-		return doExecute(expanded, method, requestCallback, responseExtractor);
+		return doExecute(expanded, method, requestCallback, responseExtractor); // 主线
 	}
 
 	/**
@@ -735,11 +735,11 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		Assert.notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method);
+			ClientHttpRequest request = createRequest(url, method); // 调用父类方法，生成InterceptingClientHttpRequest对象
 			if (requestCallback != null) {
 				requestCallback.doWithRequest(request);
 			}
-			response = request.execute();
+			response = request.execute(); // 调用父类execute方法，最终会调用InterceptingClientHttpRequest.InterceptingRequestExecution.execute方法
 			handleResponse(url, method, response);
 			return (responseExtractor != null ? responseExtractor.extractData(response) : null);
 		}

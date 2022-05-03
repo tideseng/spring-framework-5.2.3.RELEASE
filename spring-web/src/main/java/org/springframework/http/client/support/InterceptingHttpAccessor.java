@@ -56,7 +56,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 	 * @see #getRequestFactory()
 	 * @see AnnotationAwareOrderComparator
 	 */
-	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) {
+	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) { // 在LoadBalancerAutoConfiguration的RestTemplateCustomizer中会进行设置
 		// Take getInterceptors() List as-is when passed in here
 		if (this.interceptors != interceptors) {
 			this.interceptors.clear();
@@ -92,7 +92,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 	 */
 	@Override
 	public ClientHttpRequestFactory getRequestFactory() {
-		List<ClientHttpRequestInterceptor> interceptors = getInterceptors();
+		List<ClientHttpRequestInterceptor> interceptors = getInterceptors(); // 获取拦截器
 		if (!CollectionUtils.isEmpty(interceptors)) {
 			ClientHttpRequestFactory factory = this.interceptingRequestFactory;
 			if (factory == null) {
