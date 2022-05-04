@@ -91,7 +91,7 @@ import org.springframework.web.util.UriTemplateHandler;
  * @see ResponseExtractor
  * @see ResponseErrorHandler
  */
-public class RestTemplate extends InterceptingHttpAccessor implements RestOperations {
+public class RestTemplate extends InterceptingHttpAccessor implements RestOperations { // 继承Http访问拦截器（在Http访问器的基础上增加了拦截器的功能）、实现Rest操作接口
 
 	private static boolean romePresent;
 
@@ -137,7 +137,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Create a new instance of the {@link RestTemplate} using default settings.
 	 * Default {@link HttpMessageConverter HttpMessageConverters} are initialized.
 	 */
-	public RestTemplate() {
+	public RestTemplate() { // 添加一系列HttpMessageConverter的实现类（将请求响应的文本转化为相应的Java对象）、初始化URI模板处理器（对URI做相关拼接等操作）
 		this.messageConverters.add(new ByteArrayHttpMessageConverter());
 		this.messageConverters.add(new StringHttpMessageConverter());
 		this.messageConverters.add(new ResourceHttpMessageConverter(false));
@@ -312,8 +312,8 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	@Override
 	@Nullable
 	public <T> T getForObject(String url, Class<T> responseType, Object... uriVariables) throws RestClientException {
-		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType);
-		HttpMessageConverterExtractor<T> responseExtractor =
+		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType); // 获取请求回调
+		HttpMessageConverterExtractor<T> responseExtractor = // 获取Http消息转化抽取器
 				new HttpMessageConverterExtractor<>(responseType, getMessageConverters(), logger);
 		return execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables); // 主线
 	}
@@ -673,8 +673,8 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	public <T> T execute(String url, HttpMethod method, @Nullable RequestCallback requestCallback,
 			@Nullable ResponseExtractor<T> responseExtractor, Object... uriVariables) throws RestClientException {
 
-		URI expanded = getUriTemplateHandler().expand(url, uriVariables);
-		return doExecute(expanded, method, requestCallback, responseExtractor); // 主线
+		URI expanded = getUriTemplateHandler().expand(url, uriVariables); // 拼接URI
+		return doExecute(expanded, method, requestCallback, responseExtractor); // 要真正执行的地方
 	}
 
 	/**
@@ -729,19 +729,19 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 */
 	@Nullable
 	protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
-			@Nullable ResponseExtractor<T> responseExtractor) throws RestClientException {
+			@Nullable ResponseExtractor<T> responseExtractor) throws RestClientException { // 不同的请求最终都会到这里来
 
 		Assert.notNull(url, "URI is required");
 		Assert.notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method); // 调用父类方法，生成InterceptingClientHttpRequest对象
+			ClientHttpRequest request = createRequest(url, method); // 调用父类HttpAccesor的createRequest方法，生成InterceptingClientHttpRequest对象
 			if (requestCallback != null) {
-				requestCallback.doWithRequest(request);
+				requestCallback.doWithRequest(request); // 执行请求回调
 			}
-			response = request.execute(); // 调用父类execute方法，最终会调用InterceptingClientHttpRequest.InterceptingRequestExecution.execute方法
-			handleResponse(url, method, response);
-			return (responseExtractor != null ? responseExtractor.extractData(response) : null);
+			response = request.execute(); // 调用父类execute方法，最终会调用InterceptingClientHttpRequest.InterceptingRequestExecution.execute方法去执行请求并获取响应结果
+			handleResponse(url, method, response); // 处理响应结果
+			return (responseExtractor != null ? responseExtractor.extractData(response) : null); // 利用响应抽取器抽取data，返回预先定义的Java对象
 		}
 		catch (IOException ex) {
 			String resource = url.toString();
