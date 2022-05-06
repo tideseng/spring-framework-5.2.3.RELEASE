@@ -65,7 +65,7 @@ final class SimpleBufferingClientHttpRequest extends AbstractBufferingClientHttp
 
 	@Override
 	protected ClientHttpResponse executeInternal(HttpHeaders headers, byte[] bufferedOutput) throws IOException {
-		addHeaders(this.connection, headers);
+		addHeaders(this.connection, headers); // 将请求头设置到connection连接中
 		// JDK <1.8 doesn't support getOutputStream with HTTP DELETE
 		if (getMethod() == HttpMethod.DELETE && bufferedOutput.length == 0) {
 			this.connection.setDoOutput(false);
@@ -75,7 +75,7 @@ final class SimpleBufferingClientHttpRequest extends AbstractBufferingClientHttp
 		}
 		this.connection.connect();
 		if (this.connection.getDoOutput()) {
-			FileCopyUtils.copy(bufferedOutput, this.connection.getOutputStream());
+			FileCopyUtils.copy(bufferedOutput, this.connection.getOutputStream()); // 将缓冲区的数据写到输出流中
 		}
 		else {
 			// Immediately trigger the request in a no-output scenario as well

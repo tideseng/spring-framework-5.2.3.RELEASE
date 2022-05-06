@@ -93,7 +93,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 	@Override
 	public ClientHttpRequestFactory getRequestFactory() {
 		List<ClientHttpRequestInterceptor> interceptors = getInterceptors(); // 获取拦截器
-		if (!CollectionUtils.isEmpty(interceptors)) { // 拦截器不会空时创建InterceptingClientHttpRequestFactory对象
+		if (!CollectionUtils.isEmpty(interceptors)) { // 有拦截器时创建请求工厂类InterceptingClientHttpRequestFactory
 			ClientHttpRequestFactory factory = this.interceptingRequestFactory;
 			if (factory == null) {
 				factory = new InterceptingClientHttpRequestFactory(super.getRequestFactory(), interceptors);
@@ -102,7 +102,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 			return factory;
 		}
 		else {
-			return super.getRequestFactory();
+			return super.getRequestFactory(); // 没有拦截器时获取父类的请求工厂类SimpleClientHttpRequestFactory
 		}
 	}
 

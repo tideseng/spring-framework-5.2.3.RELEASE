@@ -49,9 +49,9 @@ public abstract class AbstractClientHttpRequest implements ClientHttpRequest {
 
 	@Override
 	public final ClientHttpResponse execute() throws IOException {
-		assertNotExecuted();
+		assertNotExecuted(); // 检查ClientHttpRequest是否执行过，若执行过则抛出异常
 		ClientHttpResponse result = executeInternal(this.headers); // 调用父类方法
-		this.executed = true;
+		this.executed = true; // 执行请求后将标志位设置为true
 		return result;
 	}
 

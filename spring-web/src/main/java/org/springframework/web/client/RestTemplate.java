@@ -313,7 +313,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	@Nullable
 	public <T> T getForObject(String url, Class<T> responseType, Object... uriVariables) throws RestClientException {
 		RequestCallback requestCallback = acceptHeaderRequestCallback(responseType); // 获取请求回调
-		HttpMessageConverterExtractor<T> responseExtractor = // 获取Http消息转化抽取器
+		HttpMessageConverterExtractor<T> responseExtractor = // 获取Http消息转化抽取器，可以将http响应的文本数据转化成相应的Java对象
 				new HttpMessageConverterExtractor<>(responseType, getMessageConverters(), logger);
 		return execute(url, HttpMethod.GET, requestCallback, responseExtractor, uriVariables); // 主线
 	}
@@ -735,11 +735,11 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		Assert.notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method); // 调用父类HttpAccesor的createRequest方法，生成InterceptingClientHttpRequest对象
+			ClientHttpRequest request = createRequest(url, method); // 调用父类HttpAccesor的createRequest方法，有拦截器时生成InterceptingClientHttpRequest对象、反之返回SimpleClientHttpRequestFactory对象
 			if (requestCallback != null) {
-				requestCallback.doWithRequest(request); // 执行请求回调
+				requestCallback.doWithRequest(request); // 执行请求回调，设置请求头等相关信息
 			}
-			response = request.execute(); // 调用父类execute方法，最终会调用InterceptingClientHttpRequest.InterceptingRequestExecution.execute方法去执行请求并获取响应结果
+			response = request.execute(); // 调用父类execute方法进行处理，最终会调用实现类的execute方法去执行请求并获取响应结果
 			handleResponse(url, method, response); // 处理响应结果
 			return (responseExtractor != null ? responseExtractor.extractData(response) : null); // 利用响应抽取器抽取data，返回预先定义的Java对象
 		}
@@ -773,8 +773,8 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		boolean hasError = errorHandler.hasError(response);
 		if (logger.isDebugEnabled()) {
 			try {
-				int code = response.getRawStatusCode();
-				HttpStatus status = HttpStatus.resolve(code);
+				int code = response.getRawStatusCode(); // 获取响应状态码
+				HttpStatus status = HttpStatus.resolve(code); // 解析状态码
 				logger.debug("Response " + (status != null ? status : code));
 			}
 			catch (IOException ex) {
@@ -782,7 +782,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 			}
 		}
 		if (hasError) {
-			errorHandler.handleError(url, method, response);
+			errorHandler.handleError(url, method, response); // 有异常则处理异常
 		}
 	}
 
@@ -848,7 +848,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		}
 
 		@Override
-		public void doWithRequest(ClientHttpRequest request) throws IOException {
+		public void doWithRequest(ClientHttpRequest request) throws IOException { // 将支持的MediaType设置进请求头中
 			if (this.responseType != null) {
 				List<MediaType> allSupportedMediaTypes = getMessageConverters().stream()
 						.filter(converter -> canReadResponse(this.responseType, converter))
@@ -915,9 +915,9 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 		@Override
 		@SuppressWarnings("unchecked")
 		public void doWithRequest(ClientHttpRequest httpRequest) throws IOException {
-			super.doWithRequest(httpRequest);
+			super.doWithRequest(httpRequest); // 调用父类方法，将支持的MediaType设置进请求头中
 			Object requestBody = this.requestEntity.getBody();
-			if (requestBody == null) {
+			if (requestBody == null) { // 请求体为空时
 				HttpHeaders httpHeaders = httpRequest.getHeaders();
 				HttpHeaders requestHeaders = this.requestEntity.getHeaders();
 				if (!requestHeaders.isEmpty()) {
@@ -927,7 +927,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 					httpHeaders.setContentLength(0L);
 				}
 			}
-			else {
+			else { // 请求体不为空时
 				Class<?> requestBodyClass = requestBody.getClass();
 				Type requestBodyType = (this.requestEntity instanceof RequestEntity ?
 						((RequestEntity<?>)this.requestEntity).getType() : requestBodyClass);

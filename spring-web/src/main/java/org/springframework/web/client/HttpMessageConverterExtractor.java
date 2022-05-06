@@ -92,7 +92,7 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 		MediaType contentType = getContentType(responseWrapper);
 
 		try {
-			for (HttpMessageConverter<?> messageConverter : this.messageConverters) {
+			for (HttpMessageConverter<?> messageConverter : this.messageConverters) { // 遍历HttpMessageConverter
 				if (messageConverter instanceof GenericHttpMessageConverter) {
 					GenericHttpMessageConverter<?> genericMessageConverter =
 							(GenericHttpMessageConverter<?>) messageConverter;
@@ -105,7 +105,7 @@ public class HttpMessageConverterExtractor<T> implements ResponseExtractor<T> {
 					}
 				}
 				if (this.responseClass != null) {
-					if (messageConverter.canRead(this.responseClass, contentType)) {
+					if (messageConverter.canRead(this.responseClass, contentType)) { // 如果该messageConverter能够读取该contentType，并且能转化成responseClass类型则进行转化
 						if (logger.isDebugEnabled()) {
 							String className = this.responseClass.getName();
 							logger.debug("Reading to [" + className + "] as \"" + contentType + "\"");

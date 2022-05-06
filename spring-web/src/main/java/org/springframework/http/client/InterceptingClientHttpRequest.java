@@ -88,11 +88,11 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 
 		@Override
 		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
-			if (this.iterator.hasNext()) {
+			if (this.iterator.hasNext()) { // 当前拦截器的迭代器，有拦截器时先执行拦截器的intercept方法
 				ClientHttpRequestInterceptor nextInterceptor = this.iterator.next();
 				return nextInterceptor.intercept(request, body, this); // 调用LoadBalancerInterceptor拦截器的intercept方法
 			}
-			else {
+			else { // 当拦截器执行完毕之后会回到该execute方法中，走else逻辑，此时delegate类型是SimpleBufferingClientHttpRequest
 				HttpMethod method = request.getMethod();
 				Assert.state(method != null, "No standard HTTP method");
 				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method);

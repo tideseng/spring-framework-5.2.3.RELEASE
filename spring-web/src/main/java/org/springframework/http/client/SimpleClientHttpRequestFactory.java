@@ -141,11 +141,11 @@ public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory,
 
 
 	@Override
-	public ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		HttpURLConnection connection = openConnection(uri.toURL(), this.proxy);
-		prepareConnection(connection, httpMethod.name());
+	public ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException { // 创建了一个封装URLConnection的ClientHttpRequest对象
+		HttpURLConnection connection = openConnection(uri.toURL(), this.proxy); // 获取连接，RestTemplate对原生的HttpURLConnection进行了一层封装
+		prepareConnection(connection, httpMethod.name()); // 准备连接工作，设置超时时间等参数
 
-		if (this.bufferRequestBody) {
+		if (this.bufferRequestBody) { // 默认为true
 			return new SimpleBufferingClientHttpRequest(connection, this.outputStreaming);
 		}
 		else {
@@ -200,10 +200,10 @@ public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory,
 	 */
 	protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
 		if (this.connectTimeout >= 0) {
-			connection.setConnectTimeout(this.connectTimeout);
+			connection.setConnectTimeout(this.connectTimeout); // 设置连接超时时间
 		}
 		if (this.readTimeout >= 0) {
-			connection.setReadTimeout(this.readTimeout);
+			connection.setReadTimeout(this.readTimeout); // 设置读取超时时间
 		}
 
 		connection.setDoInput(true);
