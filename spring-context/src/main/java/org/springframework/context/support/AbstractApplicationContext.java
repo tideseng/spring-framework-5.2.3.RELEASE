@@ -550,7 +550,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
-				finishRefresh();
+				finishRefresh(); // 完成刷新过程，发布相应事件
 			}
 
 			catch (BeansException ex) {
@@ -885,19 +885,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void finishRefresh() {
 		// Clear context-level resource caches (such as ASM metadata from scanning).
-		clearResourceCaches();
+		clearResourceCaches(); // 清空缓存
 
 		// Initialize lifecycle processor for this context.
-		initLifecycleProcessor();
+		initLifecycleProcessor(); // 初始化一个LifecycleProcessor，在Spring启动的时候启动bean、在Spring结束的时候销毁bean（SmartLifeCycle是一个接口，当Spring容器加载完所有的Bean并且初始化之后，会回调实现了SmartLifeCycle接口的类中对应的方法）
 
 		// Propagate refresh to lifecycle processor first.
-		getLifecycleProcessor().onRefresh();
+		getLifecycleProcessor().onRefresh(); // 调用LifecycleProcessor的onRefresh方法，执行实现了Lifecycle接口的start方法来启动bean
 
 		// Publish the final event.
-		publishEvent(new ContextRefreshedEvent(this));
+		publishEvent(new ContextRefreshedEvent(this)); // 发布ContextRefreshedEvent事件
 
 		// Participate in LiveBeansView MBean, if active.
-		LiveBeansView.registerApplicationContext(this);
+		LiveBeansView.registerApplicationContext(this); // 注册MBean，通过JMX进行监控和管理
 	}
 
 	/**

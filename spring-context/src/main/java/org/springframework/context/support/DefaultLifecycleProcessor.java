@@ -138,7 +138,7 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 	// Internal helpers
 
 	private void startBeans(boolean autoStartupOnly) {
-		Map<String, Lifecycle> lifecycleBeans = getLifecycleBeans();
+		Map<String, Lifecycle> lifecycleBeans = getLifecycleBeans(); // 获取到所有的Lifecycle实现类
 		Map<Integer, LifecycleGroup> phases = new HashMap<>();
 		lifecycleBeans.forEach((beanName, bean) -> {
 			if (!autoStartupOnly || (bean instanceof SmartLifecycle && ((SmartLifecycle) bean).isAutoStartup())) {
@@ -155,7 +155,7 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 			List<Integer> keys = new ArrayList<>(phases.keySet());
 			Collections.sort(keys);
 			for (Integer key : keys) {
-				phases.get(key).start();
+				phases.get(key).start(); // 调用start方法
 			}
 		}
 	}
@@ -179,7 +179,7 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 					logger.trace("Starting bean '" + beanName + "' of type [" + bean.getClass().getName() + "]");
 				}
 				try {
-					bean.start();
+					bean.start(); // 开始调用Lifecycle接口实现类的start方法，各框架可在这里进行扩展，如：EurekaAutoServiceRegistration、NacosWatch
 				}
 				catch (Throwable ex) {
 					throw new ApplicationContextException("Failed to start bean '" + beanName + "'", ex);
@@ -357,7 +357,7 @@ public class DefaultLifecycleProcessor implements LifecycleProcessor, BeanFactor
 			}
 			Collections.sort(this.members);
 			for (LifecycleGroupMember member : this.members) {
-				doStart(this.lifecycleBeans, member.name, this.autoStartupOnly);
+				doStart(this.lifecycleBeans, member.name, this.autoStartupOnly); // 调用doStart方法
 			}
 		}
 
