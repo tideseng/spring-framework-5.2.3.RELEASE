@@ -47,7 +47,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 
 
 	protected InterceptingClientHttpRequest(ClientHttpRequestFactory requestFactory,
-			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method) {
+			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method) { // 在InterceptingClientHttpRequestFactory中进行调用创建
 
 		this.requestFactory = requestFactory;
 		this.interceptors = interceptors;

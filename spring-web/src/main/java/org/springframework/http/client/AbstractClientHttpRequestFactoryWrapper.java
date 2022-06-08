@@ -51,7 +51,7 @@ public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientH
 	 */
 	@Override
 	public final ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		return createRequest(uri, httpMethod, this.requestFactory);
+		return createRequest(uri, httpMethod, this.requestFactory); // 创建ClientHttpRequest，并注入ClientHttpRequestFactory
 	}
 
 	/**

@@ -42,7 +42,7 @@ final class SimpleBufferingClientHttpRequest extends AbstractBufferingClientHttp
 	private final boolean outputStreaming;
 
 
-	SimpleBufferingClientHttpRequest(HttpURLConnection connection, boolean outputStreaming) {
+	SimpleBufferingClientHttpRequest(HttpURLConnection connection, boolean outputStreaming) { // 在SimpleClientHttpRequestFactory中进行调用创建
 		this.connection = connection;
 		this.outputStreaming = outputStreaming;
 	}

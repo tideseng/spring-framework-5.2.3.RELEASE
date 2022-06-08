@@ -121,7 +121,7 @@ public abstract class HttpAccessor { // Http访问器、抽象类，内部保存
 	 * @see ClientHttpRequestFactory#createRequest(URI, HttpMethod)
 	 */
 	protected ClientHttpRequest createRequest(URI url, HttpMethod method) throws IOException {
-		ClientHttpRequest request = getRequestFactory().createRequest(url, method); // 调用子类根据时候有拦截器获取相应的请求工厂，再调用父类createRequest方法生成ClientHttpRequest
+		ClientHttpRequest request = getRequestFactory().createRequest(url, method); // 调用子类InterceptingHttpAccessor根据时候有拦截器获取相应的请求工厂，再调用父类createRequest方法生成ClientHttpRequest
 		initialize(request);
 		if (logger.isDebugEnabled()) {
 			logger.debug("HTTP " + method.name() + " " + url);
