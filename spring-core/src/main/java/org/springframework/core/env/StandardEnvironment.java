@@ -51,7 +51,7 @@ package org.springframework.core.env;
  * @see SystemEnvironmentPropertySource
  * @see org.springframework.web.context.support.StandardServletEnvironment
  */
-public class StandardEnvironment extends AbstractEnvironment {
+public class StandardEnvironment extends AbstractEnvironment { // 默认的Environment对象，继承AbstractEnvironment（维护了MutablePropertySources对象，该对象有一个propertySourceList集合变量）
 
 	/** System environment property source name: {@value}. */
 	public static final String SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME = "systemEnvironment";
@@ -74,11 +74,11 @@ public class StandardEnvironment extends AbstractEnvironment {
 	 * @see #getSystemEnvironment()
 	 */
 	@Override
-	protected void customizePropertySources(MutablePropertySources propertySources) {
+	protected void customizePropertySources(MutablePropertySources propertySources) { // 父类AbstractEnvironment的钩子方法，传入MutablePropertySources对象准备添加属性来源
 		propertySources.addLast(
-				new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));
+				new PropertiesPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties())); // 添加系统属性来源
 		propertySources.addLast(
-				new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));
+				new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment())); // 添加系统环境变量来源
 	}
 
 }

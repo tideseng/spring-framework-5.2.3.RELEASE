@@ -38,8 +38,8 @@ public class MapPropertySource extends EnumerablePropertySource<Map<String, Obje
 
 	@Override
 	@Nullable
-	public Object getProperty(String name) {
-		return this.source.get(name);
+	public Object getProperty(String name) { // 获取属性值
+		return this.source.get(name); // 从构造方法中传入的Map对象中根据key获取value
 	}
 
 	@Override
