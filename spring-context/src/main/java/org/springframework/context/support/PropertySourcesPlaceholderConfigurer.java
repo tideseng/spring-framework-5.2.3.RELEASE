@@ -62,7 +62,7 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.beans.factory.config.PlaceholderConfigurerSupport
  * @see org.springframework.beans.factory.config.PropertyPlaceholderConfigurer
  */
-public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerSupport implements EnvironmentAware {
+public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerSupport implements EnvironmentAware { // 实现了BeanFactoryPostProcessor接口，通过postProcessBeanFactory方法解析参数；实现了EnvironmentAware接口来整合Environment
 
 	/**
 	 * {@value} is the name given to the {@link PropertySource} for the set of
@@ -78,7 +78,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 
 
 	@Nullable
-	private MutablePropertySources propertySources;
+	private MutablePropertySources propertySources; // 该类的结构与StandardEnvironment类相似，都有一个MutablePropertySources
 
 	@Nullable
 	private PropertySources appliedPropertySources;
@@ -125,28 +125,28 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 * sources, and once set, the configurer makes no assumptions about adding additional sources.
 	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException { // BeanFactoryPostProcessor接口方法，执行参数解析
 		if (this.propertySources == null) {
-			this.propertySources = new MutablePropertySources();
+			this.propertySources = new MutablePropertySources(); // 创建MutablePropertySources对象，用propertySourceList列表来存放属性来源途径（Environment和本地配置文件）
 			if (this.environment != null) {
-				this.propertySources.addLast(
-					new PropertySource<Environment>(ENVIRONMENT_PROPERTIES_PROPERTY_SOURCE_NAME, this.environment) {
+				this.propertySources.addLast( // 1.添加Environment属性来源
+					new PropertySource<Environment>(ENVIRONMENT_PROPERTIES_PROPERTY_SOURCE_NAME, this.environment) { // 通过PropertySource构造方法注入Environment
 						@Override
 						@Nullable
-						public String getProperty(String key) {
-							return this.source.getProperty(key);
+						public String getProperty(String key) { // 根据属性key获取属性值
+							return this.source.getProperty(key); // 这里的source是Environment对象，表示从Environment中获取属性值
 						}
 					}
 				);
 			}
 			try {
 				PropertySource<?> localPropertySource =
-						new PropertiesPropertySource(LOCAL_PROPERTIES_PROPERTY_SOURCE_NAME, mergeProperties());
+						new PropertiesPropertySource(LOCAL_PROPERTIES_PROPERTY_SOURCE_NAME, mergeProperties()); // 加载本地配置文件中的属性值并包装成Properties对象，再设置到PropertiesPropertySource对象中
 				if (this.localOverride) {
-					this.propertySources.addFirst(localPropertySource);
+					this.propertySources.addFirst(localPropertySource); // 2.添加本地配置文件属性来源
 				}
 				else {
-					this.propertySources.addLast(localPropertySource);
+					this.propertySources.addLast(localPropertySource); // 2.添加本地配置文件属性来源
 				}
 			}
 			catch (IOException ex) {
@@ -154,7 +154,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 			}
 		}
 
-		processProperties(beanFactory, new PropertySourcesPropertyResolver(this.propertySources));
+		processProperties(beanFactory, new PropertySourcesPropertyResolver(this.propertySources)); // 创建解析类并处理
 		this.appliedPropertySources = this.propertySources;
 	}
 
@@ -164,12 +164,12 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 */
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
 			final ConfigurablePropertyResolver propertyResolver) throws BeansException {
-
+		// 设置占位符的前后缀
 		propertyResolver.setPlaceholderPrefix(this.placeholderPrefix);
 		propertyResolver.setPlaceholderSuffix(this.placeholderSuffix);
-		propertyResolver.setValueSeparator(this.valueSeparator);
+		propertyResolver.setValueSeparator(this.valueSeparator); // 设置分隔符
 
-		StringValueResolver valueResolver = strVal -> {
+		StringValueResolver valueResolver = strVal -> { // 函数式接口，resolveStringValue方法的回调实现
 			String resolved = (this.ignoreUnresolvablePlaceholders ?
 					propertyResolver.resolvePlaceholders(strVal) :
 					propertyResolver.resolveRequiredPlaceholders(strVal));

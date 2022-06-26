@@ -37,7 +37,7 @@ public class PropertiesPropertySource extends MapPropertySource {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public PropertiesPropertySource(String name, Properties source) {
-		super(name, (Map) source);
+		super(name, (Map) source); // 将Properties强转为Map，再调用父类构造方法
 	}
 
 	protected PropertiesPropertySource(String name, Map<String, Object> source) {

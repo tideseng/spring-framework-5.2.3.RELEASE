@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  * @author Chris Beams
  * @since 2.5
  */
-class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBeanDefinitionParser {
+class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBeanDefinitionParser { // property-placeholder标签对应的解析类
 
 	private static final String SYSTEM_PROPERTIES_MODE_ATTRIBUTE = "system-properties-mode";
 
@@ -40,24 +40,24 @@ class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBea
 
 	@Override
 	@SuppressWarnings("deprecation")
-	protected Class<?> getBeanClass(Element element) {
+	protected Class<?> getBeanClass(Element element) { // 获取要实例化的类（钩子方法）
 		// As of Spring 3.1, the default value of system-properties-mode has changed from
 		// 'FALLBACK' to 'ENVIRONMENT'. This latter value indicates that resolution of
 		// placeholders against system properties is a function of the Environment and
 		// its current set of PropertySources.
 		if (SYSTEM_PROPERTIES_MODE_DEFAULT.equals(element.getAttribute(SYSTEM_PROPERTIES_MODE_ATTRIBUTE))) {
-			return PropertySourcesPlaceholderConfigurer.class;
+			return PropertySourcesPlaceholderConfigurer.class; // 通过实现EnvironmentAware接口来整合Environment
 		}
 
 		// The user has explicitly specified a value for system-properties-mode: revert to
 		// PropertyPlaceholderConfigurer to ensure backward compatibility with 3.0 and earlier.
 		// This is deprecated; to be removed along with PropertyPlaceholderConfigurer itself.
-		return org.springframework.beans.factory.config.PropertyPlaceholderConfigurer.class;
+		return org.springframework.beans.factory.config.PropertyPlaceholderConfigurer.class; // 该类已过时，只会从配置文件中解析占位符，不会从Environment中进行解析
 	}
 
 	@Override
-	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-		super.doParse(element, parserContext, builder);
+	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) { // 解析方法
+		super.doParse(element, parserContext, builder); // 调用父类的解析方法
 
 		builder.addPropertyValue("ignoreUnresolvablePlaceholders",
 				Boolean.valueOf(element.getAttribute("ignore-unresolvable")));

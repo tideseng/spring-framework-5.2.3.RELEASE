@@ -171,14 +171,14 @@ public abstract class PropertiesLoaderSupport {
 	 * @throws IOException in case of I/O errors
 	 * @see #setLocations
 	 */
-	protected void loadProperties(Properties props) throws IOException {
-		if (this.locations != null) {
-			for (Resource location : this.locations) {
+	protected void loadProperties(Properties props) throws IOException { // 从指定的配置文件中加载属性并设置到Properties中
+		if (this.locations != null) { // locations在BeanDefiniton中进行了解析并设置，详见: AbstractPropertyLoadingBeanDefinitionParser#doParse(...)
+			for (Resource location : this.locations) { // 循环配置文件
 				if (logger.isTraceEnabled()) {
 					logger.trace("Loading properties file from " + location);
 				}
 				try {
-					PropertiesLoaderUtils.fillProperties(
+					PropertiesLoaderUtils.fillProperties( // 加载配置文件
 							props, new EncodedResource(location, this.fileEncoding), this.propertiesPersister);
 				}
 				catch (FileNotFoundException | UnknownHostException ex) {
