@@ -103,7 +103,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private final Set<String> activeProfiles = new LinkedHashSet<>();
+	private final Set<String> activeProfiles = new LinkedHashSet<>(); // 指定的Profile列表
 
 	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles()); // 默认的profile为default
 
@@ -220,7 +220,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	//---------------------------------------------------------------------
 
 	@Override
-	public String[] getActiveProfiles() {
+	public String[] getActiveProfiles() { // 获取指定的Profile信息
 		return StringUtils.toStringArray(doGetActiveProfiles());
 	}
 
@@ -232,10 +232,10 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see #getActiveProfiles()
 	 * @see #ACTIVE_PROFILES_PROPERTY_NAME
 	 */
-	protected Set<String> doGetActiveProfiles() {
+	protected Set<String> doGetActiveProfiles() { // 获取指定的Profile列表
 		synchronized (this.activeProfiles) {
 			if (this.activeProfiles.isEmpty()) {
-				String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME); // 读取spring.profiles.active属性
+				String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME); // 从Environment中获取spring.profiles.active属性
 				if (StringUtils.hasText(profiles)) {
 					setActiveProfiles(StringUtils.commaDelimitedListToStringArray(
 							StringUtils.trimAllWhitespace(profiles)));
@@ -261,7 +261,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	}
 
 	@Override
-	public void addActiveProfile(String profile) {
+	public void addActiveProfile(String profile) { // 设置指定的Profile
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating profile '" + profile + "'");
 		}

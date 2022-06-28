@@ -29,7 +29,7 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  * @see PropertySource
  */
-public interface PropertySources extends Iterable<PropertySource<?>> {
+public interface PropertySources extends Iterable<PropertySource<?>> { // 属性来源，继承了Iterable接口，子类需要实现iterator方法进行遍历
 
 	/**
 	 * Return a sequential {@link Stream} containing the property sources.

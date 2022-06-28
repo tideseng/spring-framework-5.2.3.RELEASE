@@ -1367,8 +1367,8 @@ public class BeanDefinitionParserDelegate {
 	 * @return the resulting bean definition
 	 */
 	@Nullable
-	public BeanDefinition parseCustomElement(Element ele) {
-		return parseCustomElement(ele, null);
+	public BeanDefinition parseCustomElement(Element ele) { // 解析自定义标签
+		return parseCustomElement(ele, null); // 解析自定义标签
 	}
 
 	/**
@@ -1388,7 +1388,7 @@ public class BeanDefinitionParserDelegate {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
-		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
+		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd)); // 解析
 	}
 
 	/**

@@ -93,7 +93,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 * local properties should be ignored.
 	 * @see #postProcessBeanFactory
 	 */
-	public void setPropertySources(PropertySources propertySources) {
+	public void setPropertySources(PropertySources propertySources) { // 提供自定义注入方法
 		this.propertySources = new MutablePropertySources(propertySources);
 	}
 
@@ -104,7 +104,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 * @see #postProcessBeanFactory
 	 */
 	@Override
-	public void setEnvironment(Environment environment) {
+	public void setEnvironment(Environment environment) { // 实现EnvironmentAware注入Environment对象
 		this.environment = environment;
 	}
 
@@ -125,7 +125,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 * sources, and once set, the configurer makes no assumptions about adding additional sources.
 	 */
 	@Override
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException { // BeanFactoryPostProcessor接口方法，执行参数解析
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException { // BeanFactoryPostProcessor接口方法，执行参数解析（该类优先级最低，为Ordered.LOWEST_PRECEDENCE）
 		if (this.propertySources == null) {
 			this.propertySources = new MutablePropertySources(); // 创建MutablePropertySources对象，用propertySourceList列表来存放属性来源途径（Environment和本地配置文件）
 			if (this.environment != null) {
@@ -164,22 +164,22 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 */
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
 			final ConfigurablePropertyResolver propertyResolver) throws BeansException {
-		// 设置占位符的前后缀
-		propertyResolver.setPlaceholderPrefix(this.placeholderPrefix);
-		propertyResolver.setPlaceholderSuffix(this.placeholderSuffix);
+
+		propertyResolver.setPlaceholderPrefix(this.placeholderPrefix); // 设置占位符的前缀
+		propertyResolver.setPlaceholderSuffix(this.placeholderSuffix); // 设置占位符的后缀
 		propertyResolver.setValueSeparator(this.valueSeparator); // 设置分隔符
 
-		StringValueResolver valueResolver = strVal -> { // 函数式接口，resolveStringValue方法的回调实现
-			String resolved = (this.ignoreUnresolvablePlaceholders ?
+		StringValueResolver valueResolver = strVal -> { // 函数式接口，StringValueResolver#resolveStringValue(...)方法的回调实现
+			String resolved = (this.ignoreUnresolvablePlaceholders ? // 获取真实的属性值（ignoreUnresolvablePlaceholders默认为false）
 					propertyResolver.resolvePlaceholders(strVal) :
-					propertyResolver.resolveRequiredPlaceholders(strVal));
+					propertyResolver.resolveRequiredPlaceholders(strVal)); // 调用父类AbstractPropertyResolver的方法解析占位符属性值，这里的propertyResolver为PropertySourcesPropertyResolver
 			if (this.trimValues) {
 				resolved = resolved.trim();
 			}
 			return (resolved.equals(this.nullValue) ? null : resolved);
 		};
 
-		doProcessProperties(beanFactoryToProcess, valueResolver);
+		doProcessProperties(beanFactoryToProcess, valueResolver); // 调用父类方法处理属性解析，将占位符${xxx}替换成真正的值
 	}
 
 	/**

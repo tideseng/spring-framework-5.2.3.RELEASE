@@ -203,11 +203,11 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 	}
 
 	@Override
-	public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
+	public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException { // 解析占位符属性值
 		if (this.strictHelper == null) {
 			this.strictHelper = createPlaceholderHelper(false);
 		}
-		return doResolvePlaceholders(text, this.strictHelper);
+		return doResolvePlaceholders(text, this.strictHelper); // 解析占位符属性值
 	}
 
 	/**
@@ -232,8 +232,8 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 				this.valueSeparator, ignoreUnresolvablePlaceholders);
 	}
 
-	private String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper) {
-		return helper.replacePlaceholders(text, this::getPropertyAsRawString);
+	private String doResolvePlaceholders(String text, PropertyPlaceholderHelper helper) { // 解析占位符属性值
+		return helper.replacePlaceholders(text, this::getPropertyAsRawString); // 解析占位符属性值，函数式接口注入，当前this是PropertySourcesPropertyResolver，即调用PropertyPlaceholderHelper.PlaceholderResolver#resolvePlaceholder()方法时会回调PropertySourcesPropertyResolver#getPropertyAsRawString()方法
 	}
 
 	/**

@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  * @author Chris Beams
  * @since 2.5
  */
-class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBeanDefinitionParser { // property-placeholder标签对应的解析类
+class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBeanDefinitionParser { // property-placeholder标签对应的解析类，在ContextNamespaceHandler中进行创建
 
 	private static final String SYSTEM_PROPERTIES_MODE_ATTRIBUTE = "system-properties-mode";
 

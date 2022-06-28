@@ -56,7 +56,7 @@ public class BeanDefinitionVisitor {
 	 * value resolver to all bean metadata values.
 	 * @param valueResolver the StringValueResolver to apply
 	 */
-	public BeanDefinitionVisitor(StringValueResolver valueResolver) {
+	public BeanDefinitionVisitor(StringValueResolver valueResolver) { // lambda表达式注入，详见PropertySourcesPlaceholderConfigurer.processProperties(...)
 		Assert.notNull(valueResolver, "StringValueResolver must not be null");
 		this.valueResolver = valueResolver;
 	}
@@ -76,15 +76,15 @@ public class BeanDefinitionVisitor {
 	 * @see #resolveStringValue(String)
 	 */
 	public void visitBeanDefinition(BeanDefinition beanDefinition) {
-		visitParentName(beanDefinition);
-		visitBeanClassName(beanDefinition);
-		visitFactoryBeanName(beanDefinition);
-		visitFactoryMethodName(beanDefinition);
-		visitScope(beanDefinition);
-		if (beanDefinition.hasPropertyValues()) {
-			visitPropertyValues(beanDefinition.getPropertyValues());
+		visitParentName(beanDefinition); // ParentName占位符
+		visitBeanClassName(beanDefinition); // BeanClassName占位符
+		visitFactoryBeanName(beanDefinition); // FactoryBeanName占位符
+		visitFactoryMethodName(beanDefinition); // FactoryMethodName占位符
+		visitScope(beanDefinition); // Scope占位符
+		if (beanDefinition.hasPropertyValues()) { // 属性占位符
+			visitPropertyValues(beanDefinition.getPropertyValues()); // 当BeanDefinition存在属性值是，将占位符替换成真正的属性值
 		}
-		if (beanDefinition.hasConstructorArgumentValues()) {
+		if (beanDefinition.hasConstructorArgumentValues()) { // 构造函数占位符
 			ConstructorArgumentValues cas = beanDefinition.getConstructorArgumentValues();
 			visitIndexedArgumentValues(cas.getIndexedArgumentValues());
 			visitGenericArgumentValues(cas.getGenericArgumentValues());
@@ -141,12 +141,12 @@ public class BeanDefinitionVisitor {
 		}
 	}
 
-	protected void visitPropertyValues(MutablePropertyValues pvs) {
+	protected void visitPropertyValues(MutablePropertyValues pvs) { // 替换属性值
 		PropertyValue[] pvArray = pvs.getPropertyValues();
-		for (PropertyValue pv : pvArray) {
-			Object newVal = resolveValue(pv.getValue());
+		for (PropertyValue pv : pvArray) { // 遍历PropertyValue
+			Object newVal = resolveValue(pv.getValue()); // 获取解析值
 			if (!ObjectUtils.nullSafeEquals(newVal, pv.getValue())) {
-				pvs.add(pv.getName(), newVal);
+				pvs.add(pv.getName(), newVal); // 当解析值与原属性值不同是，替换为解析值
 			}
 		}
 	}
@@ -171,7 +171,7 @@ public class BeanDefinitionVisitor {
 
 	@SuppressWarnings("rawtypes")
 	@Nullable
-	protected Object resolveValue(@Nullable Object value) {
+	protected Object resolveValue(@Nullable Object value) { // 获取解析值
 		if (value instanceof BeanDefinition) {
 			visitBeanDefinition((BeanDefinition) value);
 		}
@@ -212,9 +212,9 @@ public class BeanDefinitionVisitor {
 		}
 		else if (value instanceof TypedStringValue) {
 			TypedStringValue typedStringValue = (TypedStringValue) value;
-			String stringValue = typedStringValue.getValue();
+			String stringValue = typedStringValue.getValue(); // 原占位符的值
 			if (stringValue != null) {
-				String visitedString = resolveStringValue(stringValue);
+				String visitedString = resolveStringValue(stringValue); // 解析String占位符
 				typedStringValue.setValue(visitedString);
 			}
 		}
@@ -288,14 +288,14 @@ public class BeanDefinitionVisitor {
 	 * @return the resolved String value
 	 */
 	@Nullable
-	protected String resolveStringValue(String strVal) {
+	protected String resolveStringValue(String strVal) { // 解析String占位符
 		if (this.valueResolver == null) {
 			throw new IllegalStateException("No StringValueResolver specified - pass a resolver " +
 					"object into the constructor or override the 'resolveStringValue' method");
 		}
-		String resolvedValue = this.valueResolver.resolveStringValue(strVal);
+		String resolvedValue = this.valueResolver.resolveStringValue(strVal); // 解析String占位符，回调lambda表达式，详见PropertySourcesPlaceholderConfigurer.processProperties(...)
 		// Return original String if not modified.
-		return (strVal.equals(resolvedValue) ? strVal : resolvedValue);
+		return (strVal.equals(resolvedValue) ? strVal : resolvedValue); // 当解析值不等于原有值时，返回解析值
 	}
 
 }

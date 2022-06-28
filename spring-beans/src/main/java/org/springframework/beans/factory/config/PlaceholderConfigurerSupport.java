@@ -100,21 +100,21 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
 
 
 	/** Defaults to {@value #DEFAULT_PLACEHOLDER_PREFIX}. */
-	protected String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX;
+	protected String placeholderPrefix = DEFAULT_PLACEHOLDER_PREFIX; // 占位符前缀
 
 	/** Defaults to {@value #DEFAULT_PLACEHOLDER_SUFFIX}. */
-	protected String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX;
+	protected String placeholderSuffix = DEFAULT_PLACEHOLDER_SUFFIX; // 占位符后缀
 
 	/** Defaults to {@value #DEFAULT_VALUE_SEPARATOR}. */
 	@Nullable
-	protected String valueSeparator = DEFAULT_VALUE_SEPARATOR;
+	protected String valueSeparator = DEFAULT_VALUE_SEPARATOR; // 占位符分隔符
 
 	protected boolean trimValues = false;
 
 	@Nullable
 	protected String nullValue;
 
-	protected boolean ignoreUnresolvablePlaceholders = false;
+	protected boolean ignoreUnresolvablePlaceholders = false; // 是否忽略占位符解析异常
 
 	@Nullable
 	private String beanName;
@@ -210,19 +210,19 @@ public abstract class PlaceholderConfigurerSupport extends PropertyResourceConfi
 	}
 
 
-	protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
+	protected void doProcessProperties(ConfigurableListableBeanFactory beanFactoryToProcess, // 处理属性解析
 			StringValueResolver valueResolver) {
 
-		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
+		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver); // BeanDefinition的访问者/修改器
 
-		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
-		for (String curName : beanNames) {
+		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames(); // 获取所有的BeanName
+		for (String curName : beanNames) { // 遍历BeanName
 			// Check that we're not parsing our own bean definition,
 			// to avoid failing on unresolvable placeholders in properties file locations.
 			if (!(curName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-				BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName);
+				BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(curName); // 根据BeanName获取BeanDefinition对象
 				try {
-					visitor.visitBeanDefinition(bd);
+					visitor.visitBeanDefinition(bd); // 遍历BeanDefinition中的MutablePropertyValues中的每一个属性值，将有占位符的属性值修改为真正的参数值
 				}
 				catch (Exception ex) {
 					throw new BeanDefinitionStoreException(bd.getResourceDescription(), curName, ex.getMessage(), ex);
