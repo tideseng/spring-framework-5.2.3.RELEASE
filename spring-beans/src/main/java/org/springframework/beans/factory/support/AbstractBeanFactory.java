@@ -887,7 +887,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void addEmbeddedValueResolver(StringValueResolver valueResolver) {
+	public void addEmbeddedValueResolver(StringValueResolver valueResolver) { // 添加StringValueResolver（PlaceholderConfigurerSupport#doProcessProperties(...)等会调用）
 		Assert.notNull(valueResolver, "StringValueResolver must not be null");
 		this.embeddedValueResolvers.add(valueResolver);
 	}
@@ -899,13 +899,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	@Override
 	@Nullable
-	public String resolveEmbeddedValue(@Nullable String value) {
+	public String resolveEmbeddedValue(@Nullable String value) { // 解析占位符
 		if (value == null) {
 			return null;
 		}
 		String result = value;
 		for (StringValueResolver resolver : this.embeddedValueResolvers) {
-			result = resolver.resolveStringValue(result);
+			result = resolver.resolveStringValue(result); // 调用lambda表达式解析占位符，获取属性值
 			if (result == null) {
 				return null;
 			}

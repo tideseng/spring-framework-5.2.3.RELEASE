@@ -104,7 +104,7 @@ public class InjectionMetadata {
 		this.checkedElements = checkedElements;
 	}
 
-	public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+	public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable { // 依赖注入
 		Collection<InjectedElement> checkedElements = this.checkedElements;
 		Collection<InjectedElement> elementsToIterate =
 				(checkedElements != null ? checkedElements : this.injectedElements);
@@ -113,7 +113,7 @@ public class InjectionMetadata {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Processing injected element of bean '" + beanName + "': " + element);
 				}
-				element.inject(target, beanName, pvs);
+				element.inject(target, beanName, pvs); // 依赖注入
 			}
 		}
 	}

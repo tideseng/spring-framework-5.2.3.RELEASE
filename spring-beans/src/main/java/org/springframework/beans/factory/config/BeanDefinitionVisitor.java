@@ -77,7 +77,7 @@ public class BeanDefinitionVisitor {
 	 */
 	public void visitBeanDefinition(BeanDefinition beanDefinition) {
 		visitParentName(beanDefinition); // ParentName占位符
-		visitBeanClassName(beanDefinition); // BeanClassName占位符
+		visitBeanClassName(beanDefinition); // BeanClassName占位符（BeanClassName也支持占位符）
 		visitFactoryBeanName(beanDefinition); // FactoryBeanName占位符
 		visitFactoryMethodName(beanDefinition); // FactoryMethodName占位符
 		visitScope(beanDefinition); // Scope占位符

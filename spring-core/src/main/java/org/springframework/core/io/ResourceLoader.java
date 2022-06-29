@@ -39,10 +39,10 @@ import org.springframework.util.ResourceUtils;
  * @see org.springframework.context.ApplicationContext
  * @see org.springframework.context.ResourceLoaderAware
  */
-public interface ResourceLoader {
+public interface ResourceLoader { // 资源加载器
 
 	/** Pseudo URL prefix for loading from the class path: "classpath:". */
-	String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX;
+	String CLASSPATH_URL_PREFIX = ResourceUtils.CLASSPATH_URL_PREFIX; // 从类路径中加载的伪URL路径
 
 
 	/**
@@ -64,7 +64,7 @@ public interface ResourceLoader {
 	 * @see Resource#exists()
 	 * @see Resource#getInputStream()
 	 */
-	Resource getResource(String location);
+	Resource getResource(String location); // 获取指定资源路径对应的Resource对象
 
 	/**
 	 * Expose the ClassLoader used by this ResourceLoader.
@@ -77,6 +77,6 @@ public interface ResourceLoader {
 	 * @see org.springframework.util.ClassUtils#forName(String, ClassLoader)
 	 */
 	@Nullable
-	ClassLoader getClassLoader();
+	ClassLoader getClassLoader(); // 当前类的类加载器
 
 }
