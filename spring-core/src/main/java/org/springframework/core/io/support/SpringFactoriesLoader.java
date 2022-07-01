@@ -58,19 +58,19 @@ import org.springframework.util.StringUtils;
  * @author Juergen Hoeller
  * @author Sam Brannen
  * @since 3.2
- */
-public final class SpringFactoriesLoader {
+ */ // Spring Boot应用在启动的时候，根据启动阶段不同的需求，会调用SpringFactoriesLoader加载相应的工厂配置信息
+public final class SpringFactoriesLoader { // SpringFactories加载器，从classpath下所有的jar包中找出各自的 META-INF/spring.factories 属性文件，并获取其中定义的工厂类
 
 	/**
 	 * The location to look for factories.
 	 * <p>Can be present in multiple JAR files.
 	 */
-	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories"; // 定义从jar包中提取的工厂类的属性文件的相对路径（spring.factories文件是属性文件格式，每条属性的key必须是接口或者抽象类的全限定名，而属性值value是一个逗号分割的实现类的名称）
 
 
 	private static final Log logger = LogFactory.getLog(SpringFactoriesLoader.class);
 
-	private static final Map<ClassLoader, MultiValueMap<String, String>> cache = new ConcurrentReferenceHashMap<>();
+	private static final Map<ClassLoader, MultiValueMap<String, String>> cache = new ConcurrentReferenceHashMap<>(); // 缓存机制
 
 
 	private SpringFactoriesLoader() {
@@ -89,21 +89,21 @@ public final class SpringFactoriesLoader {
 	 * be loaded or if an error occurs while instantiating any factory
 	 * @see #loadFactoryNames
 	 */
-	public static <T> List<T> loadFactories(Class<T> factoryType, @Nullable ClassLoader classLoader) {
+	public static <T> List<T> loadFactories(Class<T> factoryType, @Nullable ClassLoader classLoader) { // 读取classpath下所有的jar包中的所有 META-INF/spring.factories属性文件，获取其中定义的匹配类型 factoryClass的工厂类，然后创建每个工厂类的对象/实例，并返回这些工厂类对象/实例的列表
 		Assert.notNull(factoryType, "'factoryType' must not be null");
 		ClassLoader classLoaderToUse = classLoader;
 		if (classLoaderToUse == null) {
 			classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
 		}
-		List<String> factoryImplementationNames = loadFactoryNames(factoryType, classLoaderToUse);
+		List<String> factoryImplementationNames = loadFactoryNames(factoryType, classLoaderToUse); // 获取相关工厂类的全路径类名
 		if (logger.isTraceEnabled()) {
 			logger.trace("Loaded [" + factoryType.getName() + "] names: " + factoryImplementationNames);
 		}
 		List<T> result = new ArrayList<>(factoryImplementationNames.size());
 		for (String factoryImplementationName : factoryImplementationNames) {
-			result.add(instantiateFactory(factoryImplementationName, factoryType, classLoaderToUse));
+			result.add(instantiateFactory(factoryImplementationName, factoryType, classLoaderToUse)); // 通过反射调用无参构造方法创建实例
 		}
-		AnnotationAwareOrderComparator.sort(result);
+		AnnotationAwareOrderComparator.sort(result); // 排序
 		return result;
 	}
 
@@ -117,34 +117,34 @@ public final class SpringFactoriesLoader {
 	 * @throws IllegalArgumentException if an error occurs while loading factory names
 	 * @see #loadFactories
 	 */
-	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
+	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) { // 读取classpath下所有的jar包中的所有 META-INF/spring.factories属性文件，获取其中定义的匹配类型 factoryClass的工厂类，然后返回这些工厂类的全路径列表
 		String factoryTypeName = factoryType.getName();
-		return loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
+		return loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList()); // 从缓存结果中根据工厂名获取对应的列表
 	}
 
-	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
-		MultiValueMap<String, String> result = cache.get(classLoader);
-		if (result != null) { // 防止重复加载
+	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) { // 加载classpath下所有的jar包中的所有 META-INF/spring.factories属性文件，合并封装到到本地缓存中并返回缓存结果
+		MultiValueMap<String, String> result = cache.get(classLoader); // 先从缓存中获取数据，缓存中有时直接返回，防止重复加载
+		if (result != null) {
 			return result;
 		}
 
 		try {
 			Enumeration<URL> urls = (classLoader != null ?
-					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) : // 在classpath下读取META-INF/spring.factories文件
+					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) : // 加载classpath下所有的jar包中的所有 META-INF/spring.factories属性文件生成集合
 					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
 			result = new LinkedMultiValueMap<>();
-			while (urls.hasMoreElements()) {
-				URL url = urls.nextElement();
+			while (urls.hasMoreElements()) { // 遍历urls集合
+				URL url = urls.nextElement(); // 获取jar包中spring.factories文件的url地址
 				UrlResource resource = new UrlResource(url);
-				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-				for (Map.Entry<?, ?> entry : properties.entrySet()) {
-					String factoryTypeName = ((String) entry.getKey()).trim();
+				Properties properties = PropertiesLoaderUtils.loadProperties(resource); // 将jar中具体的spring.factories文件解析成Properties类
+				for (Map.Entry<?, ?> entry : properties.entrySet()) { // 遍历spring.factories文件中的所有属性
+					String factoryTypeName = ((String) entry.getKey()).trim(); // spring.factories文件中的属性key（key是工厂类的全路径名称）
 					for (String factoryImplementationName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {
-						result.add(factoryTypeName, factoryImplementationName.trim());
+						result.add(factoryTypeName, factoryImplementationName.trim()); // 添加到LinkedMultiValueMap中（内部维护了一个 <String, List<String>> 结构的map，对值放入LinkedList集合中）
 					}
 				}
 			}
-			cache.put(classLoader, result);
+			cache.put(classLoader, result); // 将结果放入缓存
 			return result;
 		}
 		catch (IOException ex) {
@@ -154,7 +154,7 @@ public final class SpringFactoriesLoader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <T> T instantiateFactory(String factoryImplementationName, Class<T> factoryType, ClassLoader classLoader) {
+	private static <T> T instantiateFactory(String factoryImplementationName, Class<T> factoryType, ClassLoader classLoader) { // 通过反射调用无参构造方法创建实例
 		try {
 			Class<?> factoryImplementationClass = ClassUtils.forName(factoryImplementationName, classLoader);
 			if (!factoryType.isAssignableFrom(factoryImplementationClass)) {
