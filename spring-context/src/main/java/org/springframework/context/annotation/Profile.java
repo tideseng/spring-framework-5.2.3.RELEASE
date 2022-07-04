@@ -99,8 +99,8 @@ import org.springframework.core.env.Profiles;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Conditional(ProfileCondition.class)
-public @interface Profile {
+@Conditional(ProfileCondition.class) // 引入了@Conditional注解，即@Profile注解实际上是一个@Conditional注解
+public @interface Profile { // 根据不同的环境，动态选择是否注册Bean
 
 	/**
 	 * The set of profiles for which the annotated component should be registered.

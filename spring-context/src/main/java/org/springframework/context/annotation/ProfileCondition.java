@@ -36,7 +36,7 @@ class ProfileCondition implements Condition {
 		MultiValueMap<String, Object> attrs = metadata.getAllAnnotationAttributes(Profile.class.getName());
 		if (attrs != null) {
 			for (Object value : attrs.get("value")) {
-				if (context.getEnvironment().acceptsProfiles(Profiles.of((String[]) value))) {
+				if (context.getEnvironment().acceptsProfiles(Profiles.of((String[]) value))) {  // 根据从ConditionContext中获取激活的Profile和注解指定的Profile进行比对，以决定是否实例化这个Bean
 					return true;
 				}
 			}
