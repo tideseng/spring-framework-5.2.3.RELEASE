@@ -162,7 +162,7 @@ class ConfigurationClassParser {
 	}
 
 
-	public void parse(Set<BeanDefinitionHolder> configCandidates) {
+	public void parse(Set<BeanDefinitionHolder> configCandidates) { // 解析配置类
 		for (BeanDefinitionHolder holder : configCandidates) {
 			BeanDefinition bd = holder.getBeanDefinition();
 			try {
@@ -191,15 +191,15 @@ class ConfigurationClassParser {
 	protected final void parse(@Nullable String className, String beanName) throws IOException {
 		Assert.notNull(className, "No bean class name for configuration class bean definition");
 		MetadataReader reader = this.metadataReaderFactory.getMetadataReader(className);
-		processConfigurationClass(new ConfigurationClass(reader, beanName));
+		processConfigurationClass(new ConfigurationClass(reader, beanName)); // 处理解析配置类
 	}
 
 	protected final void parse(Class<?> clazz, String beanName) throws IOException {
-		processConfigurationClass(new ConfigurationClass(clazz, beanName));
+		processConfigurationClass(new ConfigurationClass(clazz, beanName)); // 处理解析配置类
 	}
 
 	protected final void parse(AnnotationMetadata metadata, String beanName) throws IOException {
-		processConfigurationClass(new ConfigurationClass(metadata, beanName));
+		processConfigurationClass(new ConfigurationClass(metadata, beanName)); // 处理解析配置类
 	}
 
 	/**
@@ -217,8 +217,8 @@ class ConfigurationClassParser {
 	}
 
 
-	protected void processConfigurationClass(ConfigurationClass configClass) throws IOException {
-		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+	protected void processConfigurationClass(ConfigurationClass configClass) throws IOException { // 处理解析配置类
+		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) { // 根据@Conditional条件注解决定是否跳过处理配置类
 			return;
 		}
 
@@ -242,7 +242,7 @@ class ConfigurationClassParser {
 		// Recursively process the configuration class and its superclass hierarchy.
 		SourceClass sourceClass = asSourceClass(configClass);
 		do {
-			sourceClass = doProcessConfigurationClass(configClass, sourceClass);
+			sourceClass = doProcessConfigurationClass(configClass, sourceClass); // 处理解析配置类的具体逻辑
 		}
 		while (sourceClass != null);
 
@@ -258,7 +258,7 @@ class ConfigurationClassParser {
 	 * @return the superclass, or {@code null} if none found or previously processed
 	 */
 	@Nullable
-	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass)
+	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) // 处理解析配置类的具体逻辑
 			throws IOException {
 
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {

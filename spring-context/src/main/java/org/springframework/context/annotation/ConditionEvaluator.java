@@ -77,12 +77,12 @@ class ConditionEvaluator {
 	 * @param phase the phase of the call
 	 * @return if the item should be skipped
 	 */
-	public boolean shouldSkip(@Nullable AnnotatedTypeMetadata metadata, @Nullable ConfigurationPhase phase) {
-		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
+	public boolean shouldSkip(@Nullable AnnotatedTypeMetadata metadata, @Nullable ConfigurationPhase phase) { // 根据@Conditional条件注解决定是否跳过处理
+		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) { // metadata为null 或 没有@Conditional相关注解，直接返回false表示不跳过处理
 			return false;
 		}
 
-		if (phase == null) {
+		if (phase == null) { // 如果phase阶段为空，判断类上是否有@Configuration、@Component、@ComponentScan、@Import、@ImportResource 或 方法上有@Bean注解，如果有就使用ConfigurationPhase.PARSE_CONFIGURATION
 			if (metadata instanceof AnnotationMetadata &&
 					ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
 				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
@@ -91,21 +91,21 @@ class ConditionEvaluator {
 		}
 
 		List<Condition> conditions = new ArrayList<>();
-		for (String[] conditionClasses : getConditionClasses(metadata)) {
+		for (String[] conditionClasses : getConditionClasses(metadata)) { // 获取当前所有@Conditional注解对应的Condtion实现类的全路径类名，通过反射创建实例放入conditions集合中
 			for (String conditionClass : conditionClasses) {
 				Condition condition = getCondition(conditionClass, this.context.getClassLoader());
 				conditions.add(condition);
 			}
 		}
 
-		AnnotationAwareOrderComparator.sort(conditions);
+		AnnotationAwareOrderComparator.sort(conditions); // 进行排序
 
-		for (Condition condition : conditions) {
+		for (Condition condition : conditions) { // 遍历Condition实现类
 			ConfigurationPhase requiredPhase = null;
-			if (condition instanceof ConfigurationCondition) {
+			if (condition instanceof ConfigurationCondition) { // 如果Condition实现了ConfigurationCondition，则获取该Condition的阶段
 				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
 			}
-			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) {
+			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) { // Condition接口实现类的调用入口
 				return true;
 			}
 		}

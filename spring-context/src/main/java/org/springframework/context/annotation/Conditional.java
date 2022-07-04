@@ -59,7 +59,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Conditional {
+public @interface Conditional { // @Conditional注解是一个条件注解，参数是一个实现了Condition接口重写matches()方法的Class，表示Compenent类的注册条件是否匹配
 
 	/**
 	 * All {@link Condition Conditions} that must {@linkplain Condition#matches match}
