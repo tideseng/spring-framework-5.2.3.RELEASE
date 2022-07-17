@@ -121,16 +121,16 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * initializing a fresh bean factory for the next phase of the context's lifecycle.
 	 */
 	@Override
-	protected final void refreshBeanFactory() throws BeansException {
-		if (hasBeanFactory()) {
+	protected final void refreshBeanFactory() throws BeansException { // 刷新BeanFactory（解析xml的入口）
+		if (hasBeanFactory()) { // 如果BeanFactory不为空，则清除BeanFactory和里面的实例
 			destroyBeans();
 			closeBeanFactory();
 		}
 		try {
-			DefaultListableBeanFactory beanFactory = createBeanFactory();
+			DefaultListableBeanFactory beanFactory = createBeanFactory(); // 创建DefaultListableBeanFactory，即创建BeanFactory实例
 			beanFactory.setSerializationId(getId());
-			customizeBeanFactory(beanFactory);
-			loadBeanDefinitions(beanFactory);
+			customizeBeanFactory(beanFactory); // 自定义BeanFactory相关信息（设置是否允许BeanDefinition覆盖、是否可以循环依赖）
+			loadBeanDefinitions(beanFactory); // 加载BeanDefinition，将xml中的标签进行解析并封装成BeanDefinition对象
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
 			}
@@ -221,7 +221,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
-	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) { // 自定义BeanFactory相关信息（设置是否允许BeanDefinition覆盖、是否可以循环依赖）
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}

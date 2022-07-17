@@ -110,43 +110,43 @@ public class BeanDefinitionParserDelegate {
 
 	public static final String AUTOWIRE_AUTODETECT_VALUE = "autodetect";
 
-	public static final String NAME_ATTRIBUTE = "name";
+	public static final String NAME_ATTRIBUTE = "name"; // Bean的别名（可以是多个）
 
 	public static final String BEAN_ELEMENT = "bean";
 
 	public static final String META_ELEMENT = "meta";
 
-	public static final String ID_ATTRIBUTE = "id";
+	public static final String ID_ATTRIBUTE = "id"; // Bean的唯一标识
 
-	public static final String PARENT_ATTRIBUTE = "parent";
+	public static final String PARENT_ATTRIBUTE = "parent"; // Bean所引用的父类Bean
 
-	public static final String CLASS_ATTRIBUTE = "class";
+	public static final String CLASS_ATTRIBUTE = "class"; // Bean所对应类的全限定名，即包名+类名
 
-	public static final String ABSTRACT_ATTRIBUTE = "abstract";
+	public static final String ABSTRACT_ATTRIBUTE = "abstract"; // Bean是否为抽象Bean
 
 	public static final String SCOPE_ATTRIBUTE = "scope";
 
 	private static final String SINGLETON_ATTRIBUTE = "singleton";
 
-	public static final String LAZY_INIT_ATTRIBUTE = "lazy-init";
+	public static final String LAZY_INIT_ATTRIBUTE = "lazy-init"; // 是否需要延迟初始化
 
-	public static final String AUTOWIRE_ATTRIBUTE = "autowire";
+	public static final String AUTOWIRE_ATTRIBUTE = "autowire"; // 自动装载方式（默认为不使用自动装配）
 
-	public static final String AUTOWIRE_CANDIDATE_ATTRIBUTE = "autowire-candidate";
+	public static final String AUTOWIRE_CANDIDATE_ATTRIBUTE = "autowire-candidate"; // 表示在查找自动装配对象时是否考虑该Bean
 
 	public static final String PRIMARY_ATTRIBUTE = "primary";
 
-	public static final String DEPENDS_ON_ATTRIBUTE = "depends-on";
+	public static final String DEPENDS_ON_ATTRIBUTE = "depends-on"; // Bean初始化时依赖的对象
 
-	public static final String INIT_METHOD_ATTRIBUTE = "init-method";
+	public static final String INIT_METHOD_ATTRIBUTE = "init-method"; // Bean的初始化方法
 
-	public static final String DESTROY_METHOD_ATTRIBUTE = "destroy-method";
+	public static final String DESTROY_METHOD_ATTRIBUTE = "destroy-method"; // Bean的销毁方法
 
-	public static final String FACTORY_METHOD_ATTRIBUTE = "factory-method";
+	public static final String FACTORY_METHOD_ATTRIBUTE = "factory-method"; // 创建Bean的工厂方法（表示该Bean是通过工厂方法创建，此时class属性无效）
 
-	public static final String FACTORY_BEAN_ATTRIBUTE = "factory-bean";
+	public static final String FACTORY_BEAN_ATTRIBUTE = "factory-bean"; // 创建Bean的工厂类
 
-	public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
+	public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg"; // 用于封装构造函数参数信息
 
 	public static final String INDEX_ATTRIBUTE = "index";
 
@@ -156,15 +156,15 @@ public class BeanDefinitionParserDelegate {
 
 	public static final String KEY_TYPE_ATTRIBUTE = "key-type";
 
-	public static final String PROPERTY_ELEMENT = "property";
+	public static final String PROPERTY_ELEMENT = "property"; // 用于封装PropertyValue
 
 	public static final String REF_ATTRIBUTE = "ref";
 
 	public static final String VALUE_ATTRIBUTE = "value";
 
-	public static final String LOOKUP_METHOD_ELEMENT = "lookup-method";
+	public static final String LOOKUP_METHOD_ELEMENT = "lookup-method"; // 用于封装lookup-method信息
 
-	public static final String REPLACED_METHOD_ELEMENT = "replaced-method";
+	public static final String REPLACED_METHOD_ELEMENT = "replaced-method"; // 用于封装replaced-method信息
 
 	public static final String REPLACER_ATTRIBUTE = "replacer";
 
@@ -401,8 +401,8 @@ public class BeanDefinitionParserDelegate {
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
 	@Nullable
-	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
-		return parseBeanDefinitionElement(ele, null);
+	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) { // 解析<bean/>标签
+		return parseBeanDefinitionElement(ele, null); // 解析<bean/>标签
 	}
 
 	/**
@@ -411,7 +411,7 @@ public class BeanDefinitionParserDelegate {
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
 	@Nullable
-	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
+	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) { // 解析<bean/>标签
 		String id = ele.getAttribute(ID_ATTRIBUTE);
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
@@ -431,10 +431,10 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		if (containingBean == null) {
-			checkNameUniqueness(beanName, aliases, ele);
+			checkNameUniqueness(beanName, aliases, ele); // 检查beanName是否唯一
 		}
 
-		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean);
+		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean); // 解析<bean/>标签，封装到BeanDefinition对象
 		if (beanDefinition != null) {
 			if (!StringUtils.hasText(beanName)) {
 				try {
@@ -497,7 +497,7 @@ public class BeanDefinitionParserDelegate {
 	 * {@code null} if problems occurred during the parsing of the bean definition.
 	 */
 	@Nullable
-	public AbstractBeanDefinition parseBeanDefinitionElement(
+	public AbstractBeanDefinition parseBeanDefinitionElement( // 解析<bean/>标签，封装到BeanDefinition对象
 			Element ele, String beanName, @Nullable BeanDefinition containingBean) {
 
 		this.parseState.push(new BeanEntry(beanName));
@@ -512,9 +512,9 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
-			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
+			AbstractBeanDefinition bd = createBeanDefinition(className, parent); // 创建GenericBeanDefinition
 
-			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
+			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd); // 解析<bean/>标签并封装到BeanDefinition对象中
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
 			parseMetaElements(ele, bd);
@@ -553,7 +553,7 @@ public class BeanDefinitionParserDelegate {
 	 * @param containingBean containing bean definition
 	 * @return a bean definition initialized according to the bean element attributes
 	 */
-	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName,
+	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName, // 解析<bean/>标签并封装到BeanDefinition对象中
 			@Nullable BeanDefinition containingBean, AbstractBeanDefinition bd) {
 
 		if (ele.hasAttribute(SINGLETON_ATTRIBUTE)) {
@@ -636,10 +636,10 @@ public class BeanDefinitionParserDelegate {
 	 * @return the newly created bean definition
 	 * @throws ClassNotFoundException if bean class resolution was attempted but failed
 	 */
-	protected AbstractBeanDefinition createBeanDefinition(@Nullable String className, @Nullable String parentName)
+	protected AbstractBeanDefinition createBeanDefinition(@Nullable String className, @Nullable String parentName) // 创建GenericBeanDefinition
 			throws ClassNotFoundException {
 
-		return BeanDefinitionReaderUtils.createBeanDefinition(
+		return BeanDefinitionReaderUtils.createBeanDefinition( // 创建GenericBeanDefinition
 				parentName, className, this.readerContext.getBeanClassLoader());
 	}
 

@@ -147,7 +147,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	private String serializationId;
 
 	/** Whether to allow re-registration of a different definition with the same name. */
-	private boolean allowBeanDefinitionOverriding = true;
+	private boolean allowBeanDefinitionOverriding = true; // 是否允许BeanDefinition覆盖，默认为true
 
 	/** Whether to allow eager class loading even for lazy-init beans. */
 	private boolean allowEagerClassLoading = true;

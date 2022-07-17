@@ -38,10 +38,10 @@ import org.springframework.util.ObjectUtils;
  * @see ChildBeanDefinition
  */
 @SuppressWarnings("serial")
-public class GenericBeanDefinition extends AbstractBeanDefinition {
+public class GenericBeanDefinition extends AbstractBeanDefinition { // 通用的BeanDefinition对象
 
 	@Nullable
-	private String parentName;
+	private String parentName; // 子类Bean用来定义它所引用的父类Bean
 
 
 	/**
@@ -52,7 +52,7 @@ public class GenericBeanDefinition extends AbstractBeanDefinition {
 	 * @see #setConstructorArgumentValues
 	 * @see #setPropertyValues
 	 */
-	public GenericBeanDefinition() {
+	public GenericBeanDefinition() { // 初始化GenericBeanDefinition
 		super();
 	}
 

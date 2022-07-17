@@ -81,7 +81,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 	 * @param configLocation resource location
 	 * @throws BeansException if context creation failed
 	 */
-	public ClassPathXmlApplicationContext(String configLocation) throws BeansException {
+	public ClassPathXmlApplicationContext(String configLocation) throws BeansException { // 创建ClassPathXmlApplicationContext对象
 		this(new String[] {configLocation}, true, null);
 	}
 
@@ -91,7 +91,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 	 * @param configLocations array of resource locations
 	 * @throws BeansException if context creation failed
 	 */
-	public ClassPathXmlApplicationContext(String... configLocations) throws BeansException {
+	public ClassPathXmlApplicationContext(String... configLocations) throws BeansException { // 创建ClassPathXmlApplicationContext对象
 		this(configLocations, true, null);
 	}
 
@@ -134,14 +134,14 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 	 * @throws BeansException if context creation failed
 	 * @see #refresh()
 	 */
-	public ClassPathXmlApplicationContext(
+	public ClassPathXmlApplicationContext( // 创建ClassPathXmlApplicationContext对象，最终会执行的构造函数
 			String[] configLocations, boolean refresh, @Nullable ApplicationContext parent)
 			throws BeansException {
 
-		super(parent);
-		setConfigLocations(configLocations);
-		if (refresh) {
-			refresh();
+		super(parent); // 实例化时调用父类的构造函数
+		setConfigLocations(configLocations); // 设置配置文件（将传入的配置文件数组封装到configLocations属性中）
+		if (refresh) { // 默认为true
+			refresh(); // 初始化Spring容器的入口方法
 		}
 	}
 

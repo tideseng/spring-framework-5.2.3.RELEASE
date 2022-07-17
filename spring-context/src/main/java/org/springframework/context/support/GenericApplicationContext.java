@@ -154,7 +154,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 */
 	@Override
 	public void setParent(@Nullable ApplicationContext parent) {
-		super.setParent(parent);
+		super.setParent(parent); // 设置父容器
 		this.beanFactory.setParentBeanFactory(getInternalParentBeanFactory());
 	}
 

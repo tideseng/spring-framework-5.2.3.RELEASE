@@ -139,24 +139,24 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 
 	@Nullable
-	private volatile Object beanClass;
+	private volatile Object beanClass; // 类的全限定名，即包名+类名
 
 	@Nullable
 	private String scope = SCOPE_DEFAULT;
 
-	private boolean abstractFlag = false;
+	private boolean abstractFlag = false; // Bean是否为抽象Bean（默认为false）
 
 	@Nullable
-	private Boolean lazyInit;
+	private Boolean lazyInit; // 是否需要延迟初始化（默认为false）
 
-	private int autowireMode = AUTOWIRE_NO;
+	private int autowireMode = AUTOWIRE_NO; // 自动装载方式（默认为不使用自动装配）
 
 	private int dependencyCheck = DEPENDENCY_CHECK_NONE;
 
 	@Nullable
-	private String[] dependsOn;
+	private String[] dependsOn; // 初始化时依赖的对象
 
-	private boolean autowireCandidate = true;
+	private boolean autowireCandidate = true; // 表示在查找自动装配对象时是否考虑该Bean
 
 	private boolean primary = false;
 
@@ -170,24 +170,24 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	private boolean lenientConstructorResolution = true;
 
 	@Nullable
-	private String factoryBeanName;
+	private String factoryBeanName; // 创建Bean的工厂类
 
 	@Nullable
-	private String factoryMethodName;
+	private String factoryMethodName; // 创建Bean的工厂方法（表示该Bean是通过工厂方法创建，此时class属性无效）
 
 	@Nullable
-	private ConstructorArgumentValues constructorArgumentValues;
+	private ConstructorArgumentValues constructorArgumentValues; // 用于封装构造函数参数信息
 
 	@Nullable
-	private MutablePropertyValues propertyValues;
+	private MutablePropertyValues propertyValues; // 用于封装PropertyValue
 
-	private MethodOverrides methodOverrides = new MethodOverrides();
-
-	@Nullable
-	private String initMethodName;
+	private MethodOverrides methodOverrides = new MethodOverrides(); // 用于封装lookup-method和replaced-method信息
 
 	@Nullable
-	private String destroyMethodName;
+	private String initMethodName; // Bean的初始化方法
+
+	@Nullable
+	private String destroyMethodName; // Bean的销毁方法
 
 	private boolean enforceInitMethod = true;
 

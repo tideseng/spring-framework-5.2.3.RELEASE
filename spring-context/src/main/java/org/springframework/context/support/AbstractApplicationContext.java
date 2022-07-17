@@ -472,12 +472,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see ConfigurableEnvironment#merge(ConfigurableEnvironment)
 	 */
 	@Override
-	public void setParent(@Nullable ApplicationContext parent) {
+	public void setParent(@Nullable ApplicationContext parent) { // 设置父容器
 		this.parent = parent;
 		if (parent != null) {
 			Environment parentEnvironment = parent.getEnvironment();
 			if (parentEnvironment instanceof ConfigurableEnvironment) {
-				getEnvironment().merge((ConfigurableEnvironment) parentEnvironment);
+				getEnvironment().merge((ConfigurableEnvironment) parentEnvironment); // 将父容器的Environment合并到子容器中
 			}
 		}
 	}
@@ -513,38 +513,38 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	@Override
-	public void refresh() throws BeansException, IllegalStateException {
+	public void refresh() throws BeansException, IllegalStateException { // 初始化Spring容器（模板设计模型的典型应用）
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			prepareRefresh();
+			prepareRefresh(); // 刷新预处理，为容器初始化做准备（准备此上下文用于刷新，设置/保存启动时间和启动标志，初始化属性）
 
 			// Tell the subclass to refresh the internal bean factory.
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); // 创建BeanFactory对象（钩子方法，是ClassPathXmlApplicationContext解析XML的入口）
 
 			// Prepare the bean factory for use in this context.
-			prepareBeanFactory(beanFactory);
+			prepareBeanFactory(beanFactory); // 准备工作，添加了两个后置处理器（ApplicationContextAwareProcessor、ApplicationListenerDetector）、设置了忽略自动装配和允许自动装配接口（如果不存在某个bean的时候，spring就自动注册singleton bean）、设置了bean表达式解析器
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory);
+				postProcessBeanFactory(beanFactory); // 钩子方法，子类中进行实现
 
 				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory);
+				invokeBeanFactoryPostProcessors(beanFactory); // 执行自定义和内置的BeanFactoryPostProcessor（包括BeanDefinitionRegistryPostProcessor），即在实例化之前完成BeanDefinition的增删改查
 
 				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory);
+				registerBeanPostProcessors(beanFactory); // 把实现了BeanPostProcessor接口的类实例化，并且加入到BeanFactory中
 
 				// Initialize message source for this context.
-				initMessageSource();
+				initMessageSource(); // 初始化上下文中的资源文件，如国际化文件的处理等
 
 				// Initialize event multicaster for this context.
-				initApplicationEventMulticaster();
+				initApplicationEventMulticaster(); // 初始化事件管理类
 
 				// Initialize other special beans in specific context subclasses.
-				onRefresh();
+				onRefresh(); // 钩子方法，给子类扩展初始化其他bean，如在springboot中用来做内嵌tomcat启动
 
 				// Check for listener beans and register them.
-				registerListeners();
+				registerListeners(); // 往事件管理类中注册事件类（观察者设计模式）
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
@@ -634,8 +634,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #getBeanFactory()
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
-		refreshBeanFactory();
-		return getBeanFactory();
+		refreshBeanFactory(); // 刷新BeanFactory（钩子方法，是ClassPathXmlApplicationContext解析xml的入口）
+		return getBeanFactory(); // 获取BeanFactory（钩子方法）
 	}
 
 	/**

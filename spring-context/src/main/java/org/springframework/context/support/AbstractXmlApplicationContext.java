@@ -78,20 +78,20 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * @see #loadBeanDefinitions
 	 */
 	@Override
-	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException {
+	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) throws BeansException, IOException { // 加载BeanDefinition，将xml中的标签进行解析并封装成BeanDefinition对象
 		// Create a new XmlBeanDefinitionReader for the given BeanFactory.
-		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory);
+		XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(beanFactory); // 创建XmlBeanDefinition解析器（委托模式）
 
 		// Configure the bean definition reader with this context's
 		// resource loading environment.
-		beanDefinitionReader.setEnvironment(this.getEnvironment()); // 设置Environment到XmlBeanDefinitionReader中
-		beanDefinitionReader.setResourceLoader(this);
+		beanDefinitionReader.setEnvironment(this.getEnvironment()); // 将上下文的Environment设置到XmlBeanDefinitionReader中
+		beanDefinitionReader.setResourceLoader(this); // 将当前类设置到XmlBeanDefinitionReader的ResourceLoader中（ApplicationContext实现了ResourceLoader接口）
 		beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(this));
 
 		// Allow a subclass to provide custom initialization of the reader,
 		// then proceed with actually loading the bean definitions.
 		initBeanDefinitionReader(beanDefinitionReader);
-		loadBeanDefinitions(beanDefinitionReader);
+		loadBeanDefinitions(beanDefinitionReader); // 加载BeanDefinition
 	}
 
 	/**
@@ -118,14 +118,14 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 	 * @see #getResources
 	 * @see #getResourcePatternResolver
 	 */
-	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
+	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException { // 加载BeanDefinition
 		Resource[] configResources = getConfigResources();
 		if (configResources != null) {
 			reader.loadBeanDefinitions(configResources);
 		}
 		String[] configLocations = getConfigLocations();
 		if (configLocations != null) {
-			reader.loadBeanDefinitions(configLocations);
+			reader.loadBeanDefinitions(configLocations); // 委托给XmlBeanDefinition解析器进行加载BeanDefinition
 		}
 	}
 

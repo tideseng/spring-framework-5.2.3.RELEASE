@@ -68,7 +68,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * @see #autowire
 	 * @see #autowireBeanProperties
 	 */
-	int AUTOWIRE_NO = 0;
+	int AUTOWIRE_NO = 0; // 不使用自动装配
 
 	/**
 	 * Constant that indicates autowiring bean properties by name
@@ -77,7 +77,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * @see #autowire
 	 * @see #autowireBeanProperties
 	 */
-	int AUTOWIRE_BY_NAME = 1;
+	int AUTOWIRE_BY_NAME = 1; // 通过Bean的属性名实现自动装配
 
 	/**
 	 * Constant that indicates autowiring bean properties by type
@@ -86,7 +86,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * @see #autowire
 	 * @see #autowireBeanProperties
 	 */
-	int AUTOWIRE_BY_TYPE = 2;
+	int AUTOWIRE_BY_TYPE = 2; // 通过Bean的类型实现自动装配
 
 	/**
 	 * Constant that indicates autowiring the greediest constructor that
@@ -94,7 +94,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * @see #createBean
 	 * @see #autowire
 	 */
-	int AUTOWIRE_CONSTRUCTOR = 3;
+	int AUTOWIRE_CONSTRUCTOR = 3; // 通过Bean的构造函数实现自动装配
 
 	/**
 	 * Constant that indicates determining an appropriate autowire strategy
@@ -105,7 +105,7 @@ public interface AutowireCapableBeanFactory extends BeanFactory {
 	 * prefer annotation-based autowiring for clearer demarcation of autowiring needs.
 	 */
 	@Deprecated
-	int AUTOWIRE_AUTODETECT = 4;
+	int AUTOWIRE_AUTODETECT = 4; // 通过Bean的反省机制（introspection）来决定是使用构造函数还是使用类型
 
 	/**
 	 * Suffix for the "original instance" convention when initializing an existing

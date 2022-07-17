@@ -131,7 +131,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
 	/** Whether to automatically try to resolve circular references between beans. */
-	private boolean allowCircularReferences = true;
+	private boolean allowCircularReferences = true; // 是否允许循环依赖，默认为true
 
 	/**
 	 * Whether to resort to injecting a raw bean instance in case of circular reference,
