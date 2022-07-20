@@ -42,7 +42,7 @@ final class SimpleMetadataReader implements MetadataReader {
 
 	private final Resource resource;
 
-	private final AnnotationMetadata annotationMetadata;
+	private final AnnotationMetadata annotationMetadata; // 注解元信息
 
 
 	SimpleMetadataReader(Resource resource, @Nullable ClassLoader classLoader) throws IOException {

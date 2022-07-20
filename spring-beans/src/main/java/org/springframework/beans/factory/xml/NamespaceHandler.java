@@ -53,7 +53,7 @@ public interface NamespaceHandler {
 	 * construction but before any custom elements are parsed.
 	 * @see NamespaceHandlerSupport#registerBeanDefinitionParser(String, BeanDefinitionParser)
 	 */
-	void init();
+	void init(); // 注册对应标签与解析类的映射关系
 
 	/**
 	 * Parse the specified {@link Element} and register any resulting
@@ -70,7 +70,7 @@ public interface NamespaceHandler {
 	 * @return the primary {@code BeanDefinition} (can be {@code null} as explained above)
 	 */
 	@Nullable
-	BeanDefinition parse(Element element, ParserContext parserContext);
+	BeanDefinition parse(Element element, ParserContext parserContext); // 解析自定义标签
 
 	/**
 	 * Parse the specified {@link Node} and decorate the supplied

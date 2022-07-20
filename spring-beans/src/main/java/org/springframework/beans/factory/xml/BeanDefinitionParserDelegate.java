@@ -156,7 +156,7 @@ public class BeanDefinitionParserDelegate {
 
 	public static final String KEY_TYPE_ATTRIBUTE = "key-type";
 
-	public static final String PROPERTY_ELEMENT = "property"; // 用于封装PropertyValue
+	public static final String PROPERTY_ELEMENT = "property"; // 用于封装property信息
 
 	public static final String REF_ATTRIBUTE = "ref";
 
@@ -431,7 +431,7 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		if (containingBean == null) {
-			checkNameUniqueness(beanName, aliases, ele); // 检查beanName是否唯一
+			checkNameUniqueness(beanName, aliases, ele); // 检查beanName是否重复
 		}
 
 		AbstractBeanDefinition beanDefinition = parseBeanDefinitionElement(ele, beanName, containingBean); // 解析<bean/>标签，封装到BeanDefinition对象
@@ -464,8 +464,8 @@ public class BeanDefinitionParserDelegate {
 					return null;
 				}
 			}
-			String[] aliasesArray = StringUtils.toStringArray(aliases);
-			return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray);
+			String[] aliasesArray = StringUtils.toStringArray(aliases); // 获取别民数组
+			return new BeanDefinitionHolder(beanDefinition, beanName, aliasesArray); // 创建BeanDefinitionHolder
 		}
 
 		return null;
@@ -475,7 +475,7 @@ public class BeanDefinitionParserDelegate {
 	 * Validate that the specified bean name and aliases have not been used already
 	 * within the current level of beans element nesting.
 	 */
-	protected void checkNameUniqueness(String beanName, List<String> aliases, Element beanElement) {
+	protected void checkNameUniqueness(String beanName, List<String> aliases, Element beanElement) { // 检查beanName是否重复
 		String foundName = null;
 
 		if (StringUtils.hasText(beanName) && this.usedNames.contains(beanName)) {
@@ -512,18 +512,18 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		try {
-			AbstractBeanDefinition bd = createBeanDefinition(className, parent); // 创建GenericBeanDefinition
+			AbstractBeanDefinition bd = createBeanDefinition(className, parent); // 创建GenericBeanDefinition对象，封装class、parent属性
+			// 解析<bean/>标签的属性（scope、abstract、lazy-init、autowire、depends-on、autowire-candidate、primary、init-method、destroy-method、factory-method、factory-bean）
+			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd); // 解析<bean/>标签属性，并封装到BeanDefinition对象中
+			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT)); // 解析<bean/>标签的<description/>标签
 
-			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd); // 解析<bean/>标签并封装到BeanDefinition对象中
-			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
+			parseMetaElements(ele, bd); // 解析<bean/>标签的<meta/>标签
+			parseLookupOverrideSubElements(ele, bd.getMethodOverrides()); // 解析<bean/>标签的<lookup-method/>标签（LookupOverride）
+			parseReplacedMethodSubElements(ele, bd.getMethodOverrides()); // 解析<bean/>标签的<replaced-method/>标签（ReplaceOverride）
 
-			parseMetaElements(ele, bd);
-			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
-			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
-
-			parseConstructorArgElements(ele, bd);
-			parsePropertyElements(ele, bd);
-			parseQualifierElements(ele, bd);
+			parseConstructorArgElements(ele, bd); // 解析<bean/>标签的<constructor-arg/>标签
+			parsePropertyElements(ele, bd); // 解析<bean/>标签的<property/>标签
+			parseQualifierElements(ele, bd); // 解析<bean/>标签的<qualifier/>标签
 
 			bd.setResource(this.readerContext.getResource());
 			bd.setSource(extractSource(ele));
@@ -1378,17 +1378,17 @@ public class BeanDefinitionParserDelegate {
 	 * @return the resulting bean definition
 	 */
 	@Nullable
-	public BeanDefinition parseCustomElement(Element ele, @Nullable BeanDefinition containingBd) {
-		String namespaceUri = getNamespaceURI(ele);
+	public BeanDefinition parseCustomElement(Element ele, @Nullable BeanDefinition containingBd) { // 解析自定义标签
+		String namespaceUri = getNamespaceURI(ele); // 1.根据当前自定义标签头信息获取对应的的namespaceUri（如：<context/>自定义标签头信息对应的namespaceUri为http://www.springframework.org/schema/context）
 		if (namespaceUri == null) {
 			return null;
 		}
-		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
+		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri); // 根据namespaceUri获取NamespaceHandler实现类
 		if (handler == null) {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
-		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd)); // 解析
+		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd)); // 6.调用NamespaceHandler实现类的paser方法解析自定义标签
 	}
 
 	/**

@@ -905,7 +905,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	//---------------------------------------------------------------------
 
 	@Override
-	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
+	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) // 注册BeanDifinition，将BeanDifinition注册到BeanFactory中
 			throws BeanDefinitionStoreException {
 
 		Assert.hasText(beanName, "Bean name must not be empty");
@@ -964,8 +964,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 			else {
 				// Still in startup registration phase
-				this.beanDefinitionMap.put(beanName, beanDefinition);
-				this.beanDefinitionNames.add(beanName);
+				this.beanDefinitionMap.put(beanName, beanDefinition); // 将BeanDefinition放入map容器缓存
+				this.beanDefinitionNames.add(beanName); // 将beanName放入list集合中（Bean的实例化过程会用到）
 				removeManualSingletonName(beanName);
 			}
 			this.frozenBeanDefinitionNames = null;

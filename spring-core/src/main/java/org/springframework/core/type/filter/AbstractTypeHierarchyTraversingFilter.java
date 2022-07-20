@@ -54,12 +54,12 @@ public abstract class AbstractTypeHierarchyTraversingFilter implements TypeFilte
 
 
 	@Override
-	public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
+	public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) // 判断注解是否匹配
 			throws IOException {
 
 		// This method optimizes avoiding unnecessary creation of ClassReaders
 		// as well as visiting over those readers.
-		if (matchSelf(metadataReader)) {
+		if (matchSelf(metadataReader)) { // 判断自身的注解信息是否匹配
 			return true;
 		}
 		ClassMetadata metadata = metadataReader.getClassMetadata();

@@ -69,9 +69,9 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	 */
 	@Override
 	@Nullable
-	public BeanDefinition parse(Element element, ParserContext parserContext) {
-		BeanDefinitionParser parser = findParserForElement(element, parserContext);
-		return (parser != null ? parser.parse(element, parserContext) : null); // 解析
+	public BeanDefinition parse(Element element, ParserContext parserContext) { // 调用NamespaceHandler实现类的paser方法解析自定义标签
+		BeanDefinitionParser parser = findParserForElement(element, parserContext); // 获取自定义标签对应的解析类
+		return (parser != null ? parser.parse(element, parserContext) : null); // 解析自定义标签
 	}
 
 	/**
@@ -79,9 +79,9 @@ public abstract class NamespaceHandlerSupport implements NamespaceHandler {
 	 * the local name of the supplied {@link Element}.
 	 */
 	@Nullable
-	private BeanDefinitionParser findParserForElement(Element element, ParserContext parserContext) {
-		String localName = parserContext.getDelegate().getLocalName(element);
-		BeanDefinitionParser parser = this.parsers.get(localName);
+	private BeanDefinitionParser findParserForElement(Element element, ParserContext parserContext) { // 获取自定义标签对应的解析类
+		String localName = parserContext.getDelegate().getLocalName(element); // 获取自定义标签头信息对应标签
+		BeanDefinitionParser parser = this.parsers.get(localName); // 从映射关系中获取解析类
 		if (parser == null) {
 			parserContext.getReaderContext().fatal(
 					"Cannot locate BeanDefinitionParser for element [" + localName + "]", element);

@@ -114,9 +114,9 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	 */
 	@Override
 	@Nullable
-	public NamespaceHandler resolve(String namespaceUri) {
-		Map<String, Object> handlerMappings = getHandlerMappings();
-		Object handlerOrClassName = handlerMappings.get(namespaceUri);
+	public NamespaceHandler resolve(String namespaceUri) { // 根据namespaceUri获取NamespaceHandler实现类
+		Map<String, Object> handlerMappings = getHandlerMappings(); // 2.通过SPI机制加载所有jar中的META-INF/spring.handlers文件，并建立映射关系
+		Object handlerOrClassName = handlerMappings.get(namespaceUri); // 3.根据namespaceUri从映射关系中获取对应的NamespaceHandler处理类
 		if (handlerOrClassName == null) {
 			return null;
 		}
@@ -131,8 +131,8 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 					throw new FatalBeanException("Class [" + className + "] for namespace [" + namespaceUri +
 							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
 				}
-				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
-				namespaceHandler.init();
+				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass); // 4.通过反射调用NamespaceHandler处理类的无参构造方法生成实例
+				namespaceHandler.init(); // 5.调用NamespaceHandler处理类的init方法，注册该处理类对应标签与解析类的映射关系
 				handlerMappings.put(namespaceUri, namespaceHandler);
 				return namespaceHandler;
 			}
@@ -150,18 +150,18 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	/**
 	 * Load the specified NamespaceHandler mappings lazily.
 	 */
-	private Map<String, Object> getHandlerMappings() {
+	private Map<String, Object> getHandlerMappings() { // 通过SPI机制加载所有jar中的META-INF/spring.handlers文件，并建立映射关系
 		Map<String, Object> handlerMappings = this.handlerMappings;
-		if (handlerMappings == null) {
+		if (handlerMappings == null) { // 当handlerMappings为空时才进行初始化
 			synchronized (this) {
-				handlerMappings = this.handlerMappings;
+				handlerMappings = this.handlerMappings; // 双重检查锁机制
 				if (handlerMappings == null) {
 					if (logger.isTraceEnabled()) {
 						logger.trace("Loading NamespaceHandler mappings from [" + this.handlerMappingsLocation + "]");
 					}
 					try {
 						Properties mappings =
-								PropertiesLoaderUtils.loadAllProperties(this.handlerMappingsLocation, this.classLoader);
+								PropertiesLoaderUtils.loadAllProperties(this.handlerMappingsLocation, this.classLoader); // 读取所有jar中的META-INF/spring.handlers文件并封装成Properties对象
 						if (logger.isTraceEnabled()) {
 							logger.trace("Loaded NamespaceHandler mappings: " + mappings);
 						}

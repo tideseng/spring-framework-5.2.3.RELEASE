@@ -53,6 +53,6 @@ public interface BeanDefinitionParser {
 	 * @return the primary {@link BeanDefinition}
 	 */
 	@Nullable
-	BeanDefinition parse(Element element, ParserContext parserContext);
+	BeanDefinition parse(Element element, ParserContext parserContext); // 解析自定义标签
 
 }

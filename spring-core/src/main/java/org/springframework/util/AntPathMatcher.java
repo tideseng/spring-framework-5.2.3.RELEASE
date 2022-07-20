@@ -168,21 +168,21 @@ public class AntPathMatcher implements PathMatcher {
 
 
 	@Override
-	public boolean isPattern(@Nullable String path) {
+	public boolean isPattern(@Nullable String path) { // 检查路径是否带有: {} 或 * 或 ?
 		if (path == null) {
 			return false;
 		}
 		boolean uriVar = false;
-		for (int i = 0; i < path.length(); i++) {
+		for (int i = 0; i < path.length(); i++) { // 遍历路径的每一个子节
 			char c = path.charAt(i);
-			if (c == '*' || c == '?') {
+			if (c == '*' || c == '?') { // 当有一个子节为：* 或 ? 时，则表示匹配成功
 				return true;
 			}
 			if (c == '{') {
 				uriVar = true;
 				continue;
 			}
-			if (c == '}' && uriVar) {
+			if (c == '}' && uriVar) { // 当路径带有: {} 时，表示匹配成功
 				return true;
 			}
 		}

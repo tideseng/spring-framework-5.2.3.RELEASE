@@ -179,7 +179,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	private ConstructorArgumentValues constructorArgumentValues; // 用于封装构造函数参数信息
 
 	@Nullable
-	private MutablePropertyValues propertyValues; // 用于封装PropertyValue
+	private MutablePropertyValues propertyValues; // 用于封装property信息
 
 	private MethodOverrides methodOverrides = new MethodOverrides(); // 用于封装lookup-method和replaced-method信息
 
@@ -364,7 +364,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	 * @param defaults the default settings to apply
 	 * @since 2.5
 	 */
-	public void applyDefaults(BeanDefinitionDefaults defaults) {
+	public void applyDefaults(BeanDefinitionDefaults defaults) { // 填充BeanDefinition默认值
 		Boolean lazyInit = defaults.getLazyInit();
 		if (lazyInit != null) {
 			setLazyInit(lazyInit);

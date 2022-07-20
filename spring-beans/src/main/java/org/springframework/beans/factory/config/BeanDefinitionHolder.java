@@ -52,7 +52,7 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 	 * @param beanDefinition the BeanDefinition to wrap
 	 * @param beanName the name of the bean, as specified for the bean definition
 	 */
-	public BeanDefinitionHolder(BeanDefinition beanDefinition, String beanName) {
+	public BeanDefinitionHolder(BeanDefinition beanDefinition, String beanName) { // 初始化BeanDefinitionHolder
 		this(beanDefinition, beanName, null);
 	}
 
@@ -62,7 +62,7 @@ public class BeanDefinitionHolder implements BeanMetadataElement {
 	 * @param beanName the name of the bean, as specified for the bean definition
 	 * @param aliases alias names for the bean, or {@code null} if none
 	 */
-	public BeanDefinitionHolder(BeanDefinition beanDefinition, String beanName, @Nullable String[] aliases) {
+	public BeanDefinitionHolder(BeanDefinition beanDefinition, String beanName, @Nullable String[] aliases) { // 初始化BeanDefinitionHolder
 		Assert.notNull(beanDefinition, "BeanDefinition must not be null");
 		Assert.notNull(beanName, "Bean name must not be null");
 		this.beanDefinition = beanDefinition;
