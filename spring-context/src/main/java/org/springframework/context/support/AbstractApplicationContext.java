@@ -529,7 +529,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				postProcessBeanFactory(beanFactory); // 钩子方法，子类中进行实现
 
 				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory); // 执行自定义和内置的BeanFactoryPostProcessor（包括BeanDefinitionRegistryPostProcessor），即在实例化之前完成BeanDefinition的增删改查
+				invokeBeanFactoryPostProcessors(beanFactory); // 执行自定义和内置的BeanFactoryPostProcessor（包括BeanDefinitionRegistryPostProcessor），即在Bean实例化之前完成BeanDefinition的增删改查
 
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory); // 把实现了BeanPostProcessor接口的类实例化，并且加入到BeanFactory中
@@ -702,8 +702,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * respecting explicit order if given.
 	 * <p>Must be called before singleton instantiation.
 	 */
-	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) { // 执行自定义和内置的BeanFactoryPostProcessor
+		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors()); // 执行自定义和内置的BeanFactoryPostProcessor
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
 		// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
