@@ -208,10 +208,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/** Helper class used in event publishing. */
 	@Nullable
-	private ApplicationEventMulticaster applicationEventMulticaster;
+	private ApplicationEventMulticaster applicationEventMulticaster; // 事件管理器
 
 	/** Statically specified listeners. */
-	private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>();
+	private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>(); // 事件监听器/事件观察者
 
 	/** Local listeners registered before refresh. */
 	@Nullable
@@ -356,8 +356,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * standard framework event)
 	 */
 	@Override
-	public void publishEvent(ApplicationEvent event) {
-		publishEvent(event, null);
+	public void publishEvent(ApplicationEvent event) { // 发布事件
+		publishEvent(event, null); // 发布事件
 	}
 
 	/**
@@ -380,7 +380,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @param eventType the resolved event type, if known
 	 * @since 4.2
 	 */
-	protected void publishEvent(Object event, @Nullable ResolvableType eventType) {
+	protected void publishEvent(Object event, @Nullable ResolvableType eventType) { // 发布事件
 		Assert.notNull(event, "Event must not be null");
 
 		// Decorate event as an ApplicationEvent if necessary
@@ -400,7 +400,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			this.earlyApplicationEvents.add(applicationEvent);
 		}
 		else {
-			getApplicationEventMulticaster().multicastEvent(applicationEvent, eventType);
+			getApplicationEventMulticaster().multicastEvent(applicationEvent, eventType); // 广播事件
 		}
 
 		// Publish event via parent context as well...
@@ -497,7 +497,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	@Override
-	public void addApplicationListener(ApplicationListener<?> listener) {
+	public void addApplicationListener(ApplicationListener<?> listener) { // 注册事件监听器
 		Assert.notNull(listener, "ApplicationListener must not be null");
 		if (this.applicationEventMulticaster != null) {
 			this.applicationEventMulticaster.addApplicationListener(listener);
@@ -522,7 +522,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory(); // 创建BeanFactory对象（钩子方法，是ClassPathXmlApplicationContext解析XML的入口）
 
 			// Prepare the bean factory for use in this context.
-			prepareBeanFactory(beanFactory); // 准备工作，添加了两个后置处理器（ApplicationContextAwareProcessor、ApplicationListenerDetector）、设置了忽略自动装配和允许自动装配接口（如果不存在某个bean的时候，spring就自动注册singleton bean）、设置了bean表达式解析器
+			prepareBeanFactory(beanFactory); // 准备BeanFactory容器，设置BeanFactory的相关信息（添加了两个后置处理器（ApplicationContextAwareProcessor、ApplicationListenerDetector）、设置了忽略自动装配和允许自动装配接口（如果不存在某个bean的时候，spring就自动注册singleton bean）、设置了bean表达式解析器等）
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
@@ -532,19 +532,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory); // 执行自定义和内置的BeanFactoryPostProcessor（包括BeanDefinitionRegistryPostProcessor），即在Bean实例化之前完成BeanDefinition的增删改查
 
 				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory); // 把实现了BeanPostProcessor接口的类实例化，并且加入到BeanFactory中
+				registerBeanPostProcessors(beanFactory); // 注册beanPostProcessor实现类，设置到BeanFactory容器中
 
 				// Initialize message source for this context.
 				initMessageSource(); // 初始化上下文中的资源文件，如国际化文件的处理等
 
 				// Initialize event multicaster for this context.
-				initApplicationEventMulticaster(); // 初始化事件管理类
+				initApplicationEventMulticaster(); // 初始化事件管理器，并注册到一级缓存中
 
 				// Initialize other special beans in specific context subclasses.
 				onRefresh(); // 钩子方法，给子类扩展初始化其他bean，如在springboot中用来做内嵌tomcat启动
 
 				// Check for listener beans and register them.
-				registerListeners(); // 往事件管理类中注册事件类（观察者设计模式）
+				registerListeners(); // 往事件管理器中注册事件监听器（观察者设计模式）
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
@@ -643,14 +643,14 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * such as the context's ClassLoader and post-processors.
 	 * @param beanFactory the BeanFactory to configure
 	 */
-	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+	protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) { // 准备BeanFactory容器，设置BeanFactory的相关信息
 		// Tell the internal bean factory to use the context's class loader etc.
 		beanFactory.setBeanClassLoader(getClassLoader());
 		beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
 		// Configure the bean factory with context callbacks.
-		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this)); // 1.实例化实现了BeanPostProcessor接口的ApplicationContextAwareProcessor，并添加到BeanFactory容器中
 		beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
 		beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
@@ -666,7 +666,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
 
 		// Register early post-processor for detecting inner beans as ApplicationListeners.
-		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this)); // 2.实例化实现了BeanPostProcessor接口的ApplicationListenerDetector，并添加到BeanFactory容器中
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
 		if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
@@ -718,8 +718,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * respecting explicit order if given.
 	 * <p>Must be called before any instantiation of application beans.
 	 */
-	protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
-		PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+	protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) { // 注册beanPostProcessor实现类
+		PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this); // 注册beanPostProcessor实现类
 	}
 
 	/**
@@ -760,9 +760,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Uses SimpleApplicationEventMulticaster if none defined in the context.
 	 * @see org.springframework.context.event.SimpleApplicationEventMulticaster
 	 */
-	protected void initApplicationEventMulticaster() {
+	protected void initApplicationEventMulticaster() { // 初始化事件管理器
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
-		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
+		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) { // 默认为false
 			this.applicationEventMulticaster =
 					beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
 			if (logger.isTraceEnabled()) {
@@ -770,8 +770,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 		else {
-			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
-			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
+			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory); // 创建SimpleApplicationEventMulticaster
+			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster); // 注册到一级缓存中
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "' bean, using " +
 						"[" + this.applicationEventMulticaster.getClass().getSimpleName() + "]");
@@ -820,21 +820,21 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Add beans that implement ApplicationListener as listeners.
 	 * Doesn't affect other listeners, which can be added without being beans.
 	 */
-	protected void registerListeners() {
+	protected void registerListeners() { // 往事件管理器中注册事件监听器/事件观察者
 		// Register statically specified listeners first.
-		for (ApplicationListener<?> listener : getApplicationListeners()) {
-			getApplicationEventMulticaster().addApplicationListener(listener);
+		for (ApplicationListener<?> listener : getApplicationListeners()) { // 默认为空集合
+			getApplicationEventMulticaster().addApplicationListener(listener); // 往事件管理器中注册事件监听器
 		}
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let post-processors apply to them!
 		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
 		for (String listenerBeanName : listenerBeanNames) {
-			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName); // 往事件管理器中注册事件监听器beanName
 		}
 
 		// Publish early application events now that we finally have a multicaster...
-		Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
+		Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents; // 默认为空集合
 		this.earlyApplicationEvents = null;
 		if (earlyEventsToProcess != null) {
 			for (ApplicationEvent earlyEvent : earlyEventsToProcess) {

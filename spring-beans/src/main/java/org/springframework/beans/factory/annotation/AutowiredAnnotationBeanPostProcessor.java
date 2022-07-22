@@ -158,7 +158,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 	 * if available.
 	 */
 	@SuppressWarnings("unchecked")
-	public AutowiredAnnotationBeanPostProcessor() {
+	public AutowiredAnnotationBeanPostProcessor() { // 创建AutowiredAnnotationBeanPostProcessor（在PostProcessorRegistrationDelegate#registerBeanPostProcessors方法中进行调用创建）
 		this.autowiredAnnotationTypes.add(Autowired.class);
 		this.autowiredAnnotationTypes.add(Value.class);
 		try {
