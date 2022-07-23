@@ -43,7 +43,7 @@ import org.springframework.util.ObjectUtils;
  * @author Juergen Hoeller
  * @since 4.3.4
  */
-class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, MergedBeanDefinitionPostProcessor {
+class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, MergedBeanDefinitionPostProcessor { // 实现了BeanPostProcessor接口
 
 	private static final Log logger = LogFactory.getLog(ApplicationListenerDetector.class);
 
@@ -65,18 +65,18 @@ class ApplicationListenerDetector implements DestructionAwareBeanPostProcessor, 
 	}
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) {
+	public Object postProcessBeforeInitialization(Object bean, String beanName) { // bean实例化前的回调方法
 		return bean;
 	}
 
 	@Override
-	public Object postProcessAfterInitialization(Object bean, String beanName) {
-		if (bean instanceof ApplicationListener) {
+	public Object postProcessAfterInitialization(Object bean, String beanName) { // bean实例化后的回调方法
+		if (bean instanceof ApplicationListener) { // 判断当前Bean是否为ApplicationListener类型且是单例Bean，如果是则添加到ApplicationContext中
 			// potentially not detected as a listener by getBeanNamesForType retrieval
 			Boolean flag = this.singletonNames.get(beanName);
 			if (Boolean.TRUE.equals(flag)) {
 				// singleton bean (top-level or inner): register on the fly
-				this.applicationContext.addApplicationListener((ApplicationListener<?>) bean);
+				this.applicationContext.addApplicationListener((ApplicationListener<?>) bean); // 注册事件监听器
 			}
 			else if (Boolean.FALSE.equals(flag)) {
 				if (logger.isWarnEnabled() && !this.applicationContext.containsBean(beanName)) {

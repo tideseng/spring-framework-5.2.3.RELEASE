@@ -208,7 +208,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/** Helper class used in event publishing. */
 	@Nullable
-	private ApplicationEventMulticaster applicationEventMulticaster; // 事件管理器
+	private ApplicationEventMulticaster applicationEventMulticaster; // 事件管理器（默认为SimpleApplicationEventMulticaster，在initApplicationEventMulticaster方法中进行设置）
 
 	/** Statically specified listeners. */
 	private final Set<ApplicationListener<?>> applicationListeners = new LinkedHashSet<>(); // 事件监听器/事件观察者
@@ -419,7 +419,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the internal ApplicationEventMulticaster (never {@code null})
 	 * @throws IllegalStateException if the context has not been initialized yet
 	 */
-	ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalStateException {
+	ApplicationEventMulticaster getApplicationEventMulticaster() throws IllegalStateException { // 获取事件管理器
 		if (this.applicationEventMulticaster == null) {
 			throw new IllegalStateException("ApplicationEventMulticaster not initialized - " +
 					"call 'refresh' before multicasting events via the context: " + this);
@@ -544,7 +544,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				onRefresh(); // 钩子方法，给子类扩展初始化其他bean，如在springboot中用来做内嵌tomcat启动
 
 				// Check for listener beans and register them.
-				registerListeners(); // 往事件管理器中注册事件监听器（观察者设计模式）
+				registerListeners(); // 注册事件监听器/事件观察者并设置到事件管理器中（观察者设计模式）
 
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
@@ -762,15 +762,15 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void initApplicationEventMulticaster() { // 初始化事件管理器
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
-		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) { // 默认为false
-			this.applicationEventMulticaster =
+		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) { // 判断BeanFactory容器中是否存在事件管理器Bean或BeanDefinition（默认为false）
+			this.applicationEventMulticaster = // 获取或创建事件管理器实例并设置到ApplicationContext中
 					beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
 			if (logger.isTraceEnabled()) {
 				logger.trace("Using ApplicationEventMulticaster [" + this.applicationEventMulticaster + "]");
 			}
 		}
 		else {
-			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory); // 创建SimpleApplicationEventMulticaster
+			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory); // 创建SimpleApplicationEventMulticaster并设置到ApplicationContext中
 			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster); // 注册到一级缓存中
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "' bean, using " +
@@ -820,17 +820,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Add beans that implement ApplicationListener as listeners.
 	 * Doesn't affect other listeners, which can be added without being beans.
 	 */
-	protected void registerListeners() { // 往事件管理器中注册事件监听器/事件观察者
+	protected void registerListeners() { // 注册事件监听器/事件观察者并设置到事件管理器中
 		// Register statically specified listeners first.
 		for (ApplicationListener<?> listener : getApplicationListeners()) { // 默认为空集合
-			getApplicationEventMulticaster().addApplicationListener(listener); // 往事件管理器中注册事件监听器
+			getApplicationEventMulticaster().addApplicationListener(listener); // 将ApplicationContext上下文中的事件监听器实例添加到事件管理器中
 		}
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let post-processors apply to them!
-		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false); // 获取所有实现了ApplicationListener接口的beanName
 		for (String listenerBeanName : listenerBeanNames) {
-			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName); // 往事件管理器中注册事件监听器beanName
+			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName); // 将事件监听器beanName添加到事件管理器中
 		}
 
 		// Publish early application events now that we finally have a multicaster...
@@ -838,7 +838,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		this.earlyApplicationEvents = null;
 		if (earlyEventsToProcess != null) {
 			for (ApplicationEvent earlyEvent : earlyEventsToProcess) {
-				getApplicationEventMulticaster().multicastEvent(earlyEvent);
+				getApplicationEventMulticaster().multicastEvent(earlyEvent); // 广播事件
 			}
 		}
 	}

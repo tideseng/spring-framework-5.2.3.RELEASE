@@ -64,7 +64,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	/**
 	 * Create a new SimpleApplicationEventMulticaster for the given BeanFactory.
 	 */
-	public SimpleApplicationEventMulticaster(BeanFactory beanFactory) {
+	public SimpleApplicationEventMulticaster(BeanFactory beanFactory) { // 初始化SimpleApplicationEventMulticaster
 		setBeanFactory(beanFactory);
 	}
 
@@ -123,20 +123,20 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 
 
 	@Override
-	public void multicastEvent(ApplicationEvent event) {
-		multicastEvent(event, resolveDefaultEventType(event));
+	public void multicastEvent(ApplicationEvent event) { // 广播事件
+		multicastEvent(event, resolveDefaultEventType(event)); // 广播事件
 	}
 
 	@Override
-	public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) {
+	public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) { // 广播事件
 		ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
 		Executor executor = getTaskExecutor();
-		for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+		for (ApplicationListener<?> listener : getApplicationListeners(event, type)) { // 获取事件监听器，并进行遍历
 			if (executor != null) {
 				executor.execute(() -> invokeListener(listener, event));
 			}
 			else {
-				invokeListener(listener, event);
+				invokeListener(listener, event); // 通知事件监听器/事件观察者
 			}
 		}
 	}
@@ -151,7 +151,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	 * @param event the current event to propagate
 	 * @since 4.1
 	 */
-	protected void invokeListener(ApplicationListener<?> listener, ApplicationEvent event) {
+	protected void invokeListener(ApplicationListener<?> listener, ApplicationEvent event) { // 通知事件监听器/事件观察者
 		ErrorHandler errorHandler = getErrorHandler();
 		if (errorHandler != null) {
 			try {
@@ -162,14 +162,14 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 			}
 		}
 		else {
-			doInvokeListener(listener, event);
+			doInvokeListener(listener, event); // 通知事件监听器/事件观察者
 		}
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	private void doInvokeListener(ApplicationListener listener, ApplicationEvent event) {
+	private void doInvokeListener(ApplicationListener listener, ApplicationEvent event) { // 通知事件监听器/事件观察者
 		try {
-			listener.onApplicationEvent(event);
+			listener.onApplicationEvent(event); // 通知事件监听器/事件观察者
 		}
 		catch (ClassCastException ex) {
 			String msg = ex.getMessage();

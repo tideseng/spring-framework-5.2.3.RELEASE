@@ -49,7 +49,7 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	/**
 	 * Shared default instance of {@code AnnotationAwareOrderComparator}.
 	 */
-	public static final AnnotationAwareOrderComparator INSTANCE = new AnnotationAwareOrderComparator();
+	public static final AnnotationAwareOrderComparator INSTANCE = new AnnotationAwareOrderComparator(); // 饿汉单例模式
 
 
 	/**
@@ -106,7 +106,7 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	 * @param list the List to sort
 	 * @see java.util.List#sort(java.util.Comparator)
 	 */
-	public static void sort(List<?> list) {
+	public static void sort(List<?> list) { // 对集合元素进行排序
 		if (list.size() > 1) {
 			list.sort(INSTANCE);
 		}
