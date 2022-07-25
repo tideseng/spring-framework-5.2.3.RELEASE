@@ -390,38 +390,38 @@ class ConstructorResolver {
 	 * method, or {@code null} if none (-> use constructor argument values from bean definition)
 	 * @return a BeanWrapper for the new instance
 	 */
-	public BeanWrapper instantiateUsingFactoryMethod(
+	public BeanWrapper instantiateUsingFactoryMethod( // 实例化factoryMethod对应的实例
 			String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) {
 
-		BeanWrapperImpl bw = new BeanWrapperImpl();
+		BeanWrapperImpl bw = new BeanWrapperImpl(); // 创建BeanWrapperImpl
 		this.beanFactory.initBeanWrapper(bw);
 
 		Object factoryBean;
 		Class<?> factoryClass;
 		boolean isStatic;
 
-		String factoryBeanName = mbd.getFactoryBeanName();
-		if (factoryBeanName != null) {
+		String factoryBeanName = mbd.getFactoryBeanName(); // 获取factoryBean属性值
+		if (factoryBeanName != null) { // factoryBean属性值存在时
 			if (factoryBeanName.equals(beanName)) {
 				throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
 						"factory-bean reference points back to the same bean definition");
 			}
-			factoryBean = this.beanFactory.getBean(factoryBeanName);
+			factoryBean = this.beanFactory.getBean(factoryBeanName); // 获取factoryBean对应的实例Bean
 			if (mbd.isSingleton() && this.beanFactory.containsSingleton(beanName)) {
 				throw new ImplicitlyAppearedSingletonException();
 			}
-			factoryClass = factoryBean.getClass();
-			isStatic = false;
+			factoryClass = factoryBean.getClass(); // 标记factoryMethod对应的class类为factoryBean对应的实例Bean的class类
+			isStatic = false; // 标记factoryMethod为静态方法
 		}
-		else {
+		else { // factoryBean属性值不存在时
 			// It's a static factory method on the bean class.
 			if (!mbd.hasBeanClass()) {
 				throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
 						"bean definition declares neither a bean class nor a factory-bean reference");
 			}
 			factoryBean = null;
-			factoryClass = mbd.getBeanClass();
-			isStatic = true;
+			factoryClass = mbd.getBeanClass(); // 标记factoryMethod对应的class类为BeanDefinition中的class属性值
+			isStatic = true; // 标记factoryMethod为非静态方法
 		}
 
 		Method factoryMethodToUse = null;
@@ -453,7 +453,7 @@ class ConstructorResolver {
 			// Try all methods with this name to see if they match the given arguments.
 			factoryClass = ClassUtils.getUserClass(factoryClass);
 
-			List<Method> candidates = null;
+			List<Method> candidates = null; // 满足factoryMethod条件的方法集合（是否静态、方法名是否匹配）
 			if (mbd.isFactoryMethodUnique) {
 				if (factoryMethodToUse == null) {
 					factoryMethodToUse = mbd.getResolvedFactoryMethod();
@@ -464,8 +464,8 @@ class ConstructorResolver {
 			}
 			if (candidates == null) {
 				candidates = new ArrayList<>();
-				Method[] rawCandidates = getCandidateMethods(factoryClass, mbd);
-				for (Method candidate : rawCandidates) {
+				Method[] rawCandidates = getCandidateMethods(factoryClass, mbd); // 获取该class类中的所有方法
+				for (Method candidate : rawCandidates) { // 遍历class类中的方法
 					if (Modifier.isStatic(candidate.getModifiers()) == isStatic && mbd.isFactoryMethod(candidate)) {
 						candidates.add(candidate);
 					}
@@ -481,7 +481,7 @@ class ConstructorResolver {
 						mbd.constructorArgumentsResolved = true;
 						mbd.resolvedConstructorArguments = EMPTY_ARGS;
 					}
-					bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS));
+					bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS)); // 反射调用method获取实例化对象，并设置到BeanWrapperImpl中
 					return bw;
 				}
 			}
@@ -633,11 +633,11 @@ class ConstructorResolver {
 			}
 		}
 
-		bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, factoryMethodToUse, argsToUse));
+		bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, factoryMethodToUse, argsToUse)); // 反射调用method获取实例化对象，并设置到BeanWrapperImpl中
 		return bw;
 	}
 
-	private Object instantiate(String beanName, RootBeanDefinition mbd,
+	private Object instantiate(String beanName, RootBeanDefinition mbd, // 反射调用method获取实例化对象
 			@Nullable Object factoryBean, Method factoryMethod, Object[] args) {
 
 		try {
@@ -648,7 +648,7 @@ class ConstructorResolver {
 						this.beanFactory.getAccessControlContext());
 			}
 			else {
-				return this.beanFactory.getInstantiationStrategy().instantiate(
+				return this.beanFactory.getInstantiationStrategy().instantiate( // 反射调用method获取实例化对象
 						mbd, beanName, this.beanFactory, factoryBean, factoryMethod, args);
 			}
 		}

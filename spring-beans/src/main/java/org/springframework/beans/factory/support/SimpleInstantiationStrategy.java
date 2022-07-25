@@ -134,7 +134,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	}
 
 	@Override
-	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner,
+	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner, // 反射调用method获取实例化对象
 			@Nullable Object factoryBean, final Method factoryMethod, Object... args) {
 
 		try {
@@ -151,7 +151,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
 			try {
 				currentlyInvokedFactoryMethod.set(factoryMethod);
-				Object result = factoryMethod.invoke(factoryBean, args);
+				Object result = factoryMethod.invoke(factoryBean, args); // 反射调用method获取实例化对象
 				if (result == null) {
 					result = new NullBean();
 				}

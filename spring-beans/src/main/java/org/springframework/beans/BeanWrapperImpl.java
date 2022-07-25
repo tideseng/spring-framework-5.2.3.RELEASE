@@ -81,7 +81,7 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	 * Registers default editors.
 	 * @see #setWrappedInstance
 	 */
-	public BeanWrapperImpl() {
+	public BeanWrapperImpl() { // 实例化BeanWrapperImpl
 		this(true);
 	}
 

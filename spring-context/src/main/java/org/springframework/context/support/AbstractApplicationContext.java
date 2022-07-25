@@ -547,7 +547,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners(); // 注册事件监听器/事件观察者并设置到事件管理器中（观察者设计模式）
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				finishBeanFactoryInitialization(beanFactory);
+				finishBeanFactoryInitialization(beanFactory); // 实例化Bean
 
 				// Last step: publish corresponding event.
 				finishRefresh(); // 完成刷新过程，发布相应事件
@@ -847,11 +847,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Finish the initialization of this context's bean factory,
 	 * initializing all remaining singleton beans.
 	 */
-	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) { // 实例化Bean
 		// Initialize conversion service for this context.
 		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
 				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
-			beanFactory.setConversionService(
+			beanFactory.setConversionService( // 设置类型转换器
 					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
 		}
 
@@ -875,7 +875,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
-		beanFactory.preInstantiateSingletons();
+		beanFactory.preInstantiateSingletons(); // 实例化Bean
 	}
 
 	/**
