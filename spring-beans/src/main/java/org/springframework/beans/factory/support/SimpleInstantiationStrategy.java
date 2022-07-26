@@ -75,7 +75,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 									(PrivilegedExceptionAction<Constructor<?>>) clazz::getDeclaredConstructor);
 						}
 						else {
-							constructorToUse = clazz.getDeclaredConstructor();
+							constructorToUse = clazz.getDeclaredConstructor(); // 获取无参构造函数
 						}
 						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
 					}
@@ -84,7 +84,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					}
 				}
 			}
-			return BeanUtils.instantiateClass(constructorToUse);
+			return BeanUtils.instantiateClass(constructorToUse); // 通过反射调用无参构造函数实例化
 		}
 		else {
 			// Must generate CGLIB subclass.
@@ -103,7 +103,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 	}
 
 	@Override
-	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner,
+	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner, // 反射调用构造函数实例化对象
 			final Constructor<?> ctor, Object... args) {
 
 		if (!bd.hasMethodOverrides()) {
@@ -114,7 +114,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 					return null;
 				});
 			}
-			return BeanUtils.instantiateClass(ctor, args);
+			return BeanUtils.instantiateClass(ctor, args); // 反射调用构造函数实例化对象
 		}
 		else {
 			return instantiateWithMethodInjection(bd, beanName, owner, ctor, args);

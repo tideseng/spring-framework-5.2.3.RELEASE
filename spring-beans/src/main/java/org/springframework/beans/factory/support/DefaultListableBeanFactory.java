@@ -1186,7 +1186,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 	@Override
 	@Nullable
-	public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
+	public Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName, // 依赖注入，获取依赖Bean
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
 
 		descriptor.initParameterNameDiscovery(getParameterNameDiscoverer());
@@ -1204,14 +1204,14 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			Object result = getAutowireCandidateResolver().getLazyResolutionProxyIfNecessary(
 					descriptor, requestingBeanName);
 			if (result == null) {
-				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter); // 依赖注入
+				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter); // 依赖注入，获取依赖Bean
 			}
 			return result;
 		}
 	}
 
 	@Nullable
-	public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable String beanName,
+	public Object doResolveDependency(DependencyDescriptor descriptor, @Nullable String beanName, // 依赖注入，获取依赖Bean
 			@Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException {
 
 		InjectionPoint previousInjectionPoint = ConstructorResolver.setCurrentInjectionPoint(descriptor);
@@ -1284,7 +1284,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				autowiredBeanNames.add(autowiredBeanName);
 			}
 			if (instanceCandidate instanceof Class) {
-				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this);
+				instanceCandidate = descriptor.resolveCandidate(autowiredBeanName, type, this); // 依赖注入，获取依赖Bean
 			}
 			Object result = instanceCandidate;
 			if (result instanceof NullBean) {

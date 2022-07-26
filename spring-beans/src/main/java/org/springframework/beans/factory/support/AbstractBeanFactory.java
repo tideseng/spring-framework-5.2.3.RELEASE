@@ -320,7 +320,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				if (mbd.isSingleton()) { // 当Bean是单例Bean
 					sharedInstance = getSingleton(beanName, () -> { // 获取单例Bean实例
 						try {
-							return createBean(beanName, mbd, args); // 创建Bean（函数式接口）
+							return createBean(beanName, mbd, args); // 创建Bean（函数式接口，在getSingleton方法中触发执行）
 						}
 						catch (BeansException ex) {
 							// Explicitly remove instance from singleton cache: It might have been put there

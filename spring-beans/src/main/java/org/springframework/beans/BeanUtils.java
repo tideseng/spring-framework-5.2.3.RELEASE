@@ -180,7 +180,7 @@ public abstract class BeanUtils {
 	 * @throws BeanInstantiationException if the bean cannot be instantiated
 	 * @see Constructor#newInstance
 	 */
-	public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException {
+	public static <T> T instantiateClass(Constructor<T> ctor, Object... args) throws BeanInstantiationException { // 反射调用构造函数实例化对象
 		Assert.notNull(ctor, "Constructor must not be null");
 		try {
 			ReflectionUtils.makeAccessible(ctor);

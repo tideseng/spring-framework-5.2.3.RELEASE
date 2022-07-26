@@ -122,15 +122,15 @@ class ConstructorResolver {
 	 * or {@code null} if none (-> use constructor argument values from bean definition)
 	 * @return a BeanWrapper for the new instance
 	 */
-	public BeanWrapper autowireConstructor(String beanName, RootBeanDefinition mbd,
+	public BeanWrapper autowireConstructor(String beanName, RootBeanDefinition mbd, // 调用构造函数实例化
 			@Nullable Constructor<?>[] chosenCtors, @Nullable Object[] explicitArgs) {
 
-		BeanWrapperImpl bw = new BeanWrapperImpl();
+		BeanWrapperImpl bw = new BeanWrapperImpl(); // 创建BeanWrapperImpl
 		this.beanFactory.initBeanWrapper(bw);
 
-		Constructor<?> constructorToUse = null;
+		Constructor<?> constructorToUse = null; // 要实例化对象的构造方法
 		ArgumentsHolder argsHolderToUse = null;
-		Object[] argsToUse = null;
+		Object[] argsToUse = null; // 要实例化对象的构造方法的参数信息
 
 		if (explicitArgs != null) {
 			argsToUse = explicitArgs;
@@ -167,7 +167,7 @@ class ConstructorResolver {
 							"] from ClassLoader [" + beanClass.getClassLoader() + "] failed", ex);
 				}
 			}
-
+			// 当带有注解修饰的构造函数只有一个，且为无参构造函数时，调用无参构造函数实例化对象
 			if (candidates.length == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Constructor<?> uniqueCandidate = candidates[0];
 				if (uniqueCandidate.getParameterCount() == 0) {
@@ -176,7 +176,7 @@ class ConstructorResolver {
 						mbd.constructorArgumentsResolved = true;
 						mbd.resolvedConstructorArguments = EMPTY_ARGS;
 					}
-					bw.setBeanInstance(instantiate(beanName, mbd, uniqueCandidate, EMPTY_ARGS));
+					bw.setBeanInstance(instantiate(beanName, mbd, uniqueCandidate, EMPTY_ARGS)); // 反射调用无参构造函数实例化对象，并设置到BeanWrapperImpl中
 					return bw;
 				}
 			}
@@ -196,15 +196,15 @@ class ConstructorResolver {
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
-			AutowireUtils.sortConstructors(candidates);
+			AutowireUtils.sortConstructors(candidates); // 根据构造函数个数降序排序
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
 			LinkedList<UnsatisfiedDependencyException> causes = null;
 
 			for (Constructor<?> candidate : candidates) {
 
-				int parameterCount = candidate.getParameterCount();
-
+				int parameterCount = candidate.getParameterCount(); // 构造函数的人参数量
+				// 如果上一个构造函数已经满足条件，则不处理后面的构造函数（注意这里的 argsToUse.length 与 parameterCount是大于关系，所以可能会循环多次，产生多个构造函数的依赖注入）
 				if (constructorToUse != null && argsToUse != null && argsToUse.length > parameterCount) {
 					// Already found greedy constructor that can be satisfied ->
 					// do not look any further, there are only less greedy constructors left.
@@ -215,17 +215,17 @@ class ConstructorResolver {
 				}
 
 				ArgumentsHolder argsHolder;
-				Class<?>[] paramTypes = candidate.getParameterTypes();
+				Class<?>[] paramTypes = candidate.getParameterTypes(); // 获取构造函数的入参类型
 				if (resolvedValues != null) {
 					try {
 						String[] paramNames = ConstructorPropertiesChecker.evaluate(candidate, parameterCount);
 						if (paramNames == null) {
 							ParameterNameDiscoverer pnd = this.beanFactory.getParameterNameDiscoverer();
 							if (pnd != null) {
-								paramNames = pnd.getParameterNames(candidate);
+								paramNames = pnd.getParameterNames(candidate); // 获取构造函数入参的变量名称
 							}
 						}
-						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames,
+						argsHolder = createArgumentArray(beanName, mbd, resolvedValues, bw, paramTypes, paramNames, // 封装入参实例信息（会触发入参中的getBean操作，即实例化入参对象）
 								getUserDeclaredConstructor(candidate), autowiring, candidates.length == 1);
 					}
 					catch (UnsatisfiedDependencyException ex) {
@@ -251,8 +251,8 @@ class ConstructorResolver {
 				int typeDiffWeight = (mbd.isLenientConstructorResolution() ?
 						argsHolder.getTypeDifferenceWeight(paramTypes) : argsHolder.getAssignabilityWeight(paramTypes));
 				// Choose this constructor if it represents the closest match.
-				if (typeDiffWeight < minTypeDiffWeight) {
-					constructorToUse = candidate;
+				if (typeDiffWeight < minTypeDiffWeight) { // 变量赋值条件
+					constructorToUse = candidate; // 变量赋值
 					argsHolderToUse = argsHolder;
 					argsToUse = argsHolder.arguments;
 					minTypeDiffWeight = typeDiffWeight;
@@ -292,22 +292,22 @@ class ConstructorResolver {
 		}
 
 		Assert.state(argsToUse != null, "Unresolved constructor arguments");
-		bw.setBeanInstance(instantiate(beanName, mbd, constructorToUse, argsToUse));
+		bw.setBeanInstance(instantiate(beanName, mbd, constructorToUse, argsToUse)); // 反射调用构造函数实例化对象，并设置到BeanWrapperImpl中
 		return bw;
 	}
 
-	private Object instantiate(
+	private Object instantiate( // 反射调用构造函数实例化对象，并设置到BeanWrapperImpl中
 			String beanName, RootBeanDefinition mbd, Constructor<?> constructorToUse, Object[] argsToUse) {
 
 		try {
 			InstantiationStrategy strategy = this.beanFactory.getInstantiationStrategy();
 			if (System.getSecurityManager() != null) {
 				return AccessController.doPrivileged((PrivilegedAction<Object>) () ->
-						strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse),
+						strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse), // 反射调用构造函数实例化对象
 						this.beanFactory.getAccessControlContext());
 			}
 			else {
-				return strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse);
+				return strategy.instantiate(mbd, beanName, this.beanFactory, constructorToUse, argsToUse); // 反射调用构造函数实例化对象
 			}
 		}
 		catch (Throwable ex) {
@@ -390,7 +390,7 @@ class ConstructorResolver {
 	 * method, or {@code null} if none (-> use constructor argument values from bean definition)
 	 * @return a BeanWrapper for the new instance
 	 */
-	public BeanWrapper instantiateUsingFactoryMethod( // 实例化factoryMethod对应的实例
+	public BeanWrapper instantiateUsingFactoryMethod( // 调用factoryMethod方法实例化
 			String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) {
 
 		BeanWrapperImpl bw = new BeanWrapperImpl(); // 创建BeanWrapperImpl
@@ -717,7 +717,7 @@ class ConstructorResolver {
 	 * Create an array of arguments to invoke a constructor or factory method,
 	 * given the resolved constructor argument values.
 	 */
-	private ArgumentsHolder createArgumentArray(
+	private ArgumentsHolder createArgumentArray( // 封装入参实例信息
 			String beanName, RootBeanDefinition mbd, @Nullable ConstructorArgumentValues resolvedValues,
 			BeanWrapper bw, Class<?>[] paramTypes, @Nullable String[] paramNames, Executable executable,
 			boolean autowiring, boolean fallback) throws UnsatisfiedDependencyException {
@@ -729,7 +729,7 @@ class ConstructorResolver {
 		Set<ConstructorArgumentValues.ValueHolder> usedValueHolders = new HashSet<>(paramTypes.length);
 		Set<String> autowiredBeanNames = new LinkedHashSet<>(4);
 
-		for (int paramIndex = 0; paramIndex < paramTypes.length; paramIndex++) {
+		for (int paramIndex = 0; paramIndex < paramTypes.length; paramIndex++) { // 遍历入参
 			Class<?> paramType = paramTypes[paramIndex];
 			String paramName = (paramNames != null ? paramNames[paramIndex] : "");
 			// Try to find matching constructor argument value, either indexed or generic.
@@ -786,7 +786,7 @@ class ConstructorResolver {
 							"] - did you specify the correct bean references as arguments?");
 				}
 				try {
-					Object autowiredArgument = resolveAutowiredArgument(
+					Object autowiredArgument = resolveAutowiredArgument( // 获取依赖Bean
 							methodParam, beanName, autowiredBeanNames, converter, fallback);
 					args.rawArguments[paramIndex] = autowiredArgument;
 					args.arguments[paramIndex] = autowiredArgument;
@@ -870,7 +870,7 @@ class ConstructorResolver {
 	 * Template method for resolving the specified argument which is supposed to be autowired.
 	 */
 	@Nullable
-	protected Object resolveAutowiredArgument(MethodParameter param, String beanName,
+	protected Object resolveAutowiredArgument(MethodParameter param, String beanName, // 获取依赖Bean
 			@Nullable Set<String> autowiredBeanNames, TypeConverter typeConverter, boolean fallback) {
 
 		Class<?> paramType = param.getParameterType();
@@ -882,7 +882,7 @@ class ConstructorResolver {
 			return injectionPoint;
 		}
 		try {
-			return this.beanFactory.resolveDependency(
+			return this.beanFactory.resolveDependency( // 获取依赖Bean
 					new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
 		}
 		catch (NoUniqueBeanDefinitionException ex) {

@@ -547,14 +547,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args) // 创建Bean
 			throws BeanCreationException {
-
+		// 1.实例化Bean
 		// Instantiate the bean.
 		BeanWrapper instanceWrapper = null;
 		if (mbd.isSingleton()) {
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			instanceWrapper = createBeanInstance(beanName, mbd, args); // 创建Bean
+			instanceWrapper = createBeanInstance(beanName, mbd, args); // 创建Bean实例
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
 		Class<?> beanType = instanceWrapper.getWrappedClass();
@@ -566,7 +566,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
-					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
+					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName); // 通过BeanPostProcessor收集注解（CommonAnnotationBeanPostProcessor收集@PostConstruct、@PreDestroy、@Resource注解; AutowiredAnnotationBeanPostProcessor收集@Autowired、@Value注解）
 				}
 				catch (Throwable ex) {
 					throw new BeanCreationException(mbd.getResourceDescription(), beanName,
@@ -1087,7 +1087,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param beanName the name of the bean
 	 * @see MergedBeanDefinitionPostProcessor#postProcessMergedBeanDefinition
 	 */
-	protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) {
+	protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) { // 通过BeanPostProcessor收集注解
 		for (BeanPostProcessor bp : getBeanPostProcessors()) {
 			if (bp instanceof MergedBeanDefinitionPostProcessor) {
 				MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
@@ -1159,7 +1159,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see #autowireConstructor
 	 * @see #instantiateBean
 	 */
-	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) { // 创建Bean
+	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) { // 创建Bean实例
 		// Make sure bean class is actually resolved at this point.
 		Class<?> beanClass = resolveBeanClass(mbd, beanName);
 
@@ -1173,8 +1173,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			return obtainFromSupplier(instanceSupplier, beanName);
 		}
 
-		if (mbd.getFactoryMethodName() != null) { // 当factoryMethod不为空时，实例化factoryMethod对应的实例
-			return instantiateUsingFactoryMethod(beanName, mbd, args); // 实例化factoryMethod对应的实例（@Bean注解修饰方法也会被封装为BeanDefinition中的factoryMethod）
+		if (mbd.getFactoryMethodName() != null) { // 当factoryMethod不为空时，调用factoryMethod方法实例化
+			return instantiateUsingFactoryMethod(beanName, mbd, args); // 调用factoryMethod方法实例化（@Bean注解修饰方法也会被封装为BeanDefinition中的factoryMethod）
 		}
 
 		// Shortcut when re-creating the same bean...
@@ -1198,10 +1198,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Candidate constructors for autowiring?
-		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName); // 从BeanPostProcessor中获取满足条件的构造函数（带@Autowired注解的一个或多个构造函数、只有一个不带@Autowired注解的有参构造函数 时才会有返回值）
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
-			return autowireConstructor(beanName, mbd, ctors, args);
+			return autowireConstructor(beanName, mbd, ctors, args); // 调用带有@Autowired注解/不带@Autowired注解的有参构造函数实例化
 		}
 
 		// Preferred constructors for default construction?
@@ -1211,7 +1211,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// No special handling: simply use no-arg constructor.
-		return instantiateBean(beanName, mbd);
+		return instantiateBean(beanName, mbd); // 调用无参构造函数实例化
 	}
 
 	/**
@@ -1276,15 +1276,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostProcessor#determineCandidateConstructors
 	 */
 	@Nullable
-	protected Constructor<?>[] determineConstructorsFromBeanPostProcessors(@Nullable Class<?> beanClass, String beanName)
+	protected Constructor<?>[] determineConstructorsFromBeanPostProcessors(@Nullable Class<?> beanClass, String beanName) // 从BeanPostProcessor中获取满足条件的构造函数
 			throws BeansException {
 
 		if (beanClass != null && hasInstantiationAwareBeanPostProcessors()) {
-			for (BeanPostProcessor bp : getBeanPostProcessors()) {
-				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
+			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 遍历BeanPostProcessor集合
+				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) { // 取出实现了SmartInstantiationAwareBeanPostProcessor接口的BeanPostProcessor
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
-					Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName);
-					if (ctors != null) {
+					Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName); // 调用实现类获取满足条件的构造函数（默认为AutowiredAnnotationBeanPostProcessor）
+					if (ctors != null) { // 只要返回的构造函数不为空，则跳出循环直接返回
 						return ctors;
 					}
 				}
@@ -1299,7 +1299,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param mbd the bean definition for the bean
 	 * @return a BeanWrapper for the new instance
 	 */
-	protected BeanWrapper instantiateBean(final String beanName, final RootBeanDefinition mbd) {
+	protected BeanWrapper instantiateBean(final String beanName, final RootBeanDefinition mbd) { // 调用无参构造函数实例化
 		try {
 			Object beanInstance;
 			final BeanFactory parent = this;
@@ -1309,7 +1309,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						getAccessControlContext());
 			}
 			else {
-				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
+				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent); // 调用无参构造函数实例化
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
 			initBeanWrapper(bw);
@@ -1332,10 +1332,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @return a BeanWrapper for the new instance
 	 * @see #getBean(String, Object[])
 	 */
-	protected BeanWrapper instantiateUsingFactoryMethod( // 实例化factoryMethod对应的实例
+	protected BeanWrapper instantiateUsingFactoryMethod( // 调用factoryMethod方法实例化
 			String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) {
 
-		return new ConstructorResolver(this).instantiateUsingFactoryMethod(beanName, mbd, explicitArgs); // 实例化factoryMethod对应的实例
+		return new ConstructorResolver(this).instantiateUsingFactoryMethod(beanName, mbd, explicitArgs); // 调用factoryMethod方法实例化
 	}
 
 	/**
@@ -1352,10 +1352,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * or {@code null} if none (-> use constructor argument values from bean definition)
 	 * @return a BeanWrapper for the new instance
 	 */
-	protected BeanWrapper autowireConstructor(
+	protected BeanWrapper autowireConstructor( // 调用构造函数实例化
 			String beanName, RootBeanDefinition mbd, @Nullable Constructor<?>[] ctors, @Nullable Object[] explicitArgs) {
 
-		return new ConstructorResolver(this).autowireConstructor(beanName, mbd, ctors, explicitArgs);
+		return new ConstructorResolver(this).autowireConstructor(beanName, mbd, ctors, explicitArgs); // 调用构造函数实例化
 	}
 
 	/**
