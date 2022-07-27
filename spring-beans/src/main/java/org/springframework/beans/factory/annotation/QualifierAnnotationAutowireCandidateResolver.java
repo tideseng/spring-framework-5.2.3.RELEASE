@@ -361,7 +361,7 @@ public class QualifierAnnotationAutowireCandidateResolver extends GenericTypeAwa
 	 * Determine a suggested value from any of the given candidate annotations.
 	 */
 	@Nullable
-	protected Object findValue(Annotation[] annotationsToSearch) {
+	protected Object findValue(Annotation[] annotationsToSearch) { // 获取@Value注解中的占位符
 		if (annotationsToSearch.length > 0) {   // qualifier annotations have to be local
 			AnnotationAttributes attr = AnnotatedElementUtils.getMergedAnnotationAttributes(
 					AnnotatedElementUtils.forAnnotations(annotationsToSearch), this.valueAnnotationType);

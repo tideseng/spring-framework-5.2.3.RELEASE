@@ -258,7 +258,7 @@ public abstract class BeanFactoryUtils {
 	 * @return the array of matching bean names, or an empty array if none
 	 * @see ListableBeanFactory#getBeanNamesForType(Class, boolean, boolean)
 	 */
-	public static String[] beanNamesForTypeIncludingAncestors(
+	public static String[] beanNamesForTypeIncludingAncestors( // 从父子容器中获取符合类型的beanName列表
 			ListableBeanFactory lbf, Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
 
 		Assert.notNull(lbf, "ListableBeanFactory must not be null");

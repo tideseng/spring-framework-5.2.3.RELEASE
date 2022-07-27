@@ -201,7 +201,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	@Nullable
 	private transient StringValueResolver embeddedValueResolver;
 
-	private final transient Map<String, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<>(256);
+	private final transient Map<String, InjectionMetadata> injectionMetadataCache = new ConcurrentHashMap<>(256); // 收集注解缓存映射容器
 
 
 	/**
@@ -212,8 +212,8 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	 */
 	public CommonAnnotationBeanPostProcessor() { // 创建CommonAnnotationBeanPostProcessor（在PostProcessorRegistrationDelegate#registerBeanPostProcessors方法中进行调用创建）
 		setOrder(Ordered.LOWEST_PRECEDENCE - 3);
-		setInitAnnotationType(PostConstruct.class);
-		setDestroyAnnotationType(PreDestroy.class);
+		setInitAnnotationType(PostConstruct.class); // 调用父类方法设置初始化方法对应的注解
+		setDestroyAnnotationType(PreDestroy.class); // 调用父类方法设置销毁方法对应的注解
 		ignoreResourceType("javax.xml.ws.WebServiceContext");
 	}
 
@@ -306,9 +306,9 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 
 	@Override
-	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
-		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null);
+	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) { // 收集注解（@PostConstruct、@PreDestroy、@Resource注解）
+		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName); // 收集@PostConstruct、@PreDestroy
+		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null); // 收集@Resoure注解
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -328,10 +328,10 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	}
 
 	@Override
-	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
-		InjectionMetadata metadata = findResourceMetadata(beanName, bean.getClass(), pvs);
+	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) { // 处理@Resource依赖注入
+		InjectionMetadata metadata = findResourceMetadata(beanName, bean.getClass(), pvs); // 获取收集的@Resource注解
 		try {
-			metadata.inject(bean, beanName, pvs);
+			metadata.inject(bean, beanName, pvs); // 依赖注入
 		}
 		catch (Throwable ex) {
 			throw new BeanCreationException(beanName, "Injection of resource dependencies failed", ex);
@@ -348,27 +348,27 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	}
 
 
-	private InjectionMetadata findResourceMetadata(String beanName, final Class<?> clazz, @Nullable PropertyValues pvs) {
+	private InjectionMetadata findResourceMetadata(String beanName, final Class<?> clazz, @Nullable PropertyValues pvs) { // 获取收集的@Resoure注解
 		// Fall back to class name as cache key, for backwards compatibility with custom callers.
-		String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName());
+		String cacheKey = (StringUtils.hasLength(beanName) ? beanName : clazz.getName()); // 构建缓存Key
 		// Quick check on the concurrent map first, with minimal locking.
-		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey);
+		InjectionMetadata metadata = this.injectionMetadataCache.get(cacheKey); // 查看缓存中是否存在
 		if (InjectionMetadata.needsRefresh(metadata, clazz)) {
-			synchronized (this.injectionMetadataCache) {
+			synchronized (this.injectionMetadataCache) { // 双重检查锁机制
 				metadata = this.injectionMetadataCache.get(cacheKey);
 				if (InjectionMetadata.needsRefresh(metadata, clazz)) {
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
-					metadata = buildResourceMetadata(clazz);
-					this.injectionMetadataCache.put(cacheKey, metadata);
+					metadata = buildResourceMetadata(clazz); // 收集@Resoure注解
+					this.injectionMetadataCache.put(cacheKey, metadata); // 放入缓存
 				}
 			}
 		}
 		return metadata;
 	}
 
-	private InjectionMetadata buildResourceMetadata(final Class<?> clazz) {
+	private InjectionMetadata buildResourceMetadata(final Class<?> clazz) { // 收集@Resoure注解
 		if (!AnnotationUtils.isCandidateClass(clazz, resourceAnnotationTypes)) {
 			return InjectionMetadata.EMPTY;
 		}
@@ -393,7 +393,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 					currElements.add(new EjbRefElement(field, field, null));
 				}
 				else if (field.isAnnotationPresent(Resource.class)) {
-					if (Modifier.isStatic(field.getModifiers())) {
+					if (Modifier.isStatic(field.getModifiers())) { // @Resource注解不支持static修饰，会直接报错
 						throw new IllegalStateException("@Resource annotation is not supported on static fields");
 					}
 					if (!this.ignoredResourceTypes.contains(field.getType().getName())) {

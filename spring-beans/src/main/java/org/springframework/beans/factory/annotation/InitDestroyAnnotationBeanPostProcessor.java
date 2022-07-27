@@ -101,10 +101,10 @@ public class InitDestroyAnnotationBeanPostProcessor
 	protected transient Log logger = LogFactory.getLog(getClass());
 
 	@Nullable
-	private Class<? extends Annotation> initAnnotationType;
+	private Class<? extends Annotation> initAnnotationType; // 初始化方法对应的注解，默认为@PostConstruct注解
 
 	@Nullable
-	private Class<? extends Annotation> destroyAnnotationType;
+	private Class<? extends Annotation> destroyAnnotationType; // 销毁方法对应的注解，默认为@PreDestroy注解
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -119,7 +119,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 	 * annotation attributes. There is no default, although a typical choice
 	 * is the JSR-250 {@link javax.annotation.PostConstruct} annotation.
 	 */
-	public void setInitAnnotationType(Class<? extends Annotation> initAnnotationType) {
+	public void setInitAnnotationType(Class<? extends Annotation> initAnnotationType) { // 设置初始化方法对应的注解
 		this.initAnnotationType = initAnnotationType;
 	}
 
@@ -130,7 +130,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 	 * annotation attributes. There is no default, although a typical choice
 	 * is the JSR-250 {@link javax.annotation.PreDestroy} annotation.
 	 */
-	public void setDestroyAnnotationType(Class<? extends Annotation> destroyAnnotationType) {
+	public void setDestroyAnnotationType(Class<? extends Annotation> destroyAnnotationType) { // 设置销毁方法对应的注解
 		this.destroyAnnotationType = destroyAnnotationType;
 	}
 
@@ -145,8 +145,8 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 
 	@Override
-	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
-		LifecycleMetadata metadata = findLifecycleMetadata(beanType);
+	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) { // 收集@PostConstruct、@PreDestroy
+		LifecycleMetadata metadata = findLifecycleMetadata(beanType); // 获取收集的@PostConstruct、@PreDestroy注解
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -196,10 +196,10 @@ public class InitDestroyAnnotationBeanPostProcessor
 	}
 
 
-	private LifecycleMetadata findLifecycleMetadata(Class<?> clazz) {
+	private LifecycleMetadata findLifecycleMetadata(Class<?> clazz) { // 获取收集的@PostConstruct、@PreDestroy注解
 		if (this.lifecycleMetadataCache == null) {
 			// Happens after deserialization, during destruction...
-			return buildLifecycleMetadata(clazz);
+			return buildLifecycleMetadata(clazz); // 获取收集的@PostConstruct、@PreDestroy注解
 		}
 		// Quick check on the concurrent map first, with minimal locking.
 		LifecycleMetadata metadata = this.lifecycleMetadataCache.get(clazz);
@@ -216,7 +216,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 		return metadata;
 	}
 
-	private LifecycleMetadata buildLifecycleMetadata(final Class<?> clazz) {
+	private LifecycleMetadata buildLifecycleMetadata(final Class<?> clazz) { // 获取收集的@PostConstruct、@PreDestroy注解
 		if (!AnnotationUtils.isCandidateClass(clazz, Arrays.asList(this.initAnnotationType, this.destroyAnnotationType))) {
 			return this.emptyLifecycleMetadata;
 		}
@@ -232,13 +232,13 @@ public class InitDestroyAnnotationBeanPostProcessor
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
 				if (this.initAnnotationType != null && method.isAnnotationPresent(this.initAnnotationType)) {
 					LifecycleElement element = new LifecycleElement(method);
-					currInitMethods.add(element);
+					currInitMethods.add(element); // 收集@PostConstruct注解
 					if (logger.isTraceEnabled()) {
 						logger.trace("Found init method on class [" + clazz.getName() + "]: " + method);
 					}
 				}
 				if (this.destroyAnnotationType != null && method.isAnnotationPresent(this.destroyAnnotationType)) {
-					currDestroyMethods.add(new LifecycleElement(method));
+					currDestroyMethods.add(new LifecycleElement(method)); // 收集@PreDestroy注解
 					if (logger.isTraceEnabled()) {
 						logger.trace("Found destroy method on class [" + clazz.getName() + "]: " + method);
 					}
@@ -252,7 +252,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 		while (targetClass != null && targetClass != Object.class);
 
 		return (initMethods.isEmpty() && destroyMethods.isEmpty() ? this.emptyLifecycleMetadata :
-				new LifecycleMetadata(clazz, initMethods, destroyMethods));
+				new LifecycleMetadata(clazz, initMethods, destroyMethods)); // 将收集到的@PostConstruct、@PreDestroy注解封装到LifecycleMetadata中
 	}
 
 
@@ -286,7 +286,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 		@Nullable
 		private volatile Set<LifecycleElement> checkedDestroyMethods;
 
-		public LifecycleMetadata(Class<?> targetClass, Collection<LifecycleElement> initMethods,
+		public LifecycleMetadata(Class<?> targetClass, Collection<LifecycleElement> initMethods, // 初始化LifecycleMetadata
 				Collection<LifecycleElement> destroyMethods) {
 
 			this.targetClass = targetClass;
@@ -330,7 +330,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 					if (logger.isTraceEnabled()) {
 						logger.trace("Invoking init method on bean '" + beanName + "': " + element.getMethod());
 					}
-					element.invoke(target);
+					element.invoke(target); // 反射调用方法
 				}
 			}
 		}
@@ -384,9 +384,9 @@ public class InitDestroyAnnotationBeanPostProcessor
 			return this.identifier;
 		}
 
-		public void invoke(Object target) throws Throwable {
+		public void invoke(Object target) throws Throwable { // 反射调用方法
 			ReflectionUtils.makeAccessible(this.method);
-			this.method.invoke(target, (Object[]) null);
+			this.method.invoke(target, (Object[]) null); // 反射调用无参方法
 		}
 
 		@Override

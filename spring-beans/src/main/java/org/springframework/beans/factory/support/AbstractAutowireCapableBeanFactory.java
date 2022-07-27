@@ -561,7 +561,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (beanType != NullBean.class) {
 			mbd.resolvedTargetType = beanType;
 		}
-
+		// 2.通过BeanPostProcessor收集注解，为依赖注入的实现提供支持
 		// Allow post-processors to modify the merged bean definition.
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
@@ -591,7 +591,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			populateBean(beanName, mbd, instanceWrapper);
+			populateBean(beanName, mbd, instanceWrapper); // 4.依赖注入
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -1088,10 +1088,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @see MergedBeanDefinitionPostProcessor#postProcessMergedBeanDefinition
 	 */
 	protected void applyMergedBeanDefinitionPostProcessors(RootBeanDefinition mbd, Class<?> beanType, String beanName) { // 通过BeanPostProcessor收集注解
-		for (BeanPostProcessor bp : getBeanPostProcessors()) {
+		for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了MergedBeanDefinitionPostProcessor接口的BeanPostProcessor收集注解
 			if (bp instanceof MergedBeanDefinitionPostProcessor) {
 				MergedBeanDefinitionPostProcessor bdp = (MergedBeanDefinitionPostProcessor) bp;
-				bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName);
+				bdp.postProcessMergedBeanDefinition(mbd, beanType, beanName); // CommonAnnotationBeanPostProcessor收集@PostConstruct、@PreDestroy、@Resource注解; AutowiredAnnotationBeanPostProcessor收集@Autowired、@Value注解
 			}
 		}
 	}
@@ -1280,7 +1280,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			throws BeansException {
 
 		if (beanClass != null && hasInstantiationAwareBeanPostProcessors()) {
-			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 遍历BeanPostProcessor集合
+			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了SmartInstantiationAwareBeanPostProcessor接口的BeanPostProcessor获取满足条件的构造函数
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) { // 取出实现了SmartInstantiationAwareBeanPostProcessor接口的BeanPostProcessor
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
 					Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName); // 调用实现类获取满足条件的构造函数（默认为AutowiredAnnotationBeanPostProcessor）
@@ -1382,10 +1382,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
-			for (BeanPostProcessor bp : getBeanPostProcessors()) {
+			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了InstantiationAwareBeanPostProcessor接口的BeanPostProcessor控制是否禁止依赖注入
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-					if (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) {
+					if (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) { // 控制是否禁止依赖注入（默认不禁止）
 						return;
 					}
 				}
@@ -1408,23 +1408,23 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			pvs = newPvs;
 		}
 
-		boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();
+		boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors(); // 判断BeanFactory容器中是否有InstantiationAwareBeanPostProcessor接口实现类（默认存在AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor）
 		boolean needsDepCheck = (mbd.getDependencyCheck() != AbstractBeanDefinition.DEPENDENCY_CHECK_NONE);
 
 		PropertyDescriptor[] filteredPds = null;
-		if (hasInstAwareBpps) {
+		if (hasInstAwareBpps) { // 默认为true
 			if (pvs == null) {
 				pvs = mbd.getPropertyValues();
 			}
-			for (BeanPostProcessor bp : getBeanPostProcessors()) {
-				if (bp instanceof InstantiationAwareBeanPostProcessor) {
+			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了InstantiationAwareBeanPostProcessor接口的BeanPostProcessor实现依赖注入
+				if (bp instanceof InstantiationAwareBeanPostProcessor) { // 默认为AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
-					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName);
+					PropertyValues pvsToUse = ibp.postProcessProperties(pvs, bw.getWrappedInstance(), beanName); // 注解依赖注入
 					if (pvsToUse == null) {
 						if (filteredPds == null) {
 							filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 						}
-						pvsToUse = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
+						pvsToUse = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName); // 旧版的注解依赖注入
 						if (pvsToUse == null) {
 							return;
 						}
@@ -1441,7 +1441,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (pvs != null) {
-			applyPropertyValues(beanName, mbd, bw, pvs);
+			applyPropertyValues(beanName, mbd, bw, pvs); // xml依赖注入逻辑
 		}
 	}
 
@@ -1780,7 +1780,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}, getAccessControlContext());
 		}
 		else {
-			invokeAwareMethods(beanName, bean);
+			invokeAwareMethods(beanName, bean); // Aware接口的调用
 		}
 
 		Object wrappedBean = bean;

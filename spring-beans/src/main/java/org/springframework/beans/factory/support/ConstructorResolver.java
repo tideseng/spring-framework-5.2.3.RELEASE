@@ -882,7 +882,7 @@ class ConstructorResolver {
 			return injectionPoint;
 		}
 		try {
-			return this.beanFactory.resolveDependency( // 获取依赖Bean
+			return this.beanFactory.resolveDependency( // 获取构造函数参数依赖的Bean对象
 					new DependencyDescriptor(param, true), beanName, autowiredBeanNames, typeConverter);
 		}
 		catch (NoUniqueBeanDefinitionException ex) {

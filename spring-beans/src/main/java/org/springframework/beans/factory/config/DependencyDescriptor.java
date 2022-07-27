@@ -270,10 +270,10 @@ public class DependencyDescriptor extends InjectionPoint implements Serializable
 	 * @since 4.3.2
 	 * @see BeanFactory#getBean(String)
 	 */
-	public Object resolveCandidate(String beanName, Class<?> requiredType, BeanFactory beanFactory) // 依赖注入，获取依赖Bean
+	public Object resolveCandidate(String beanName, Class<?> requiredType, BeanFactory beanFactory) // 获取依赖的Bean实例
 			throws BeansException {
 
-		return beanFactory.getBean(beanName); // 获取依赖Bean
+		return beanFactory.getBean(beanName); // 获取依赖的Bean实例
 	}
 
 

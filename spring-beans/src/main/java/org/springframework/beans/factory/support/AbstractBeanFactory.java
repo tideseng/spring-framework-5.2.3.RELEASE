@@ -148,7 +148,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	private TypeConverter typeConverter;
 
 	/** String resolvers to apply e.g. to annotation attribute values. */
-	private final List<StringValueResolver> embeddedValueResolvers = new CopyOnWriteArrayList<>();
+	private final List<StringValueResolver> embeddedValueResolvers = new CopyOnWriteArrayList<>(); // 占位符解析器
 
 	/** BeanPostProcessors to apply in createBean. */
 	private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
@@ -887,13 +887,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void addEmbeddedValueResolver(StringValueResolver valueResolver) { // 添加StringValueResolver（PlaceholderConfigurerSupport#doProcessProperties(...)等会调用）
+	public void addEmbeddedValueResolver(StringValueResolver valueResolver) { // 添加StringValueResolver（AbstractApplicationContext#finishBeanFactoryInitialization(...)、PlaceholderConfigurerSupport#doProcessProperties(...)等会调用）
 		Assert.notNull(valueResolver, "StringValueResolver must not be null");
-		this.embeddedValueResolvers.add(valueResolver);
+		this.embeddedValueResolvers.add(valueResolver); // 添加占位符解析器
 	}
 
 	@Override
-	public boolean hasEmbeddedValueResolver() {
+	public boolean hasEmbeddedValueResolver() { // 是否存在占位符解析器
 		return !this.embeddedValueResolvers.isEmpty();
 	}
 
@@ -904,7 +904,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			return null;
 		}
 		String result = value;
-		for (StringValueResolver resolver : this.embeddedValueResolvers) {
+		for (StringValueResolver resolver : this.embeddedValueResolvers) { // 遍历占位符解析器
 			result = resolver.resolveStringValue(result); // 调用lambda表达式解析占位符，获取属性值
 			if (result == null) {
 				return null;
@@ -914,12 +914,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+	public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) { // 将BeanPostProcessor添加到容器中
 		Assert.notNull(beanPostProcessor, "BeanPostProcessor must not be null");
 		// Remove from old position, if any
 		this.beanPostProcessors.remove(beanPostProcessor);
 		// Track whether it is instantiation/destruction aware
-		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) { // AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor实现类改接口
 			this.hasInstantiationAwareBeanPostProcessors = true;
 		}
 		if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {

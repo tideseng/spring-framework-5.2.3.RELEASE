@@ -52,7 +52,7 @@ public class InjectionMetadata {
 	 * An empty {@code InjectionMetadata} instance with no-op callbacks.
 	 * @since 5.2
 	 */
-	public static final InjectionMetadata EMPTY = new InjectionMetadata(Object.class, Collections.emptyList()) {
+	public static final InjectionMetadata EMPTY = new InjectionMetadata(Object.class, Collections.emptyList()) { // InjectionMetadata对象的空实现
 		@Override
 		public void checkConfigMembers(RootBeanDefinition beanDefinition) {
 		}
@@ -67,9 +67,9 @@ public class InjectionMetadata {
 
 	private static final Log logger = LogFactory.getLog(InjectionMetadata.class);
 
-	private final Class<?> targetClass;
+	private final Class<?> targetClass; // 收集注解的目标类
 
-	private final Collection<InjectedElement> injectedElements;
+	private final Collection<InjectedElement> injectedElements; // 收集的注解元素集合
 
 	@Nullable
 	private volatile Set<InjectedElement> checkedElements;
@@ -109,7 +109,7 @@ public class InjectionMetadata {
 		Collection<InjectedElement> elementsToIterate =
 				(checkedElements != null ? checkedElements : this.injectedElements);
 		if (!elementsToIterate.isEmpty()) {
-			for (InjectedElement element : elementsToIterate) {
+			for (InjectedElement element : elementsToIterate) { // 遍历元素
 				if (logger.isTraceEnabled()) {
 					logger.trace("Processing injected element of bean '" + beanName + "': " + element);
 				}
@@ -164,7 +164,7 @@ public class InjectionMetadata {
 
 		protected final Member member;
 
-		protected final boolean isField;
+		protected final boolean isField; // 是否属性
 
 		@Nullable
 		protected final PropertyDescriptor pd;
@@ -174,7 +174,7 @@ public class InjectionMetadata {
 
 		protected InjectedElement(Member member, @Nullable PropertyDescriptor pd) {
 			this.member = member;
-			this.isField = (member instanceof Field);
+			this.isField = (member instanceof Field); // 判断是否为属性
 			this.pd = pd;
 		}
 
@@ -215,7 +215,7 @@ public class InjectionMetadata {
 		/**
 		 * Either this or {@link #getResourceToInject} needs to be overridden.
 		 */
-		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs)
+		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs) // 依赖注入
 				throws Throwable {
 
 			if (this.isField) {
