@@ -324,7 +324,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 			// Read the model and create bean definitions based on its content
 			if (this.reader == null) {
-				this.reader = new ConfigurationClassBeanDefinitionReader(
+				this.reader = new ConfigurationClassBeanDefinitionReader( // 创建ConfigurationClassBeanDefinitionReader
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
@@ -436,7 +436,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 		private final BeanFactory beanFactory;
 
-		public ImportAwareBeanPostProcessor(BeanFactory beanFactory) {
+		public ImportAwareBeanPostProcessor(BeanFactory beanFactory) { // 初始化ImportAwareBeanPostProcessor
 			this.beanFactory = beanFactory;
 		}
 
@@ -451,12 +451,12 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		@Override
-		public Object postProcessBeforeInitialization(Object bean, String beanName) {
+		public Object postProcessBeforeInitialization(Object bean, String beanName) { // 初始化前置操作--实现对ImportAware的支持
 			if (bean instanceof ImportAware) {
-				ImportRegistry ir = this.beanFactory.getBean(IMPORT_REGISTRY_BEAN_NAME, ImportRegistry.class);
-				AnnotationMetadata importingClass = ir.getImportingClassFor(ClassUtils.getUserClass(bean).getName());
+				ImportRegistry ir = this.beanFactory.getBean(IMPORT_REGISTRY_BEAN_NAME, ImportRegistry.class); // 从容器中获取ImportRegistry类型的实例（只会有一个）
+				AnnotationMetadata importingClass = ir.getImportingClassFor(ClassUtils.getUserClass(bean).getName()); // 获取导入该类的注解信息
 				if (importingClass != null) {
-					((ImportAware) bean).setImportMetadata(importingClass);
+					((ImportAware) bean).setImportMetadata(importingClass); // 设置导入类的注解信息
 				}
 			}
 			return bean;

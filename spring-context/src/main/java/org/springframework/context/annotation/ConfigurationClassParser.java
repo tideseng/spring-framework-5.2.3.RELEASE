@@ -582,7 +582,7 @@ class ConfigurationClassParser {
 					else {
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class
-						this.importStack.registerImport(
+						this.importStack.registerImport( // 添加Import映射关系
 								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
 						processConfigurationClass(candidate.asConfigClass(configClass));
 					}
@@ -692,7 +692,7 @@ class ConfigurationClassParser {
 
 		private final MultiValueMap<String, AnnotationMetadata> imports = new LinkedMultiValueMap<>();
 
-		public void registerImport(AnnotationMetadata importingClass, String importedClass) {
+		public void registerImport(AnnotationMetadata importingClass, String importedClass) { // 添加Import映射关系
 			this.imports.add(importedClass, importingClass);
 		}
 

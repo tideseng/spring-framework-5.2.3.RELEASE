@@ -77,11 +77,11 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 	@Override
 	@Nullable
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException { // 初始化前置操作--调用Aware相关接口
 		if (!(bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
 				bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
 				bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)){
-			return bean;
+			return bean; // 如果bean不是Aware的实现类，直接返回
 		}
 
 		AccessControlContext acc = null;
@@ -92,18 +92,18 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 		if (acc != null) {
 			AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
-				invokeAwareInterfaces(bean);
+				invokeAwareInterfaces(bean); // 调用Aware相关接口
 				return null;
 			}, acc);
 		}
 		else {
-			invokeAwareInterfaces(bean);
+			invokeAwareInterfaces(bean); // 调用Aware相关接口（EnvironmentAware、ApplicationContextAware、ResourceLoaderAware、EmbeddedValueResolverAware、ApplicationEventPublisherAware、MessageSourceAware）
 		}
 
 		return bean;
 	}
 
-	private void invokeAwareInterfaces(Object bean) {
+	private void invokeAwareInterfaces(Object bean) { // 调用Aware相关接口
 		if (bean instanceof EnvironmentAware) {
 			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
 		}

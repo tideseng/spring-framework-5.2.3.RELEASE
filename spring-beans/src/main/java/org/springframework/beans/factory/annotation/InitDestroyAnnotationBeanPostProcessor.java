@@ -151,10 +151,10 @@ public class InitDestroyAnnotationBeanPostProcessor
 	}
 
 	@Override
-	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		LifecycleMetadata metadata = findLifecycleMetadata(bean.getClass());
+	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException { // 初始化前置操作--调用初始化无参方法
+		LifecycleMetadata metadata = findLifecycleMetadata(bean.getClass()); // 获取收集的@PostConstruct、@PreDestroy注解
 		try {
-			metadata.invokeInitMethods(bean, beanName);
+			metadata.invokeInitMethods(bean, beanName); // 反射调用初始化无参方法
 		}
 		catch (InvocationTargetException ex) {
 			throw new BeanCreationException(beanName, "Invocation of init method failed", ex.getTargetException());
@@ -321,7 +321,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 			this.checkedDestroyMethods = checkedDestroyMethods;
 		}
 
-		public void invokeInitMethods(Object target, String beanName) throws Throwable {
+		public void invokeInitMethods(Object target, String beanName) throws Throwable { // 反射调用初始化无参方法
 			Collection<LifecycleElement> checkedInitMethods = this.checkedInitMethods;
 			Collection<LifecycleElement> initMethodsToIterate =
 					(checkedInitMethods != null ? checkedInitMethods : this.initMethods);
@@ -330,12 +330,12 @@ public class InitDestroyAnnotationBeanPostProcessor
 					if (logger.isTraceEnabled()) {
 						logger.trace("Invoking init method on bean '" + beanName + "': " + element.getMethod());
 					}
-					element.invoke(target); // 反射调用方法
+					element.invoke(target); // 反射调用无参方法
 				}
 			}
 		}
 
-		public void invokeDestroyMethods(Object target, String beanName) throws Throwable {
+		public void invokeDestroyMethods(Object target, String beanName) throws Throwable { // 反射调用销毁无参方法
 			Collection<LifecycleElement> checkedDestroyMethods = this.checkedDestroyMethods;
 			Collection<LifecycleElement> destroyMethodsToUse =
 					(checkedDestroyMethods != null ? checkedDestroyMethods : this.destroyMethods);
@@ -344,7 +344,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 					if (logger.isTraceEnabled()) {
 						logger.trace("Invoking destroy method on bean '" + beanName + "': " + element.getMethod());
 					}
-					element.invoke(target);
+					element.invoke(target); // 反射调用无参方法
 				}
 			}
 		}
