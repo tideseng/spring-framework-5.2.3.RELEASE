@@ -497,7 +497,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						}
 						return;
 					}
-					if (method.getParameterCount() == 0) {
+					if (method.getParameterCount() == 0) { // 带注解的无参构造方法也会被收集
 						if (logger.isInfoEnabled()) {
 							logger.info("Autowired annotation should only be used on methods with parameters: " +
 									method);
@@ -706,7 +706,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 				Set<String> autowiredBeans = new LinkedHashSet<>(argumentCount);
 				Assert.state(beanFactory != null, "No BeanFactory available");
 				TypeConverter typeConverter = beanFactory.getTypeConverter();
-				for (int i = 0; i < arguments.length; i++) { // 遍历方法中的参数
+				for (int i = 0; i < arguments.length; i++) { // 遍历方法中的参数（如果为无参，则直接跳过，入参数组为空集合，仍会进行调用）
 					MethodParameter methodParam = new MethodParameter(method, i);
 					DependencyDescriptor currDesc = new DependencyDescriptor(methodParam, this.required); // 将方法中的每一个参数都构造成DependencyDescriptor对象
 					currDesc.setContainingClass(bean.getClass());

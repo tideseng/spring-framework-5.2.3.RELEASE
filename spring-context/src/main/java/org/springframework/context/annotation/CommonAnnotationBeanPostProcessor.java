@@ -429,11 +429,11 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 						currElements.add(new EjbRefElement(method, bridgedMethod, pd));
 					}
 					else if (bridgedMethod.isAnnotationPresent(Resource.class)) {
-						if (Modifier.isStatic(method.getModifiers())) {
+						if (Modifier.isStatic(method.getModifiers())) { // @Resource注解不支持static修饰，会直接报错
 							throw new IllegalStateException("@Resource annotation is not supported on static methods");
 						}
 						Class<?>[] paramTypes = method.getParameterTypes();
-						if (paramTypes.length != 1) {
+						if (paramTypes.length != 1) { // @Resource注解修饰的方法参数支持1个，否则会直接报错
 							throw new IllegalStateException("@Resource annotation requires a single-arg method: " + method);
 						}
 						if (!this.ignoredResourceTypes.contains(paramTypes[0].getName())) {

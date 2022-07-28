@@ -1496,7 +1496,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 * Add an entry to the candidate map: a bean instance if available or just the resolved
 	 * type, preventing early bean initialization ahead of primary candidate selection.
 	 */
-	private void addCandidateEntry(Map<String, Object> candidates, String candidateName,
+	private void addCandidateEntry(Map<String, Object> candidates, String candidateName, // 添加映射关系
 			DependencyDescriptor descriptor, Class<?> requiredType) {
 
 		if (descriptor instanceof MultiElementDescriptor) {
@@ -1508,10 +1508,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		else if (containsSingleton(candidateName) || (descriptor instanceof StreamDependencyDescriptor &&
 				((StreamDependencyDescriptor) descriptor).isOrdered())) {
 			Object beanInstance = descriptor.resolveCandidate(candidateName, requiredType, this); // 获取依赖的Bean实例，会触发getBean操作
-			candidates.put(candidateName, (beanInstance instanceof NullBean ? null : beanInstance));
+			candidates.put(candidateName, (beanInstance instanceof NullBean ? null : beanInstance)); // 添加beanName与bean实例的映射关系
 		}
 		else {
-			candidates.put(candidateName, getType(candidateName));
+			candidates.put(candidateName, getType(candidateName)); // 添加beanName与beanClass的映射关系
 		}
 	}
 
