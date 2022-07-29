@@ -246,7 +246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
-		Object sharedInstance = getSingleton(beanName); // 从容器缓存中获取实例
+		Object sharedInstance = getSingleton(beanName); // 从容器缓存中获取实例（实例化并初始化完毕的bean、或提前暴露的bean，防止单例bean的循环依赖）
 		if (sharedInstance != null && args == null) { // 当缓存中存在实例时
 			if (logger.isTraceEnabled()) {
 				if (isSingletonCurrentlyInCreation(beanName)) {
@@ -299,7 +299,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 				// Guarantee initialization of beans that the current bean depends on.
 				String[] dependsOn = mbd.getDependsOn(); // 获取dependsOn依赖对象
-				if (dependsOn != null) {
+				if (dependsOn != null) { // 当存在dependsOn依赖对象时
 					for (String dep : dependsOn) { // 遍历dependsOn依赖对象
 						if (isDependent(beanName, dep)) {
 							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
@@ -315,9 +315,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						}
 					}
 				}
-
+				// 创建Bean实例
 				// Create bean instance.
-				if (mbd.isSingleton()) { // 当Bean是单例Bean
+				if (mbd.isSingleton()) { // 1.当Bean是单例Bean时
 					sharedInstance = getSingleton(beanName, () -> { // 获取单例Bean实例
 						try {
 							return createBean(beanName, mbd, args); // 创建Bean（函数式接口，在getSingleton方法中触发执行）
@@ -333,15 +333,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 
-				else if (mbd.isPrototype()) { // 当Bean是多例Bean
+				else if (mbd.isPrototype()) { // 2.当Bean是多例Bean时
 					// It's a prototype -> create a new instance.
 					Object prototypeInstance = null;
 					try {
-						beforePrototypeCreation(beanName);
-						prototypeInstance = createBean(beanName, mbd, args); // 创建Bean
+						beforePrototypeCreation(beanName); // 标记多例beanName正在创建
+						prototypeInstance = createBean(beanName, mbd, args); // 创建Bean（多例bean不会用到一级缓存和三级缓存）
 					}
 					finally {
-						afterPrototypeCreation(beanName);
+						afterPrototypeCreation(beanName); // 清除多例beanName正在创建
 					}
 					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
 				}
@@ -919,7 +919,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Remove from old position, if any
 		this.beanPostProcessors.remove(beanPostProcessor);
 		// Track whether it is instantiation/destruction aware
-		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) { // AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor实现类改接口
+		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) { // AutowiredAnnotationBeanPostProcessor、CommonAnnotationBeanPostProcessor实现了该接口
 			this.hasInstantiationAwareBeanPostProcessors = true;
 		}
 		if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {
@@ -1103,18 +1103,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @see #isPrototypeCurrentlyInCreation
 	 */
 	@SuppressWarnings("unchecked")
-	protected void beforePrototypeCreation(String beanName) {
+	protected void beforePrototypeCreation(String beanName) { // 标记多例beanName正在创建
 		Object curVal = this.prototypesCurrentlyInCreation.get();
-		if (curVal == null) {
+		if (curVal == null) { // 当前ThreadLocal为空时，直接设置成String容器
 			this.prototypesCurrentlyInCreation.set(beanName);
 		}
-		else if (curVal instanceof String) {
+		else if (curVal instanceof String) { // 当前ThreadLocal为String容器时，将String容器转为Set容器
 			Set<String> beanNameSet = new HashSet<>(2);
 			beanNameSet.add((String) curVal);
 			beanNameSet.add(beanName);
 			this.prototypesCurrentlyInCreation.set(beanNameSet);
 		}
-		else {
+		else { // 当前ThreadLocal为Set容器时，直接添加元素
 			Set<String> beanNameSet = (Set<String>) curVal;
 			beanNameSet.add(beanName);
 		}
@@ -1127,7 +1127,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @see #isPrototypeCurrentlyInCreation
 	 */
 	@SuppressWarnings("unchecked")
-	protected void afterPrototypeCreation(String beanName) {
+	protected void afterPrototypeCreation(String beanName) { // 清除多例beanName正在创建
 		Object curVal = this.prototypesCurrentlyInCreation.get();
 		if (curVal instanceof String) {
 			this.prototypesCurrentlyInCreation.remove();

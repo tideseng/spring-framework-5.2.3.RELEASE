@@ -218,19 +218,19 @@ public class InjectionMetadata {
 		protected void inject(Object target, @Nullable String requestingBeanName, @Nullable PropertyValues pvs) // 依赖注入
 				throws Throwable {
 
-			if (this.isField) {
+			if (this.isField) { // 当为属性时
 				Field field = (Field) this.member;
 				ReflectionUtils.makeAccessible(field);
-				field.set(target, getResourceToInject(target, requestingBeanName));
+				field.set(target, getResourceToInject(target, requestingBeanName)); // 通过反射设置属性值
 			}
-			else {
+			else { // 当为方法时
 				if (checkPropertySkipping(pvs)) {
 					return;
 				}
 				try {
 					Method method = (Method) this.member;
 					ReflectionUtils.makeAccessible(method);
-					method.invoke(target, getResourceToInject(target, requestingBeanName));
+					method.invoke(target, getResourceToInject(target, requestingBeanName)); // 通过反射调用方法
 				}
 				catch (InvocationTargetException ex) {
 					throw ex.getTargetException();

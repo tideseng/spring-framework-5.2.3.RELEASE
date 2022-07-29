@@ -406,7 +406,7 @@ class ConstructorResolver {
 				throw new BeanDefinitionStoreException(mbd.getResourceDescription(), beanName,
 						"factory-bean reference points back to the same bean definition");
 			}
-			factoryBean = this.beanFactory.getBean(factoryBeanName); // 获取factoryBean对应的实例Bean
+			factoryBean = this.beanFactory.getBean(factoryBeanName); // 获取factoryBean对应的实例Bean，会触发getBean操作
 			if (mbd.isSingleton() && this.beanFactory.containsSingleton(beanName)) {
 				throw new ImplicitlyAppearedSingletonException();
 			}

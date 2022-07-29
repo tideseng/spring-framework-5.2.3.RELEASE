@@ -448,7 +448,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	//-------------------------------------------------------------------------
 
 	@Override
-	public Object resolveBeanByName(String name, DependencyDescriptor descriptor) {
+	public Object resolveBeanByName(String name, DependencyDescriptor descriptor) { // 获取指定名称的bean对象
 		InjectionPoint previousInjectionPoint = ConstructorResolver.setCurrentInjectionPoint(descriptor);
 		try {
 			return getBean(name, descriptor.getDependencyType());
@@ -554,7 +554,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			instanceWrapper = createBeanInstance(beanName, mbd, args); // 创建Bean实例
+			instanceWrapper = createBeanInstance(beanName, mbd, args); // 创建Bean实例（创建Bean会触发构造函数参数的getBean，由于bean还未提前暴露，所以默认构造函数循环依赖不能解决）
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
 		Class<?> beanType = instanceWrapper.getWrappedClass();
@@ -575,17 +575,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				mbd.postProcessed = true;
 			}
 		}
-
+		// 3.提前暴露bean（提前暴露bean只能解决单例循环依赖，多例循环依赖和构造函数循环依赖不能解决，原因是多例Bean不会提前暴露、构造函数触发时还来不及提前暴露）
 		// Eagerly cache singletons to be able to resolve circular references
 		// even when triggered by lifecycle interfaces like BeanFactoryAware.
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
-				isSingletonCurrentlyInCreation(beanName));
+				isSingletonCurrentlyInCreation(beanName)); // 只有当bean是单例、且正在创建、允许循环依赖时，才提前暴露bean
 		if (earlySingletonExposure) {
 			if (logger.isTraceEnabled()) {
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
+			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean)); // 提前暴露bean
 		}
 
 		// Initialize the bean instance.
@@ -956,13 +956,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param bean the raw bean instance
 	 * @return the object to expose as bean reference
 	 */
-	protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) {
-		Object exposedObject = bean;
+	protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) { // 获取提前暴露的bean
+		Object exposedObject = bean; // 提前暴露的bean
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
-			for (BeanPostProcessor bp : getBeanPostProcessors()) {
+			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了SmartInstantiationAwareBeanPostProcessor接口的BeanPostProcessor获取提前暴露的bean对象
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
-					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
+					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName); // 循环调用，是装饰器设计模式的典型应用
 				}
 			}
 		}
@@ -1366,7 +1366,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * @param bw the BeanWrapper with bean instance
 	 */
 	@SuppressWarnings("deprecation")  // for postProcessPropertyValues
-	protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) {
+	protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) { // 依赖注入
 		if (bw == null) {
 			if (mbd.hasPropertyValues()) {
 				throw new BeanCreationException(
@@ -1381,7 +1381,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
 		// state of the bean before properties are set. This can be used, for example,
 		// to support styles of field injection.
-		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
+		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) { // 默认为true
 			for (BeanPostProcessor bp : getBeanPostProcessors()) { // 通过实现了InstantiationAwareBeanPostProcessor接口的BeanPostProcessor控制是否禁止依赖注入
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;

@@ -1201,7 +1201,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			return new Jsr330Factory().createDependencyProvider(descriptor, requestingBeanName);
 		}
 		else {
-			Object result = getAutowireCandidateResolver().getLazyResolutionProxyIfNecessary(
+			Object result = getAutowireCandidateResolver().getLazyResolutionProxyIfNecessary( // 获取@Lazy修饰的依赖代理对象
 					descriptor, requestingBeanName);
 			if (result == null) {
 				result = doResolveDependency(descriptor, requestingBeanName, autowiredBeanNames, typeConverter); // 获取依赖元素值

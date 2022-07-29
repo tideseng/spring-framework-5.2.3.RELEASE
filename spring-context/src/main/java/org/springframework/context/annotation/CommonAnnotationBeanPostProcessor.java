@@ -497,7 +497,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	 * @return the resource object (never {@code null})
 	 * @throws NoSuchBeanDefinitionException if no corresponding target resource found
 	 */
-	protected Object getResource(LookupElement element, @Nullable String requestingBeanName)
+	protected Object getResource(LookupElement element, @Nullable String requestingBeanName) // 获取@Resource注入的元素
 			throws NoSuchBeanDefinitionException {
 
 		if (StringUtils.hasLength(element.mappedName)) {
@@ -510,7 +510,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			throw new NoSuchBeanDefinitionException(element.lookupType,
 					"No resource factory configured - specify the 'resourceFactory' property");
 		}
-		return autowireResource(this.resourceFactory, element, requestingBeanName);
+		return autowireResource(this.resourceFactory, element, requestingBeanName); // 获取@Resource注入的元素
 	}
 
 	/**
@@ -522,7 +522,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 	 * @return the resource object (never {@code null})
 	 * @throws NoSuchBeanDefinitionException if no corresponding target resource found
 	 */
-	protected Object autowireResource(BeanFactory factory, LookupElement element, @Nullable String requestingBeanName)
+	protected Object autowireResource(BeanFactory factory, LookupElement element, @Nullable String requestingBeanName) // 获取@Resource注入的元素，即通过注入对象的名称从BeanFactory获取bean对象
 			throws NoSuchBeanDefinitionException {
 
 		Object resource;
@@ -534,13 +534,13 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 			DependencyDescriptor descriptor = element.getDependencyDescriptor();
 			if (this.fallbackToDefaultTypeMatch && element.isDefaultName && !factory.containsBean(name)) {
 				autowiredBeanNames = new LinkedHashSet<>();
-				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null);
+				resource = beanFactory.resolveDependency(descriptor, requestingBeanName, autowiredBeanNames, null); // 获取依赖元素值
 				if (resource == null) {
 					throw new NoSuchBeanDefinitionException(element.getLookupType(), "No resolvable resource object");
 				}
 			}
 			else {
-				resource = beanFactory.resolveBeanByName(name, descriptor);
+				resource = beanFactory.resolveBeanByName(name, descriptor); // 从BeanFactory获取注入对象的名称的bean对象
 				autowiredBeanNames = Collections.singleton(name);
 			}
 		}
@@ -648,9 +648,9 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 		}
 
 		@Override
-		protected Object getResourceToInject(Object target, @Nullable String requestingBeanName) {
-			return (this.lazyLookup ? buildLazyResourceProxy(this, requestingBeanName) :
-					getResource(this, requestingBeanName));
+		protected Object getResourceToInject(Object target, @Nullable String requestingBeanName) { // 获取@Resource注入的元素
+			return (this.lazyLookup ? buildLazyResourceProxy(this, requestingBeanName) : // lazyLookup默认为false
+					getResource(this, requestingBeanName)); // 获取@Resource注入的元素
 		}
 	}
 
