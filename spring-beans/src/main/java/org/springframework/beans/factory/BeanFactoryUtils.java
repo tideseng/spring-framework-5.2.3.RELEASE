@@ -78,14 +78,14 @@ public abstract class BeanFactoryUtils {
 	 * @return the transformed name
 	 * @see BeanFactory#FACTORY_BEAN_PREFIX
 	 */
-	public static String transformedBeanName(String name) {
+	public static String transformedBeanName(String name) { // 获取真实的beanName，即不带'&'的beanName
 		Assert.notNull(name, "'name' must not be null");
-		if (!name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) {
+		if (!name.startsWith(BeanFactory.FACTORY_BEAN_PREFIX)) { // 当beanName不是以'&'开头时，就是真实的beanName，直接返回
 			return name;
 		}
 		return transformedBeanNameCache.computeIfAbsent(name, beanName -> {
 			do {
-				beanName = beanName.substring(BeanFactory.FACTORY_BEAN_PREFIX.length());
+				beanName = beanName.substring(BeanFactory.FACTORY_BEAN_PREFIX.length()); // 截取'&'后的文本作为beanName
 			}
 			while (beanName.startsWith(BeanFactory.FACTORY_BEAN_PREFIX));
 			return beanName;

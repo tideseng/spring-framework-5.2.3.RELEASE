@@ -856,8 +856,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		for (String beanName : beanNames) { // 遍历beanDefinitionNames集合
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName); // 合并父BeanDefinition的属性
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) { // 实例化非抽象、非懒加载的单例Bean
-				if (isFactoryBean(beanName)) { // 判断是否为FactoryBean
-					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+				if (isFactoryBean(beanName)) { // FactoryBean的处理逻辑
+					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); // 获取前缀为'&'的beanName对应的实例，其实就是beanName实例
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
 						boolean isEagerInit;
@@ -867,7 +867,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 									getAccessControlContext());
 						}
 						else {
-							isEagerInit = (factory instanceof SmartFactoryBean &&
+							isEagerInit = (factory instanceof SmartFactoryBean && // 当bean实现了SmartFactoryBean接口，并重写isEagerInit方法返回true，则提前调用getObject()方法
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
 						if (isEagerInit) {
@@ -875,7 +875,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						}
 					}
 				}
-				else {
+				else { // 非FactoryBean的处理逻辑
 					getBean(beanName); // 获取Bean实例
 				}
 			}
