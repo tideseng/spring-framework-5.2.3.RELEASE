@@ -438,8 +438,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	}
 
 	@Override
-	public void destroyBean(Object existingBean) {
-		new DisposableBeanAdapter(existingBean, getBeanPostProcessors(), getAccessControlContext()).destroy();
+	public void destroyBean(Object existingBean) { // 销毁指定Bean
+		new DisposableBeanAdapter(existingBean, getBeanPostProcessors(), getAccessControlContext()).destroy(); // 创建DisposableBeanAdapter，并调用destroy方法，通过实现了DestructionAwareBeanPostProcessor接口的BeanPostProcessor、DisposableBean接口类、destroy-method方法名销毁Bean
 	}
 
 
@@ -633,7 +633,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		// Register bean as disposable.
 		try {
-			registerDisposableBeanIfNecessary(beanName, bean, mbd);
+			registerDisposableBeanIfNecessary(beanName, bean, mbd); // 注册销毁Bean时的处理类DisposableBeanAdapter
 		}
 		catch (BeanDefinitionValidationException ex) {
 			throw new BeanCreationException(

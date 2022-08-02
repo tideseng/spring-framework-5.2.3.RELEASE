@@ -98,7 +98,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	private boolean singletonsCurrentlyInDestruction = false;
 
 	/** Disposable bean instances: bean name to disposable instance. */
-	private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
+	private final Map<String, Object> disposableBeans = new LinkedHashMap<>(); // 销毁Bean的映射关系
 
 	/** Map between containing bean names: bean name to Set of bean names that the bean contains. */
 	private final Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<>(16);
@@ -362,9 +362,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean
 	 * @param bean the bean instance
 	 */
-	public void registerDisposableBean(String beanName, DisposableBean bean) {
+	public void registerDisposableBean(String beanName, DisposableBean bean) { // 注册销毁Bean映射关系
 		synchronized (this.disposableBeans) {
-			this.disposableBeans.put(beanName, bean);
+			this.disposableBeans.put(beanName, bean); // 注册销毁Bean映射关系
 		}
 	}
 
@@ -488,7 +488,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		}
 	}
 
-	public void destroySingletons() {
+	public void destroySingletons() { // 销毁所有Bean
 		if (logger.isTraceEnabled()) {
 			logger.trace("Destroying singletons in " + this);
 		}
@@ -498,10 +498,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 
 		String[] disposableBeanNames;
 		synchronized (this.disposableBeans) {
-			disposableBeanNames = StringUtils.toStringArray(this.disposableBeans.keySet());
+			disposableBeanNames = StringUtils.toStringArray(this.disposableBeans.keySet()); // 获取所有key
 		}
 		for (int i = disposableBeanNames.length - 1; i >= 0; i--) {
-			destroySingleton(disposableBeanNames[i]);
+			destroySingleton(disposableBeanNames[i]); // 销毁Bean
 		}
 
 		this.containedBeanMap.clear();
@@ -531,7 +531,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean
 	 * @see #destroyBean
 	 */
-	public void destroySingleton(String beanName) {
+	public void destroySingleton(String beanName) { // 销毁Bean
 		// Remove a registered singleton of the given name, if any.
 		removeSingleton(beanName);
 
@@ -540,7 +540,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		synchronized (this.disposableBeans) {
 			disposableBean = (DisposableBean) this.disposableBeans.remove(beanName);
 		}
-		destroyBean(beanName, disposableBean);
+		destroyBean(beanName, disposableBean); // 销毁Bean
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean
 	 * @param bean the bean instance to destroy
 	 */
-	protected void destroyBean(String beanName, @Nullable DisposableBean bean) {
+	protected void destroyBean(String beanName, @Nullable DisposableBean bean) { // 销毁Bean
 		// Trigger destruction of dependent beans first...
 		Set<String> dependencies;
 		synchronized (this.dependentBeanMap) {
@@ -568,7 +568,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		// Actually destroy the bean now...
 		if (bean != null) {
 			try {
-				bean.destroy();
+				bean.destroy(); // 销毁Bean
 			}
 			catch (Throwable ex) {
 				if (logger.isWarnEnabled()) {

@@ -905,8 +905,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		}
 		String result = value;
 		for (StringValueResolver resolver : this.embeddedValueResolvers) { // 遍历占位符解析器
-			result = resolver.resolveStringValue(result); // 调用lambda表达式解析占位符，获取属性值
-			if (result == null) {
+			result = resolver.resolveStringValue(result); // 调用lambda表达式解析占位符，获取属性值（详见PropertySourcesPlaceholderConfigurer#processProperties(...)或AbstractApplicationContext.finishBeanFactoryInitialization(...)）
+			if (result == null) { // 解析不到默认返回原始占位符值
 				return null;
 			}
 		}
@@ -1857,15 +1857,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @see #registerDisposableBean
 	 * @see #registerDependentBean
 	 */
-	protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
+	protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) { // 注册销毁Bean时的处理类DisposableBeanAdapter
 		AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
-		if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) {
+		if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) { // 判断是否非多例且Bean是否需要销毁（实现了DisposableBean接口、有@PreDestroy注解方法、destroy-method属性方法）
 			if (mbd.isSingleton()) {
 				// Register a DisposableBean implementation that performs all destruction
 				// work for the given bean: DestructionAwareBeanPostProcessors,
 				// DisposableBean interface, custom destroy method.
-				registerDisposableBean(beanName,
-						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+				registerDisposableBean(beanName, // 注册销毁Bean映射关系
+						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc)); // 创建DisposableBeanAdapter，通过实现了DestructionAwareBeanPostProcessor接口的BeanPostProcessor、DisposableBean接口类、destroy-method方法名销毁Bean
 			}
 			else {
 				// A bean with a custom scope...

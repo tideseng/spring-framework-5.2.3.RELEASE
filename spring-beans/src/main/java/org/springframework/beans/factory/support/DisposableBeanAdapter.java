@@ -60,7 +60,7 @@ import org.springframework.util.StringUtils;
  * @see AbstractBeanDefinition#getDestroyMethodName()
  */
 @SuppressWarnings("serial")
-class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
+class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable { // 实现了Runnable接口
 
 	private static final String CLOSE_METHOD_NAME = "close";
 
@@ -98,8 +98,8 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	 * @param postProcessors the List of BeanPostProcessors
 	 * (potentially DestructionAwareBeanPostProcessor), if any
 	 */
-	public DisposableBeanAdapter(Object bean, String beanName, RootBeanDefinition beanDefinition,
-			List<BeanPostProcessor> postProcessors, @Nullable AccessControlContext acc) {
+	public DisposableBeanAdapter(Object bean, String beanName, RootBeanDefinition beanDefinition, // 初始化DisposableBeanAdapter
+			List<BeanPostProcessor> postProcessors, @Nullable AccessControlContext acc) { // 传入BeanPostProcessor
 
 		Assert.notNull(bean, "Disposable bean must not be null");
 		this.bean = bean;
@@ -108,7 +108,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 				(this.bean instanceof DisposableBean && !beanDefinition.isExternallyManagedDestroyMethod("destroy"));
 		this.nonPublicAccessAllowed = beanDefinition.isNonPublicAccessAllowed();
 		this.acc = acc;
-		String destroyMethodName = inferDestroyMethodIfNecessary(bean, beanDefinition);
+		String destroyMethodName = inferDestroyMethodIfNecessary(bean, beanDefinition); // 获取destroyMethod对应的方法名
 		if (destroyMethodName != null && !(this.invokeDisposableBean && "destroy".equals(destroyMethodName)) &&
 				!beanDefinition.isExternallyManagedDestroyMethod(destroyMethodName)) {
 			this.destroyMethodName = destroyMethodName;
@@ -133,7 +133,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 			}
 			this.destroyMethod = destroyMethod;
 		}
-		this.beanPostProcessors = filterPostProcessors(postProcessors, bean);
+		this.beanPostProcessors = filterPostProcessors(postProcessors, bean); // 过滤出beanBane符合条件的DestructionAwareBeanPostProcessors
 	}
 
 	/**
@@ -142,14 +142,14 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	 * @param postProcessors the List of BeanPostProcessors
 	 * (potentially DestructionAwareBeanPostProcessor), if any
 	 */
-	public DisposableBeanAdapter(Object bean, List<BeanPostProcessor> postProcessors, AccessControlContext acc) {
+	public DisposableBeanAdapter(Object bean, List<BeanPostProcessor> postProcessors, AccessControlContext acc) { // 初始化DisposableBeanAdapter
 		Assert.notNull(bean, "Disposable bean must not be null");
 		this.bean = bean;
 		this.beanName = bean.getClass().getName();
 		this.invokeDisposableBean = (this.bean instanceof DisposableBean);
 		this.nonPublicAccessAllowed = true;
 		this.acc = acc;
-		this.beanPostProcessors = filterPostProcessors(postProcessors, bean);
+		this.beanPostProcessors = filterPostProcessors(postProcessors, bean); // 过滤出符合条件的DestructionAwareBeanPostProcessors
 	}
 
 	/**
@@ -184,7 +184,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	 */
 	@Nullable
 	private String inferDestroyMethodIfNecessary(Object bean, RootBeanDefinition beanDefinition) {
-		String destroyMethodName = beanDefinition.getDestroyMethodName();
+		String destroyMethodName = beanDefinition.getDestroyMethodName(); // 获取xml配置的destroy-method属性值
 		if (AbstractBeanDefinition.INFER_METHOD.equals(destroyMethodName) ||
 				(destroyMethodName == null && bean instanceof AutoCloseable)) {
 			// Only perform destroy method inference or Closeable detection
@@ -213,12 +213,12 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	 * @return the filtered List of DestructionAwareBeanPostProcessors
 	 */
 	@Nullable
-	private List<DestructionAwareBeanPostProcessor> filterPostProcessors(List<BeanPostProcessor> processors, Object bean) {
+	private List<DestructionAwareBeanPostProcessor> filterPostProcessors(List<BeanPostProcessor> processors, Object bean) { // 过滤出符合条件的DestructionAwareBeanPostProcessors
 		List<DestructionAwareBeanPostProcessor> filteredPostProcessors = null;
 		if (!CollectionUtils.isEmpty(processors)) {
 			filteredPostProcessors = new ArrayList<>(processors.size());
 			for (BeanPostProcessor processor : processors) {
-				if (processor instanceof DestructionAwareBeanPostProcessor) {
+				if (processor instanceof DestructionAwareBeanPostProcessor) { // 收集实现了DestructionAwareBeanPostProcessor接口的BeanPostProcessor会调用销毁Bean的处理方法（如：CommonAnnotationBeanPostProcessor、ApplicationListenerDetector）
 					DestructionAwareBeanPostProcessor dabpp = (DestructionAwareBeanPostProcessor) processor;
 					if (dabpp.requiresDestruction(bean)) {
 						filteredPostProcessors.add(dabpp);
@@ -236,10 +236,10 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 	}
 
 	@Override
-	public void destroy() {
+	public void destroy() { // 销毁bean
 		if (!CollectionUtils.isEmpty(this.beanPostProcessors)) {
 			for (DestructionAwareBeanPostProcessor processor : this.beanPostProcessors) {
-				processor.postProcessBeforeDestruction(this.bean, this.beanName);
+				processor.postProcessBeforeDestruction(this.bean, this.beanName); // 调用@PreDestroy修饰的方法
 			}
 		}
 
@@ -255,7 +255,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 					}, this.acc);
 				}
 				else {
-					((DisposableBean) this.bean).destroy();
+					((DisposableBean) this.bean).destroy(); // 调用DisposableBean接口的destroy方法
 				}
 			}
 			catch (Throwable ex) {
@@ -275,7 +275,7 @@ class DisposableBeanAdapter implements DisposableBean, Runnable, Serializable {
 		else if (this.destroyMethodName != null) {
 			Method methodToInvoke = determineDestroyMethod(this.destroyMethodName);
 			if (methodToInvoke != null) {
-				invokeCustomDestroyMethod(ClassUtils.getInterfaceMethodIfPossible(methodToInvoke));
+				invokeCustomDestroyMethod(ClassUtils.getInterfaceMethodIfPossible(methodToInvoke)); // 调用destroy-method修饰的方法
 			}
 		}
 	}
