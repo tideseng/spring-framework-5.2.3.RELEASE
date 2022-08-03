@@ -160,7 +160,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	private volatile boolean hasDestructionAwareBeanPostProcessors;
 
 	/** Map from scope identifier String to corresponding Scope. */
-	private final Map<String, Scope> scopes = new LinkedHashMap<>(8);
+	private final Map<String, Scope> scopes = new LinkedHashMap<>(8); // Scope映射容器
 
 	/** Security context used when running with a SecurityManager. */
 	@Nullable
@@ -198,8 +198,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	//---------------------------------------------------------------------
 
 	@Override
-	public Object getBean(String name) throws BeansException { // 获取Bean实例
-		return doGetBean(name, null, null, false); // 获取Bean实例
+	public Object getBean(String name) throws BeansException { // 根据name获取Bean实例
+		return doGetBean(name, null, null, false); // 根据name获取Bean实例
 	}
 
 	@Override
@@ -294,7 +294,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			try {
-				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName); // 合并父BeanDefinition的属性
+				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName); // 合并父BeanDefinition的属性（当beanName在beanDefinitionMap容器中不存在时，会抛出NoSuchBeanDefinitionException异常）
 				checkMergedBeanDefinition(mbd, beanName, args);
 
 				// Guarantee initialization of beans that the current bean depends on.
@@ -346,20 +346,20 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
 				}
 
-				else {
-					String scopeName = mbd.getScope();
-					final Scope scope = this.scopes.get(scopeName);
+				else { // 3.当Bean的为自定义scope时，应用自己进行管理
+					String scopeName = mbd.getScope();  // 获取scopeName
+					final Scope scope = this.scopes.get(scopeName); // 根据scopeName获取自定义Scope
 					if (scope == null) {
 						throw new IllegalStateException("No Scope registered for scope name '" + scopeName + "'");
 					}
 					try {
-						Object scopedInstance = scope.get(beanName, () -> {
-							beforePrototypeCreation(beanName);
+						Object scopedInstance = scope.get(beanName, () -> { // 调用自定义Scope接口的get方法，并传入了一个函数式接口参数
+							beforePrototypeCreation(beanName); // 标记beanName正在创建
 							try {
-								return createBean(beanName, mbd, args);
+								return createBean(beanName, mbd, args); // 创建Bean
 							}
 							finally {
-								afterPrototypeCreation(beanName);
+								afterPrototypeCreation(beanName); // 清除beanName正在创建
 							}
 						});
 						bean = getObjectForBeanInstance(scopedInstance, name, beanName, mbd);
@@ -963,13 +963,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public void registerScope(String scopeName, Scope scope) {
+	public void registerScope(String scopeName, Scope scope) { // 注册Scope
 		Assert.notNull(scopeName, "Scope identifier must not be null");
 		Assert.notNull(scope, "Scope must not be null");
 		if (SCOPE_SINGLETON.equals(scopeName) || SCOPE_PROTOTYPE.equals(scopeName)) {
 			throw new IllegalArgumentException("Cannot replace existing scopes 'singleton' and 'prototype'");
 		}
-		Scope previous = this.scopes.put(scopeName, scope);
+		Scope previous = this.scopes.put(scopeName, scope); // 添加scope映射关系
 		if (previous != null && previous != scope) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Replacing scope '" + scopeName + "' from [" + previous + "] to [" + scope + "]");

@@ -338,13 +338,13 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	//---------------------------------------------------------------------
 
 	@Override
-	public <T> T getBean(Class<T> requiredType) throws BeansException {
-		return getBean(requiredType, (Object[]) null);
+	public <T> T getBean(Class<T> requiredType) throws BeansException { // 根据ClassType获取Bean实例
+		return getBean(requiredType, (Object[]) null); // 根据ClassType获取Bean实例
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getBean(Class<T> requiredType, @Nullable Object... args) throws BeansException {
+	public <T> T getBean(Class<T> requiredType, @Nullable Object... args) throws BeansException { // 根据ClassType获取Bean实例
 		Assert.notNull(requiredType, "Required type must not be null");
 		Object resolved = resolveBean(ResolvableType.forRawClass(requiredType), args, false);
 		if (resolved == null) {
@@ -857,7 +857,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName); // 合并父BeanDefinition的属性
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) { // 实例化非抽象、非懒加载的单例Bean
 				if (isFactoryBean(beanName)) { // FactoryBean的处理逻辑
-					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); // 获取前缀为'&'的beanName对应的实例，其实就是beanName实例
+					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName); // 获取前缀为'&'的beanName对应的实例，其实就是FactoryBean实例本身（带&的beanName返回的是实例本身，不带&的beanName返回的是getObject()方法的实例）
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
 						boolean isEagerInit;
@@ -867,11 +867,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 									getAccessControlContext());
 						}
 						else {
-							isEagerInit = (factory instanceof SmartFactoryBean && // 当bean实现了SmartFactoryBean接口，并重写isEagerInit方法返回true，则提前调用getObject()方法
+							isEagerInit = (factory instanceof SmartFactoryBean && // 当Bean实现了SmartFactoryBean接口，并重写isEagerInit方法返回true，则提前调用getObject()方法
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
-						if (isEagerInit) {
-							getBean(beanName);
+						if (isEagerInit) { // 当需要提前初始化时
+							getBean(beanName); // 获取不带&的beanName实例，即获取getObject()方法的实例
 						}
 					}
 				}
@@ -1136,7 +1136,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			ResolvableType requiredType, @Nullable Object[] args, boolean nonUniqueAsNull) throws BeansException {
 
 		Assert.notNull(requiredType, "Required type must not be null");
-		String[] candidateNames = getBeanNamesForType(requiredType);
+		String[] candidateNames = getBeanNamesForType(requiredType); // 根据BeanClass获取对应的beanName数组
 
 		if (candidateNames.length > 1) {
 			List<String> autowireCandidates = new ArrayList<>(candidateNames.length);
@@ -1150,11 +1150,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 		}
 
-		if (candidateNames.length == 1) {
+		if (candidateNames.length == 1) { // 当BeanClass只有一个对应的beanName时
 			String beanName = candidateNames[0];
-			return new NamedBeanHolder<>(beanName, (T) getBean(beanName, requiredType.toClass(), args));
+			return new NamedBeanHolder<>(beanName, (T) getBean(beanName, requiredType.toClass(), args)); // 根据beanName调用getBean()
 		}
-		else if (candidateNames.length > 1) {
+		else if (candidateNames.length > 1) { // 当BeanClass有多个对应的beanName时
 			Map<String, Object> candidates = new LinkedHashMap<>(candidateNames.length);
 			for (String beanName : candidateNames) {
 				if (containsSingleton(beanName) && args == null) {
@@ -1165,18 +1165,18 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					candidates.put(beanName, getType(beanName));
 				}
 			}
-			String candidateName = determinePrimaryCandidate(candidates, requiredType.toClass());
+			String candidateName = determinePrimaryCandidate(candidates, requiredType.toClass()); // 从给定的容器中判断出primary的beanName
 			if (candidateName == null) {
-				candidateName = determineHighestPriorityCandidate(candidates, requiredType.toClass());
+				candidateName = determineHighestPriorityCandidate(candidates, requiredType.toClass()); // 从给定的容器中判断出优先级较高的beanName
 			}
 			if (candidateName != null) {
 				Object beanInstance = candidates.get(candidateName);
 				if (beanInstance == null || beanInstance instanceof Class) {
-					beanInstance = getBean(candidateName, requiredType.toClass(), args);
+					beanInstance = getBean(candidateName, requiredType.toClass(), args); // 当挑选出一个beanName时，根据beanName调用getBean()
 				}
 				return new NamedBeanHolder<>(candidateName, (T) beanInstance);
 			}
-			if (!nonUniqueAsNull) {
+			if (!nonUniqueAsNull) { // nonUniqueAsNull默认为false
 				throw new NoUniqueBeanDefinitionException(requiredType, candidates.keySet());
 			}
 		}
@@ -1555,16 +1555,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 * @see #isPrimary(String, Object)
 	 */
 	@Nullable
-	protected String determinePrimaryCandidate(Map<String, Object> candidates, Class<?> requiredType) {
+	protected String determinePrimaryCandidate(Map<String, Object> candidates, Class<?> requiredType) { // 从给定的容器中判断出primary的beanName
 		String primaryBeanName = null;
 		for (Map.Entry<String, Object> entry : candidates.entrySet()) {
 			String candidateBeanName = entry.getKey();
 			Object beanInstance = entry.getValue();
-			if (isPrimary(candidateBeanName, beanInstance)) {
+			if (isPrimary(candidateBeanName, beanInstance)) { // 判断该beanName对应的BeanDefinition是否为primary
 				if (primaryBeanName != null) {
 					boolean candidateLocal = containsBeanDefinition(candidateBeanName);
 					boolean primaryLocal = containsBeanDefinition(primaryBeanName);
-					if (candidateLocal && primaryLocal) {
+					if (candidateLocal && primaryLocal) { // 当存在多个同为primary的beanName时抛出异常
 						throw new NoUniqueBeanDefinitionException(requiredType, candidates.size(),
 								"more than one 'primary' bean found among candidates: " + candidates.keySet());
 					}
@@ -1593,17 +1593,17 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 * @see #getPriority(Object)
 	 */
 	@Nullable
-	protected String determineHighestPriorityCandidate(Map<String, Object> candidates, Class<?> requiredType) {
+	protected String determineHighestPriorityCandidate(Map<String, Object> candidates, Class<?> requiredType) { // 从给定的容器中判断出优先级较高的beanName
 		String highestPriorityBeanName = null;
 		Integer highestPriority = null;
 		for (Map.Entry<String, Object> entry : candidates.entrySet()) {
 			String candidateBeanName = entry.getKey();
 			Object beanInstance = entry.getValue();
 			if (beanInstance != null) {
-				Integer candidatePriority = getPriority(beanInstance);
+				Integer candidatePriority = getPriority(beanInstance); // 获取该beanName对应的优先级
 				if (candidatePriority != null) {
 					if (highestPriorityBeanName != null) {
-						if (candidatePriority.equals(highestPriority)) {
+						if (candidatePriority.equals(highestPriority)) { // 当存在多个同为最高优先级的beanName时抛出异常
 							throw new NoUniqueBeanDefinitionException(requiredType, candidates.size(),
 									"Multiple beans found with the same priority ('" + highestPriority +
 									"') among candidates: " + candidates.keySet());
