@@ -46,18 +46,18 @@ import org.springframework.util.ClassUtils;
  * @see BeanMethod
  * @see ConfigurationClassParser
  */
-final class ConfigurationClass {
+final class ConfigurationClass { // 配置类，用于封装解析
 
-	private final AnnotationMetadata metadata;
+	private final AnnotationMetadata metadata; // 注解元信息
 
 	private final Resource resource;
 
 	@Nullable
 	private String beanName;
 
-	private final Set<ConfigurationClass> importedBy = new LinkedHashSet<>(1);
+	private final Set<ConfigurationClass> importedBy = new LinkedHashSet<>(1); // 外部类容器
 
-	private final Set<BeanMethod> beanMethods = new LinkedHashSet<>();
+	private final Set<BeanMethod> beanMethods = new LinkedHashSet<>(); // @Bean方法容器
 
 	private final Map<String, Class<? extends BeanDefinitionReader>> importedResources =
 			new LinkedHashMap<>();

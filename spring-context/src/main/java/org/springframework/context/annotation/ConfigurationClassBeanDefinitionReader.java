@@ -96,7 +96,7 @@ class ConfigurationClassBeanDefinitionReader {
 	 * Create a new {@link ConfigurationClassBeanDefinitionReader} instance
 	 * that will be used to populate the given {@link BeanDefinitionRegistry}.
 	 */
-	ConfigurationClassBeanDefinitionReader(BeanDefinitionRegistry registry, SourceExtractor sourceExtractor,
+	ConfigurationClassBeanDefinitionReader(BeanDefinitionRegistry registry, SourceExtractor sourceExtractor, // 实例化ConfigurationClassBeanDefinitionReader
 			ResourceLoader resourceLoader, Environment environment, BeanNameGenerator importBeanNameGenerator,
 			ImportRegistry importRegistry) {
 
@@ -114,10 +114,10 @@ class ConfigurationClassBeanDefinitionReader {
 	 * Read {@code configurationModel}, registering bean definitions
 	 * with the registry based on its contents.
 	 */
-	public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
+	public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) { // 加载BeanDefinition
 		TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
-		for (ConfigurationClass configClass : configurationModel) {
-			loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
+		for (ConfigurationClass configClass : configurationModel) { // 遍历配置类
+			loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator); // 加载BeanDefinition
 		}
 	}
 
@@ -227,8 +227,8 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 		else {
 			// instance @Bean method
-			beanDef.setFactoryBeanName(configClass.getBeanName());
-			beanDef.setUniqueFactoryMethodName(methodName);
+			beanDef.setFactoryBeanName(configClass.getBeanName()); // 设置@Bean注解对应的FactoryBean属性
+			beanDef.setUniqueFactoryMethodName(methodName); // 设置@Bean注解对应的FactoryMethod属性
 		}
 
 		if (metadata instanceof StandardMethodMetadata) {
@@ -284,7 +284,7 @@ class ConfigurationClassBeanDefinitionReader {
 			logger.trace(String.format("Registering bean definition for @Bean method %s.%s()",
 					configClass.getMetadata().getClassName(), beanName));
 		}
-		this.registry.registerBeanDefinition(beanName, beanDefToRegister);
+		this.registry.registerBeanDefinition(beanName, beanDefToRegister); // 注册BeanDefinition
 	}
 
 	protected boolean isOverriddenByExistingDefinition(BeanMethod beanMethod, String beanName) {

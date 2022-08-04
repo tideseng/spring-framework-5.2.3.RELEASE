@@ -81,33 +81,33 @@ abstract class ConfigurationClassUtils {
 	 * @param metadataReaderFactory the current factory in use by the caller
 	 * @return whether the candidate qualifies as (any kind of) configuration class
 	 */
-	public static boolean checkConfigurationClassCandidate(
+	public static boolean checkConfigurationClassCandidate( // 判断BeanDefinition是否为候选配置类
 			BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
 
 		String className = beanDef.getBeanClassName();
 		if (className == null || beanDef.getFactoryMethodName() != null) {
 			return false;
 		}
-
+		// 一、获取BeanDefinition上的注解元信息
 		AnnotationMetadata metadata;
-		if (beanDef instanceof AnnotatedBeanDefinition &&
+		if (beanDef instanceof AnnotatedBeanDefinition && // 如果是注解扫描产生的BeanDefinition（如：ScannedGenericBeanDefinition）
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...
-			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata();
+			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata(); // 获取注解元信息
 		}
-		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) {
+		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) { // 如果是非注解扫描产生的BeanDefinition（如：RootBeanDefinition、GenericBeanDefinition）
 			// Check already loaded Class if present...
 			// since we possibly can't even load the class file for this Class.
-			Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass();
+			Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass(); // 获取BeanDefinition的beanClass
 			if (BeanFactoryPostProcessor.class.isAssignableFrom(beanClass) ||
 					BeanPostProcessor.class.isAssignableFrom(beanClass) ||
 					AopInfrastructureBean.class.isAssignableFrom(beanClass) ||
 					EventListenerFactory.class.isAssignableFrom(beanClass)) {
-				return false;
+				return false; // 如果该类是BeanFactoryPostProcessor、BeanPostProcessor、AopInfrastructureBean、EventListenerFactory子类，则立即返回无需处理
 			}
 			metadata = AnnotationMetadata.introspect(beanClass);
 		}
-		else {
+		else { // 其它情况
 			try {
 				MetadataReader metadataReader = metadataReaderFactory.getMetadataReader(className);
 				metadata = metadataReader.getAnnotationMetadata();
@@ -120,22 +120,22 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-
-		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
-		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
-			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
+		// 二、根据注解元信息中的相关注解进行判断
+		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName()); // 获取注解元信息获取@Configuration注解的相关信息
+		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) { // 当该类被@Configuration注解修饰，且proxyBeanMethods属性为默认值true时
+			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL); // 设置configurationClass属性标记完全匹配
 		}
-		else if (config != null || isConfigurationCandidate(metadata)) {
-			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
+		else if (config != null || isConfigurationCandidate(metadata)) { // 当该类被@Configuration注解修饰且proxyBeanMethods属性为false、或该类不被@Configuration注解修饰但被@Component、@ComponentScan、@Import、@ImportResource、@Bean修饰时
+			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE); // 设置configurationClass属性标记局部匹配
 		}
 		else {
 			return false;
 		}
 
 		// It's a full or lite configuration candidate... Let's determine the order value, if any.
-		Integer order = getOrder(metadata);
+		Integer order = getOrder(metadata); // 从注解元信息中获取@Order注解值
 		if (order != null) {
-			beanDef.setAttribute(ORDER_ATTRIBUTE, order);
+			beanDef.setAttribute(ORDER_ATTRIBUTE, order); // 当类中有@Order注解时，将其值设置到BeanDefinition中的attribute属性中
 		}
 
 		return true;
@@ -148,14 +148,14 @@ abstract class ConfigurationClassUtils {
 	 * @return {@code true} if the given class is to be registered for
 	 * configuration class processing; {@code false} otherwise
 	 */
-	public static boolean isConfigurationCandidate(AnnotationMetadata metadata) {
+	public static boolean isConfigurationCandidate(AnnotationMetadata metadata) { // 判断注解元信息对应的类是否为轻量级配置类（被@Component、@ComponentScan、@Import、@ImportResource、@Bean修饰）
 		// Do not consider an interface or an annotation...
 		if (metadata.isInterface()) {
 			return false;
 		}
 
 		// Any of the typical annotations found?
-		for (String indicator : candidateIndicators) {
+		for (String indicator : candidateIndicators) { // 只要@Component、@ComponentScan、@Import、@ImportResource中任何一个注解匹配，则是轻量级配置类
 			if (metadata.isAnnotated(indicator)) {
 				return true;
 			}
@@ -163,7 +163,7 @@ abstract class ConfigurationClassUtils {
 
 		// Finally, let's look for @Bean methods...
 		try {
-			return metadata.hasAnnotatedMethods(Bean.class.getName());
+			return metadata.hasAnnotatedMethods(Bean.class.getName()); // 当有@Bean修饰的方法时，也是轻量级配置类
 		}
 		catch (Throwable ex) {
 			if (logger.isDebugEnabled()) {
@@ -181,7 +181,7 @@ abstract class ConfigurationClassUtils {
 	 * @since 5.0
 	 */
 	@Nullable
-	public static Integer getOrder(AnnotationMetadata metadata) {
+	public static Integer getOrder(AnnotationMetadata metadata) { // 从注解元信息中获取@Order注解值
 		Map<String, Object> orderAttributes = metadata.getAnnotationAttributes(Order.class.getName());
 		return (orderAttributes != null ? ((Integer) orderAttributes.get(AnnotationUtils.VALUE)) : null);
 	}
@@ -194,7 +194,7 @@ abstract class ConfigurationClassUtils {
 	 * or {@link Ordered#LOWEST_PRECEDENCE} if none declared
 	 * @since 4.2
 	 */
-	public static int getOrder(BeanDefinition beanDef) {
+	public static int getOrder(BeanDefinition beanDef) { // 从BeanDefinition中获取order的attribute属性值
 		Integer order = (Integer) beanDef.getAttribute(ORDER_ATTRIBUTE);
 		return (order != null ? order : Ordered.LOWEST_PRECEDENCE);
 	}
