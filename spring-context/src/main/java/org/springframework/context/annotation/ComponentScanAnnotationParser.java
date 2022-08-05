@@ -63,7 +63,7 @@ class ComponentScanAnnotationParser {
 	private final BeanDefinitionRegistry registry;
 
 
-	public ComponentScanAnnotationParser(Environment environment, ResourceLoader resourceLoader,
+	public ComponentScanAnnotationParser(Environment environment, ResourceLoader resourceLoader, // 初始化ComponentScanAnnotationParser
 			BeanNameGenerator beanNameGenerator, BeanDefinitionRegistry registry) {
 
 		this.environment = environment;
@@ -73,8 +73,8 @@ class ComponentScanAnnotationParser {
 	}
 
 
-	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) {
-		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(this.registry,
+	public Set<BeanDefinitionHolder> parse(AnnotationAttributes componentScan, final String declaringClass) { // 处理@componentScan注解，扫描生成符合条件的BeanDefinition集合
+		ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(this.registry, // 创建注解扫描器
 				componentScan.getBoolean("useDefaultFilters"), this.environment, this.resourceLoader);
 
 		Class<? extends BeanNameGenerator> generatorClass = componentScan.getClass("nameGenerator");
@@ -108,7 +108,7 @@ class ComponentScanAnnotationParser {
 		if (lazyInit) {
 			scanner.getBeanDefinitionDefaults().setLazyInit(true);
 		}
-
+		// 收集basePackage
 		Set<String> basePackages = new LinkedHashSet<>();
 		String[] basePackagesArray = componentScan.getStringArray("basePackages");
 		for (String pkg : basePackagesArray) {
@@ -123,13 +123,13 @@ class ComponentScanAnnotationParser {
 			basePackages.add(ClassUtils.getPackageName(declaringClass));
 		}
 
-		scanner.addExcludeFilter(new AbstractTypeHierarchyTraversingFilter(false, false) {
+		scanner.addExcludeFilter(new AbstractTypeHierarchyTraversingFilter(false, false) { // 添加排除规则，排除自己
 			@Override
 			protected boolean matchClassName(String className) {
 				return declaringClass.equals(className);
 			}
 		});
-		return scanner.doScan(StringUtils.toStringArray(basePackages));
+		return scanner.doScan(StringUtils.toStringArray(basePackages)); // 扫描包路径，并把符合过滤条件的类封装成BeanDefinition对象
 	}
 
 	private List<TypeFilter> typeFiltersFor(AnnotationAttributes filterAttributes) {

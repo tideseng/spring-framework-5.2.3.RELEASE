@@ -33,7 +33,7 @@ import org.springframework.core.type.MethodMetadata;
  */
 final class BeanMethod extends ConfigurationMethod {
 
-	public BeanMethod(MethodMetadata metadata, ConfigurationClass configurationClass) {
+	public BeanMethod(MethodMetadata metadata, ConfigurationClass configurationClass) { // 初始化BeanMethod
 		super(metadata, configurationClass);
 	}
 

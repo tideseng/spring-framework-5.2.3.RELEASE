@@ -90,12 +90,12 @@ abstract class ConfigurationClassUtils {
 		}
 		// 一、获取BeanDefinition上的注解元信息
 		AnnotationMetadata metadata;
-		if (beanDef instanceof AnnotatedBeanDefinition && // 如果是注解扫描产生的BeanDefinition（如：ScannedGenericBeanDefinition）
+		if (beanDef instanceof AnnotatedBeanDefinition && // 如果是注解扫描产生的BeanDefinition（如：AnnotatedGenericBeanDefinition、ScannedGenericBeanDefinition）
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...
 			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata(); // 获取注解元信息
 		}
-		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) { // 如果是非注解扫描产生的BeanDefinition（如：RootBeanDefinition、GenericBeanDefinition）
+		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) { // 如果是非注解扫描产生的BeanDefinition（如：RootBeanDefinition、GenericBeanDefinition，注册的内置Bean都是RootBeanDefinition类型）
 			// Check already loaded Class if present...
 			// since we possibly can't even load the class file for this Class.
 			Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass(); // 获取BeanDefinition的beanClass

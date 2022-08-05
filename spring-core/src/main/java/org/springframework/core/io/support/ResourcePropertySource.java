@@ -53,7 +53,7 @@ public class ResourcePropertySource extends PropertiesPropertySource {
 	 * Create a PropertySource having the given name based on Properties
 	 * loaded from the given encoded resource.
 	 */
-	public ResourcePropertySource(String name, EncodedResource resource) throws IOException {
+	public ResourcePropertySource(String name, EncodedResource resource) throws IOException { // 初始化ResourcePropertySource
 		super(name, PropertiesLoaderUtils.loadProperties(resource));
 		this.resourceName = getNameForResource(resource.getResource());
 	}
@@ -63,7 +63,7 @@ public class ResourcePropertySource extends PropertiesPropertySource {
 	 * The name of the PropertySource will be generated based on the
 	 * {@link Resource#getDescription() description} of the given resource.
 	 */
-	public ResourcePropertySource(EncodedResource resource) throws IOException {
+	public ResourcePropertySource(EncodedResource resource) throws IOException { // 初始化ResourcePropertySource
 		super(getNameForResource(resource.getResource()), PropertiesLoaderUtils.loadProperties(resource));
 		this.resourceName = null;
 	}

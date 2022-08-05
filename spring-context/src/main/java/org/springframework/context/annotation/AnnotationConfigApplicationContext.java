@@ -62,9 +62,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
-	public AnnotationConfigApplicationContext() {
-		this.reader = new AnnotatedBeanDefinitionReader(this);
-		this.scanner = new ClassPathBeanDefinitionScanner(this);
+	public AnnotationConfigApplicationContext() { // 初始化AnnotationConfigApplicationContext
+		this.reader = new AnnotatedBeanDefinitionReader(this); // 创建AnnotatedBeanDefinitionReader注解读取器，并注册内置Bean
+		this.scanner = new ClassPathBeanDefinitionScanner(this); // 创建ClassPathBeanDefinitionScanner注解扫描器，并注册默认的注解拦截器
 	}
 
 	/**
@@ -73,8 +73,8 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(DefaultListableBeanFactory beanFactory) {
 		super(beanFactory);
-		this.reader = new AnnotatedBeanDefinitionReader(this);
-		this.scanner = new ClassPathBeanDefinitionScanner(this);
+		this.reader = new AnnotatedBeanDefinitionReader(this); // 创建AnnotatedBeanDefinitionReader，并注册内置Bean
+		this.scanner = new ClassPathBeanDefinitionScanner(this); // 创建ClassPathBeanDefinitionScanner注解扫描器，并注册默认的注解拦截器
 	}
 
 	/**
@@ -83,10 +83,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @param componentClasses one or more component classes &mdash; for example,
 	 * {@link Configuration @Configuration} classes
 	 */
-	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
-		this();
-		register(componentClasses);
-		refresh();
+	public AnnotationConfigApplicationContext(Class<?>... componentClasses) { // 初始化AnnotationConfigApplicationContext
+		this(); // 调用无参构造方法
+		register(componentClasses); // 通过注解读取器将类封装成BeanDefinition并注册到BeanFactory中（通过注解读取器生成的是AnnotatedGenericBeanDefinition）
+		refresh(); // 调用refresh()方法初始化Spring容器
 	}
 
 	/**
@@ -95,10 +95,10 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * and automatically refreshing the context.
 	 * @param basePackages the packages to scan for component classes
 	 */
-	public AnnotationConfigApplicationContext(String... basePackages) {
-		this();
-		scan(basePackages);
-		refresh();
+	public AnnotationConfigApplicationContext(String... basePackages) { // 初始化AnnotationConfigApplicationContext
+		this(); // 调用无参构造方法
+		scan(basePackages); // 通过注解扫描器将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中（通过注解扫描器生成的是ScannedGenericBeanDefinition）
+		refresh(); // 调用refresh()方法初始化Spring容器
 	}
 
 
@@ -157,9 +157,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @see #refresh()
 	 */
 	@Override
-	public void register(Class<?>... componentClasses) {
+	public void register(Class<?>... componentClasses) { // 通过注解读取器将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 		Assert.notEmpty(componentClasses, "At least one component class must be specified");
-		this.reader.register(componentClasses);
+		this.reader.register(componentClasses); // 通过注解读取器将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 	}
 
 	/**
@@ -171,9 +171,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @see #refresh()
 	 */
 	@Override
-	public void scan(String... basePackages) {
+	public void scan(String... basePackages) { // 通过注解扫描器将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中
 		Assert.notEmpty(basePackages, "At least one base package must be specified");
-		this.scanner.scan(basePackages);
+		this.scanner.scan(basePackages); // 通过注解扫描器将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中
 	}
 
 

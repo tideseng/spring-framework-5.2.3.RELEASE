@@ -133,8 +133,8 @@ public abstract class AnnotationConfigUtils {
 	 * Register all relevant annotation post processors in the given registry.
 	 * @param registry the registry to operate on
 	 */
-	public static void registerAnnotationConfigProcessors(BeanDefinitionRegistry registry) {
-		registerAnnotationConfigProcessors(registry, null);
+	public static void registerAnnotationConfigProcessors(BeanDefinitionRegistry registry) { // 注册内置Bean
+		registerAnnotationConfigProcessors(registry, null); // 注册内置Bean
 	}
 
 	/**
@@ -230,11 +230,11 @@ public abstract class AnnotationConfigUtils {
 		}
 	}
 
-	public static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd) { // 填充BeanDefinition注解属性
-		processCommonDefinitionAnnotations(abd, abd.getMetadata()); // 填充BeanDefinition注解属性
+	public static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd) { // 填充BeanDefinition注解属性（@lazy、@Primary、@DependsOn、@Role、@Description）
+		processCommonDefinitionAnnotations(abd, abd.getMetadata()); // 填充BeanDefinition注解属性（@lazy、@Primary、@DependsOn、@Role、@Description）
 	}
 
-	static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd, AnnotatedTypeMetadata metadata) { // 填充BeanDefinition注解属性
+	static void processCommonDefinitionAnnotations(AnnotatedBeanDefinition abd, AnnotatedTypeMetadata metadata) { // 填充BeanDefinition注解属性（@lazy、@Primary、@DependsOn、@Role、@Description）
 		AnnotationAttributes lazy = attributesFor(metadata, Lazy.class);
 		if (lazy != null) {
 			abd.setLazyInit(lazy.getBoolean("value"));

@@ -49,7 +49,7 @@ public class CompositePropertySource extends EnumerablePropertySource<Object> {
 	 * Create a new {@code CompositePropertySource}.
 	 * @param name the name of the property source
 	 */
-	public CompositePropertySource(String name) {
+	public CompositePropertySource(String name) { // 初始化支持合并PropertySource对象的CompositePropertySource
 		super(name);
 	}
 

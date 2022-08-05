@@ -33,8 +33,8 @@ import org.springframework.lang.Nullable;
 public class DefaultPropertySourceFactory implements PropertySourceFactory {
 
 	@Override
-	public PropertySource<?> createPropertySource(@Nullable String name, EncodedResource resource) throws IOException {
-		return (name != null ? new ResourcePropertySource(name, resource) : new ResourcePropertySource(resource));
+	public PropertySource<?> createPropertySource(@Nullable String name, EncodedResource resource) throws IOException { // 加载Resource中的配置属性封装到PropertySource对象中
+		return (name != null ? new ResourcePropertySource(name, resource) : new ResourcePropertySource(resource)); // 创建ResourcePropertySource对象
 	}
 
 }
