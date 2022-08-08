@@ -319,7 +319,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			parser.parse(candidates); // 解析候选配置类BeanDefinition集合
 			parser.validate();
 
-			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
+			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses()); // 获取所有收集到的ConfigurationClass
 			configClasses.removeAll(alreadyParsed);
 
 			// Read the model and create bean definitions based on its content
@@ -328,7 +328,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
-			this.reader.loadBeanDefinitions(configClasses); // 从ConfigurationClass中加载BeanDefinition
+			this.reader.loadBeanDefinitions(configClasses); // 从ConfigurationClass中加载BeanDefinition（@Bean、@ImportResource、ImportBeanDefinitionRegistrar具体处理逻辑）
 			alreadyParsed.addAll(configClasses);
 
 			candidates.clear(); // 清空
@@ -344,7 +344,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						BeanDefinition bd = registry.getBeanDefinition(candidateName);
 						if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory) &&
 								!alreadyParsedClasses.contains(bd.getBeanClassName())) {
-							candidates.add(new BeanDefinitionHolder(bd, candidateName)); // 当新增的BeanDefinition为候选配置类，且还没有被处理时，添加到要解析的列表中（如：通过ImportBeanDefinitionRegistrar接口手动注册的类）
+							candidates.add(new BeanDefinitionHolder(bd, candidateName)); // 当新增的BeanDefinition为候选配置类，且还没有被处理时，添加到要解析的列表中（如：通过ImportBeanDefinitionRegistrar接口手动注册的BeanDefinition）
 						}
 					}
 				}

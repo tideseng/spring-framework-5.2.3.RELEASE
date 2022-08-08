@@ -82,30 +82,30 @@ class ConditionEvaluator {
 			return false;
 		}
 
-		if (phase == null) { // 如果phase阶段为空，判断类上是否有@Configuration、@Component、@ComponentScan、@Import、@ImportResource 或 方法上有@Bean注解，如果有就使用ConfigurationPhase.PARSE_CONFIGURATION
+		if (phase == null) { // 如果phase阶段为空，判断类是否为候选配置类，如果是则使用ConfigurationPhase.PARSE_CONFIGURATION、否则使用ConfigurationPhase.REGISTER_BEAN
 			if (metadata instanceof AnnotationMetadata &&
 					ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
-				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
+				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION); // 赋值phase重新进行调用
 			}
-			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
+			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN); // 赋值phase重新进行调用
 		}
 
-		List<Condition> conditions = new ArrayList<>();
+		List<Condition> conditions = new ArrayList<>(); // 所有@Conditional注解对应的Condtion实现类容器
 		for (String[] conditionClasses : getConditionClasses(metadata)) { // 获取当前所有@Conditional注解对应的Condtion实现类的全路径类名，通过反射创建实例放入conditions集合中
 			for (String conditionClass : conditionClasses) {
-				Condition condition = getCondition(conditionClass, this.context.getClassLoader());
-				conditions.add(condition);
+				Condition condition = getCondition(conditionClass, this.context.getClassLoader()); // 通过反射创建Condition实例（每次都创建一个实例）
+				conditions.add(condition); // 将Condition实例放入conditions集合中
 			}
 		}
 
-		AnnotationAwareOrderComparator.sort(conditions); // 进行排序
+		AnnotationAwareOrderComparator.sort(conditions); // 对conditions集合进行排序
 
 		for (Condition condition : conditions) { // 遍历Condition实现类
 			ConfigurationPhase requiredPhase = null;
 			if (condition instanceof ConfigurationCondition) { // 如果Condition实现了ConfigurationCondition，则获取该Condition的阶段
 				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
 			}
-			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) { // Condition接口实现类的调用入口
+			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) { // 当该Condition的阶段与传入的parse相同时，调用Condition#matches(...)方法判断是否匹配
 				return true;
 			}
 		}

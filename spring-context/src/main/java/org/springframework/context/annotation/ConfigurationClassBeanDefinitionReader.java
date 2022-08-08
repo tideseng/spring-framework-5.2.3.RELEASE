@@ -137,21 +137,21 @@ class ConfigurationClassBeanDefinitionReader {
 			return;
 		}
 
-		if (configClass.isImported()) {
-			registerBeanDefinitionForImportedConfigurationClass(configClass);
+		if (configClass.isImported()) { // 内部类/@Import导入类
+			registerBeanDefinitionForImportedConfigurationClass(configClass); // 处理内部类/@Import导入类，加载内部类/@Import导入类修饰的BeanDefinition
 		}
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) { // 遍历BeanMethod
-			loadBeanDefinitionsForBeanMethod(beanMethod); // 注册@Bean修饰的BeanDefinition
+			loadBeanDefinitionsForBeanMethod(beanMethod); // 处理@Bean，加载@Bean修饰的BeanDefinition
 		}
 
-		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
-		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
+		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources()); // 处理@ImportSource，加载@ImportSource修饰的BeanDefinition
+		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars()); // 处理ImportBeanDefinitionRegistrar类，调用ImportBeanDefinitionRegistrar类注册BeanDefinition
 	}
 
 	/**
 	 * Register the {@link Configuration} class itself as a bean definition.
 	 */
-	private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) {
+	private void registerBeanDefinitionForImportedConfigurationClass(ConfigurationClass configClass) { // 处理内部类/@Import导入类，加载内部类/@Import导入类修饰的BeanDefinition
 		AnnotationMetadata metadata = configClass.getMetadata();
 		AnnotatedGenericBeanDefinition configBeanDef = new AnnotatedGenericBeanDefinition(metadata); // 创建AnnotatedGenericBeanDefinition
 
@@ -175,7 +175,7 @@ class ConfigurationClassBeanDefinitionReader {
 	 * with the BeanDefinitionRegistry based on its contents.
 	 */
 	@SuppressWarnings("deprecation")  // for RequiredAnnotationBeanPostProcessor.SKIP_REQUIRED_CHECK_ATTRIBUTE
-	private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) { // 注册@Bean修饰的BeanDefinition
+	private void loadBeanDefinitionsForBeanMethod(BeanMethod beanMethod) { // 处理@Bean，加载@Bean修饰的BeanDefinition
 		ConfigurationClass configClass = beanMethod.getConfigurationClass();
 		MethodMetadata metadata = beanMethod.getMetadata();
 		String methodName = metadata.getMethodName(); // 获取methodName
@@ -338,7 +338,7 @@ class ConfigurationClassBeanDefinitionReader {
 		return true;
 	}
 
-	private void loadBeanDefinitionsFromImportedResources(
+	private void loadBeanDefinitionsFromImportedResources( // 处理@ImportSource，加载@ImportSource修饰的BeanDefinition
 			Map<String, Class<? extends BeanDefinitionReader>> importedResources) {
 
 		Map<Class<?>, BeanDefinitionReader> readerInstanceCache = new HashMap<>();
@@ -380,9 +380,9 @@ class ConfigurationClassBeanDefinitionReader {
 		});
 	}
 
-	private void loadBeanDefinitionsFromRegistrars(Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> registrars) {
+	private void loadBeanDefinitionsFromRegistrars(Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> registrars) { // 处理ImportBeanDefinitionRegistrar类，调用ImportBeanDefinitionRegistrar类注册BeanDefinition
 		registrars.forEach((registrar, metadata) ->
-				registrar.registerBeanDefinitions(metadata, this.registry, this.importBeanNameGenerator));
+				registrar.registerBeanDefinitions(metadata, this.registry, this.importBeanNameGenerator)); // 调用ImportBeanDefinitionRegistrar类注册BeanDefinition
 	}
 
 

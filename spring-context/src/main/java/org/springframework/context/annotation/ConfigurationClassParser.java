@@ -556,21 +556,21 @@ class ConfigurationClassParser {
 			this.importStack.push(configClass);
 			try {
 				for (SourceClass candidate : importCandidates) { // 遍历@Import导入的类
-					if (candidate.isAssignable(ImportSelector.class)) { // 如果Import类实现了ImportSelector接口
+					if (candidate.isAssignable(ImportSelector.class)) { // 如果Import类实现了ImportSelector接口，都会递归调用ConfigurationClassParser#processImports(...)方法
 						// Candidate class is an ImportSelector -> delegate to it to determine imports
 						Class<?> candidateClass = candidate.loadClass();
 						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class, // 通过反射进行实例化ImportSelector
 								this.environment, this.resourceLoader, this.registry);
 						if (selector instanceof DeferredImportSelector) { // ImportSelector实现类是DeferredImportSelector类型的处理逻辑
-							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector); // 添加DeferredImportSelector类（处理的时机在ConfigurationClassParser#parse(...)方法的结束前）
+							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector); // 添加DeferredImportSelector类（处理的时机在ConfigurationClassParser#parse(...)方法的结束前，且当前DeferredImportSelector不会交给Spring容器管理）
 						}
 						else { // ImportSelector实现类不是DeferredImportSelector类型的处理逻辑
 							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata()); // 调用ImportSelector接口的selectImports方法，获取所有需要import到spring容器的beanName
-							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames); // 将导入的类名封装成SourceClass对象
-							processImports(configClass, currentSourceClass, importSourceClasses, false); // 递归调用ConfigurationClassParser#processImports(...)方法
+							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames); // 将导入的类名封装成SourceClass对象列表
+							processImports(configClass, currentSourceClass, importSourceClasses, false); // 递归调用ConfigurationClassParser#processImports(...)方法（当前ImportSelector不会交给Spring容器管理）
 						}
 					}
-					else if (candidate.isAssignable(ImportBeanDefinitionRegistrar.class)) { // 如果Import类实现了ImportBeanDefinitionRegistrar接口
+					else if (candidate.isAssignable(ImportBeanDefinitionRegistrar.class)) { // 如果Import类实现了ImportBeanDefinitionRegistrar接口，则添加到当前ConfigurationClass中
 						// Candidate class is an ImportBeanDefinitionRegistrar ->
 						// delegate to it to register additional bean definitions
 						Class<?> candidateClass = candidate.loadClass();
@@ -579,7 +579,7 @@ class ConfigurationClassParser {
 										this.environment, this.resourceLoader, this.registry);
 						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata()); // 添加ImportBeanDefinitionRegistrar与AnnotationMetadata的映射关系（并没有调用接口的registerBeanDefinitions方法）
 					}
-					else { // 导入的是一个普通的类
+					else { // 如果导入的是一个普通的类，则递归调用解析导入的配置类并将配置类存放到ConfigurationClass集合中
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class
 						this.importStack.registerImport( // 添加Import映射关系
@@ -790,7 +790,7 @@ class ConfigurationClassParser {
 					.getImportGroup();
 			DeferredImportSelectorGrouping grouping = this.groupings.computeIfAbsent( // 根据DeferredImportSelector.Group获取或创建对应的DeferredImportSelectorGrouping
 					(group != null ? group : deferredImport),
-					key -> new DeferredImportSelectorGrouping(createGroup(group))); // 通过反射创建DeferredImportSelector.Group的实现类（如果没有使用Spring默认的Group），并添加到DeferredImportSelectorGrouping中
+					key -> new DeferredImportSelectorGrouping(createGroup(group))); // 通过反射创建DeferredImportSelector.Group的实现类（如果没有使用Spring默认的Group--DefaultDeferredImportSelectorGroup），并添加到DeferredImportSelectorGrouping中
 			grouping.add(deferredImport); // 添加DeferredImportSelectorHolder
 			this.configurationClasses.put(deferredImport.getConfigurationClass().getMetadata(),
 					deferredImport.getConfigurationClass());
@@ -802,7 +802,7 @@ class ConfigurationClassParser {
 					ConfigurationClass configurationClass = this.configurationClasses.get(
 							entry.getMetadata());
 					try {
-						processImports(configurationClass, asSourceClass(configurationClass), // 递归调用递归调用ConfigurationClassParser#processImports(...)方法
+						processImports(configurationClass, asSourceClass(configurationClass), // 递归调用ConfigurationClassParser#processImports(...)方法
 								asSourceClasses(entry.getImportClassName()), false);
 					}
 					catch (BeanDefinitionStoreException ex) {
@@ -817,9 +817,9 @@ class ConfigurationClassParser {
 			}
 		}
 
-		private Group createGroup(@Nullable Class<? extends Group> type) {
+		private Group createGroup(@Nullable Class<? extends Group> type) { // 通过反射创建DeferredImportSelector.Group的实现类（如果没有使用Spring默认的Group--DefaultDeferredImportSelectorGroup）
 			Class<? extends Group> effectiveType = (type != null ? type
-					: DefaultDeferredImportSelectorGroup.class);
+					: DefaultDeferredImportSelectorGroup.class); // 未实现接口时Group为空，则使用Spring默认的Group--DefaultDeferredImportSelectorGroup
 			Group group = ParserStrategyUtils.instantiateClass(effectiveType, Group.class,
 					ConfigurationClassParser.this.environment,
 					ConfigurationClassParser.this.resourceLoader,
