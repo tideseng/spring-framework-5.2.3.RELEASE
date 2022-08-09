@@ -123,8 +123,8 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 								afterSingletonCreation(beanName);
 							}
 						}
-						if (containsSingleton(beanName)) {
-							this.factoryBeanObjectCache.put(beanName, object); // 将实例放入FactoryBean缓存
+						if (containsSingleton(beanName)) { // 当一级缓存中存在beanName时，将FactoryBean接口的实例放入FactoryBean缓存
+							this.factoryBeanObjectCache.put(beanName, object); // 将FactoryBean接口的实例放入FactoryBean缓存
 						}
 					}
 				}

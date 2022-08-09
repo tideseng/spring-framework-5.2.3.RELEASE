@@ -402,7 +402,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	public boolean containsBean(String name) {
 		String beanName = transformedBeanName(name);
 		if (containsSingleton(beanName) || containsBeanDefinition(beanName)) {
-			return (!BeanFactoryUtils.isFactoryDereference(name) || isFactoryBean(name));
+			return (!BeanFactoryUtils.isFactoryDereference(name) || isFactoryBean(name)); // 判断是否为FactoryBean
 		}
 		// Not found -> check parent.
 		BeanFactory parentBeanFactory = getParentBeanFactory();
@@ -1066,7 +1066,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	}
 
 	@Override
-	public boolean isFactoryBean(String name) throws NoSuchBeanDefinitionException {
+	public boolean isFactoryBean(String name) throws NoSuchBeanDefinitionException { // 判断是否为FactoryBean
 		String beanName = transformedBeanName(name); // 获取真实的beanName
 		Object beanInstance = getSingleton(beanName, false); // 从一二级缓存中获取缓存实例
 		if (beanInstance != null) {

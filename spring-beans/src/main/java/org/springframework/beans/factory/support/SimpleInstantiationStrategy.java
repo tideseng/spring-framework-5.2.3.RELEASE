@@ -148,17 +148,17 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 				ReflectionUtils.makeAccessible(factoryMethod);
 			}
 
-			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
+			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get(); // 从ThreadLocal中获取Method
 			try {
-				currentlyInvokedFactoryMethod.set(factoryMethod);
-				Object result = factoryMethod.invoke(factoryBean, args); // 反射调用method获取实例化对象
+				currentlyInvokedFactoryMethod.set(factoryMethod); // 将当前factoryMethod放入ThreadLocal
+				Object result = factoryMethod.invoke(factoryBean, args); // 反射调用method获取实例化对象（如果当前类被代理且是@Bean修饰的方法，则会调用ConfigurationClassEnhancer.BeanMethodInterceptor#intercept方法，再调用被代理方法）
 				if (result == null) {
 					result = new NullBean();
 				}
 				return result;
 			}
 			finally {
-				if (priorInvokedFactoryMethod != null) {
+				if (priorInvokedFactoryMethod != null) { // 当反射调用method实例化对象完成后，判断当前线程中是否上一个正在实例化的factoryMethod，如果有则赋值为上一个factoryMethod
 					currentlyInvokedFactoryMethod.set(priorInvokedFactoryMethod);
 				}
 				else {
