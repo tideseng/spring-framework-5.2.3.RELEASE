@@ -69,11 +69,11 @@ public class OrderComparator implements Comparator<Object> {
 	}
 
 	@Override
-	public int compare(@Nullable Object o1, @Nullable Object o2) {
-		return doCompare(o1, o2, null);
+	public int compare(@Nullable Object o1, @Nullable Object o2) { // 排序比较
+		return doCompare(o1, o2, null); // 排序比较
 	}
 
-	private int doCompare(@Nullable Object o1, @Nullable Object o2, @Nullable OrderSourceProvider sourceProvider) {
+	private int doCompare(@Nullable Object o1, @Nullable Object o2, @Nullable OrderSourceProvider sourceProvider) { // 排序比较
 		boolean p1 = (o1 instanceof PriorityOrdered);
 		boolean p2 = (o2 instanceof PriorityOrdered);
 		if (p1 && !p2) {
@@ -83,8 +83,8 @@ public class OrderComparator implements Comparator<Object> {
 			return 1;
 		}
 
-		int i1 = getOrder(o1, sourceProvider);
-		int i2 = getOrder(o2, sourceProvider);
+		int i1 = getOrder(o1, sourceProvider); // 获取排序值
+		int i2 = getOrder(o2, sourceProvider); // 获取排序值
 		return Integer.compare(i1, i2);
 	}
 
@@ -95,7 +95,7 @@ public class OrderComparator implements Comparator<Object> {
 	 * @param obj the object to check
 	 * @return the order value, or {@code Ordered.LOWEST_PRECEDENCE} as fallback
 	 */
-	private int getOrder(@Nullable Object obj, @Nullable OrderSourceProvider sourceProvider) {
+	private int getOrder(@Nullable Object obj, @Nullable OrderSourceProvider sourceProvider) { // 获取排序值
 		Integer order = null;
 		if (obj != null && sourceProvider != null) {
 			Object orderSource = sourceProvider.getOrderSource(obj);
@@ -114,7 +114,7 @@ public class OrderComparator implements Comparator<Object> {
 				}
 			}
 		}
-		return (order != null ? order : getOrder(obj));
+		return (order != null ? order : getOrder(obj)); // 获取排序值
 	}
 
 	/**
@@ -124,9 +124,9 @@ public class OrderComparator implements Comparator<Object> {
 	 * @param obj the object to check
 	 * @return the order value, or {@code Ordered.LOWEST_PRECEDENCE} as fallback
 	 */
-	protected int getOrder(@Nullable Object obj) {
+	protected int getOrder(@Nullable Object obj) { // 获取排序值
 		if (obj != null) {
-			Integer order = findOrder(obj);
+			Integer order = findOrder(obj); // 获取排序值
 			if (order != null) {
 				return order;
 			}

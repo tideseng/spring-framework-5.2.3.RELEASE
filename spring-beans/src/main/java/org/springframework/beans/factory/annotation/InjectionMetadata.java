@@ -93,7 +93,7 @@ public class InjectionMetadata {
 		Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
 		for (InjectedElement element : this.injectedElements) {
 			Member member = element.getMember();
-			if (!beanDefinition.isExternallyManagedConfigMember(member)) {
+			if (!beanDefinition.isExternallyManagedConfigMember(member)) { // 只有当externallyManagedConfigMembers属性中不存在该元素时，才进行添加
 				beanDefinition.registerExternallyManagedConfigMember(member);
 				checkedElements.add(element);
 				if (logger.isTraceEnabled()) {

@@ -98,7 +98,7 @@ class ConditionEvaluator {
 			}
 		}
 
-		AnnotationAwareOrderComparator.sort(conditions); // 对conditions集合进行排序
+		AnnotationAwareOrderComparator.sort(conditions); // 对conditions集合进行排序（根据PriorityOrdered接口、Ordered接口、@Order注解、@Priority注解获排序值进行比较）
 
 		for (Condition condition : conditions) { // 遍历Condition实现类
 			ConfigurationPhase requiredPhase = null;

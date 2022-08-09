@@ -247,7 +247,7 @@ final class PostProcessorRegistrationDelegate {
 
 		// Finally, re-register all internal BeanPostProcessors.
 		sortPostProcessors(internalPostProcessors, beanFactory); // 排序
-		registerBeanPostProcessors(beanFactory, internalPostProcessors); // 将内置的BeanPostProcessor实现类注册到BeanFactory容器中
+		registerBeanPostProcessors(beanFactory, internalPostProcessors); // 将内置的BeanPostProcessor实现类注册到BeanFactory容器中（因为自定义的比内置的先加入容器，所以自定义的优先级要高于内置的CommonAnnotationBeanPostProcessor、AutowiredAnnotationBeanPostProcessor）
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
 		// moving it to the end of the processor chain (for picking up proxies etc).
@@ -268,22 +268,22 @@ final class PostProcessorRegistrationDelegate {
 	/**
 	 * Invoke the given BeanDefinitionRegistryPostProcessor beans.
 	 */
-	private static void invokeBeanDefinitionRegistryPostProcessors(
+	private static void invokeBeanDefinitionRegistryPostProcessors( // 调用BeanDefinitionRegistryPostProcessor实现类的postProcessBeanDefinitionRegistry方法
 			Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
 
 		for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
-			postProcessor.postProcessBeanDefinitionRegistry(registry);
+			postProcessor.postProcessBeanDefinitionRegistry(registry); // 调用BeanDefinitionRegistryPostProcessor实现类的postProcessBeanDefinitionRegistry方法
 		}
 	}
 
 	/**
 	 * Invoke the given BeanFactoryPostProcessor beans.
 	 */
-	private static void invokeBeanFactoryPostProcessors(
+	private static void invokeBeanFactoryPostProcessors( // 调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法
 			Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
 
 		for (BeanFactoryPostProcessor postProcessor : postProcessors) {
-			postProcessor.postProcessBeanFactory(beanFactory);
+			postProcessor.postProcessBeanFactory(beanFactory); // 调用BeanFactoryPostProcessor实现类的postProcessBeanFactory方法
 		}
 	}
 

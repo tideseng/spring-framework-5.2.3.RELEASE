@@ -93,7 +93,7 @@ public abstract class OrderUtils {
 	 * @return the order value, or {@code null} if none can be found
 	 */
 	@Nullable
-	static Integer getOrderFromAnnotations(AnnotatedElement element, MergedAnnotations annotations) {
+	static Integer getOrderFromAnnotations(AnnotatedElement element, MergedAnnotations annotations) { // 从@Order、@Priority注解中获取排序值
 		if (!(element instanceof Class)) {
 			return findOrder(annotations);
 		}
@@ -101,7 +101,7 @@ public abstract class OrderUtils {
 		if (cached != null) {
 			return (cached instanceof Integer ? (Integer) cached : null);
 		}
-		Integer result = findOrder(annotations);
+		Integer result = findOrder(annotations); // 从@Order、@Priority注解中获取排序值
 		orderCache.put(element, result != null ? result : NOT_ANNOTATED);
 		return result;
 	}
