@@ -126,7 +126,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 */
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException { // BeanFactoryPostProcessor接口方法，执行参数解析（该类优先级最低，为Ordered.LOWEST_PRECEDENCE）
-		if (this.propertySources == null) {
+		if (this.propertySources == null) { // 首次进入默认为空
 			this.propertySources = new MutablePropertySources(); // 创建MutablePropertySources对象，用propertySourceList列表来存放属性来源途径（Environment和本地配置文件）
 			if (this.environment != null) {
 				this.propertySources.addLast( // 1.添加Environment属性来源
@@ -142,8 +142,8 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 			try {
 				PropertySource<?> localPropertySource =
 						new PropertiesPropertySource(LOCAL_PROPERTIES_PROPERTY_SOURCE_NAME, mergeProperties()); // 加载本地配置文件中的属性值并包装成Properties对象，再设置到PropertiesPropertySource对象中
-				if (this.localOverride) {
-					this.propertySources.addFirst(localPropertySource); // 2.添加本地配置文件属性来源
+				if (this.localOverride) { // 默认为false
+					this.propertySources.addFirst(localPropertySource);
 				}
 				else {
 					this.propertySources.addLast(localPropertySource); // 2.添加本地配置文件属性来源
@@ -154,7 +154,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 			}
 		}
 
-		processProperties(beanFactory, new PropertySourcesPropertyResolver(this.propertySources)); // 创建解析类并处理
+		processProperties(beanFactory, new PropertySourcesPropertyResolver(this.propertySources)); // 创建解析类并解析属性
 		this.appliedPropertySources = this.propertySources;
 	}
 
@@ -162,7 +162,7 @@ public class PropertySourcesPlaceholderConfigurer extends PlaceholderConfigurerS
 	 * Visit each bean definition in the given bean factory and attempt to replace ${...} property
 	 * placeholders with values from the given properties.
 	 */
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess,
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, // 解析属性
 			final ConfigurablePropertyResolver propertyResolver) throws BeansException {
 
 		propertyResolver.setPlaceholderPrefix(this.placeholderPrefix); // 设置占位符的前缀

@@ -67,8 +67,8 @@ public class AnnotatedBeanDefinitionReader {
 	 * @see #AnnotatedBeanDefinitionReader(BeanDefinitionRegistry, Environment)
 	 * @see #setEnvironment(Environment)
 	 */
-	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) {
-		this(registry, getOrCreateEnvironment(registry));
+	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry) { // 初始化AnnotatedBeanDefinitionReader，并注册内置Bean
+		this(registry, getOrCreateEnvironment(registry)); // 调用有参构造器
 	}
 
 	/**
@@ -80,12 +80,12 @@ public class AnnotatedBeanDefinitionReader {
 	 * profiles.
 	 * @since 3.1
 	 */
-	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) {
+	public AnnotatedBeanDefinitionReader(BeanDefinitionRegistry registry, Environment environment) { // 初始化AnnotatedBeanDefinitionReader，并注册内置Bean
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
-		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
+		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry); // 注册内置Bean
 	}
 
 
@@ -132,9 +132,9 @@ public class AnnotatedBeanDefinitionReader {
 	 * @param componentClasses one or more component classes,
 	 * e.g. {@link Configuration @Configuration} classes
 	 */
-	public void register(Class<?>... componentClasses) {
+	public void register(Class<?>... componentClasses) { // 将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 		for (Class<?> componentClass : componentClasses) {
-			registerBean(componentClass);
+			registerBean(componentClass); // 将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 		}
 	}
 
@@ -143,8 +143,8 @@ public class AnnotatedBeanDefinitionReader {
 	 * class-declared annotations.
 	 * @param beanClass the class of the bean
 	 */
-	public void registerBean(Class<?> beanClass) {
-		doRegisterBean(beanClass, null, null, null, null);
+	public void registerBean(Class<?> beanClass) { // 将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
+		doRegisterBean(beanClass, null, null, null, null); // 将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 	}
 
 	/**
@@ -246,21 +246,21 @@ public class AnnotatedBeanDefinitionReader {
 	 * {@link BeanDefinition}, e.g. setting a lazy-init or primary flag
 	 * @since 5.0
 	 */
-	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name,
+	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name, // 将类封装成BeanDefinition（AnnotatedGenericBeanDefinition）并注册到BeanFactory中
 			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
 			@Nullable BeanDefinitionCustomizer[] customizers) {
 
-		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
-		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
+		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass); // 创建AnnotatedGenericBeanDefinition
+		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) { // 判断是否应该跳过
 			return;
 		}
 
 		abd.setInstanceSupplier(supplier);
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
-		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
+		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry)); // 生成beanName
 
-		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd); // 填充BeanDefinition注解属性（@lazy、@Primary、@DependsOn、@Role、@Description）
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -280,9 +280,9 @@ public class AnnotatedBeanDefinitionReader {
 			}
 		}
 
-		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName); // 封装成BeanDefinitionHolder
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
-		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
+		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry); // 将BeanDefinition注册到BeanFactory中
 	}
 
 

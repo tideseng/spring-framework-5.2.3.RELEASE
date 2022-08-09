@@ -59,7 +59,7 @@ public class PropertyPlaceholderHelper {
 	@Nullable
 	private final String valueSeparator; // 占位符分隔符
 
-	private final boolean ignoreUnresolvablePlaceholders; // 是否忽略占位符解析异常
+	private final boolean ignoreUnresolvablePlaceholders; // 是否忽略占位符解析异常，默认为true
 
 
 	/**
@@ -96,7 +96,7 @@ public class PropertyPlaceholderHelper {
 			this.simplePrefix = this.placeholderPrefix;
 		}
 		this.valueSeparator = valueSeparator; // 占位符分隔符
-		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders; // 是否忽略占位符解析异常
+		this.ignoreUnresolvablePlaceholders = ignoreUnresolvablePlaceholders; // 是否忽略占位符解析异常，默认为true
 	}
 
 
@@ -170,7 +170,7 @@ public class PropertyPlaceholderHelper {
 					}
 					startIndex = result.indexOf(this.placeholderPrefix, startIndex + propVal.length()); // 使while条件不满足跳出循环
 				}
-				else if (this.ignoreUnresolvablePlaceholders) {
+				else if (this.ignoreUnresolvablePlaceholders) { // 是否忽略占位符解析异常，默认为true
 					// Proceed with unprocessed value.
 					startIndex = result.indexOf(this.placeholderPrefix, endIndex + this.placeholderSuffix.length());
 				}
@@ -184,7 +184,7 @@ public class PropertyPlaceholderHelper {
 				startIndex = -1;
 			}
 		}
-		return result.toString(); // 返回属性值
+		return result.toString(); // 返回属性值（如果解析不到并且没有默认值，则返回原始占位符值）
 	}
 
 	private int findPlaceholderEndIndex(CharSequence buf, int startIndex) {

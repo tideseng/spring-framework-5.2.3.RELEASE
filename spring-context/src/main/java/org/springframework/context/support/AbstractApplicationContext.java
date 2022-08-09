@@ -325,8 +325,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Subclasses may override this method in order to supply
 	 * a custom {@link ConfigurableEnvironment} implementation.
 	 */
-	protected ConfigurableEnvironment createEnvironment() {
-		return new StandardEnvironment();
+	protected ConfigurableEnvironment createEnvironment() { // 构建Environment
+		return new StandardEnvironment(); // 创建StandardEnvironment，会先创建AbstractEnvironment并调用customizePropertySources钩子方法
 	}
 
 	/**
@@ -858,7 +858,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		// Register a default embedded value resolver if no bean post-processor
 		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
 		// at this point, primarily for resolution in annotation attribute values.
-		if (!beanFactory.hasEmbeddedValueResolver()) { // 当容器中不存在占位符解析器时，添加默认的占位符解析器
+		if (!beanFactory.hasEmbeddedValueResolver()) { // 当容器中不存在占位符解析器时，添加默认的占位符解析器（默认的占位符解析器只会从Environment环境中解析属性值，并不会从本地文件中进行解析）
 			beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal)); // 添加占位符解析器
 		}
 
@@ -1103,7 +1103,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	//---------------------------------------------------------------------
 
 	@Override
-	public Object getBean(String name) throws BeansException {
+	public Object getBean(String name) throws BeansException { // 根据name获取Bean实例
 		assertBeanFactoryActive();
 		return getBeanFactory().getBean(name);
 	}
@@ -1121,9 +1121,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	@Override
-	public <T> T getBean(Class<T> requiredType) throws BeansException {
+	public <T> T getBean(Class<T> requiredType) throws BeansException { // 根据ClassType获取Bean实例
 		assertBeanFactoryActive();
-		return getBeanFactory().getBean(requiredType);
+		return getBeanFactory().getBean(requiredType); // 根据ClassType获取Bean实例
 	}
 
 	@Override

@@ -81,8 +81,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @param registry the {@code BeanFactory} to load bean definitions into, in the form
 	 * of a {@code BeanDefinitionRegistry}
 	 */
-	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) {
-		this(registry, true);
+	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry) { // 初始化ClassPathBeanDefinitionScanner注解扫描器，并注册默认的注解拦截器
+		this(registry, true); // 调用两个参数的构造器
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @see #setEnvironment
 	 */
 	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters) {
-		this(registry, useDefaultFilters, getOrCreateEnvironment(registry));
+		this(registry, useDefaultFilters, getOrCreateEnvironment(registry)); // 调用三个参数的构造器
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters,
 			Environment environment) {
 
-		this(registry, useDefaultFilters, environment,
+		this(registry, useDefaultFilters, environment, // 调用四个参数的构造器
 				(registry instanceof ResourceLoader ? (ResourceLoader) registry : null));
 	}
 
@@ -156,7 +156,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @param resourceLoader the {@link ResourceLoader} to use
 	 * @since 4.3.6
 	 */
-	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters, // 创建注解扫描器
+	public ClassPathBeanDefinitionScanner(BeanDefinitionRegistry registry, boolean useDefaultFilters, // 创建注解扫描器（最终都会调用的构造器）
 			Environment environment, @Nullable ResourceLoader resourceLoader) {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
@@ -248,14 +248,14 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * @param basePackages the packages to check for annotated classes
 	 * @return number of beans registered
 	 */
-	public int scan(String... basePackages) {
+	public int scan(String... basePackages) { // 将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中
 		int beanCountAtScanStart = this.registry.getBeanDefinitionCount();
 
-		doScan(basePackages);
+		doScan(basePackages); // 将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中
 
 		// Register annotation config processors, if necessary.
 		if (this.includeAnnotationConfig) {
-			AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
+			AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry); // 注册内置Bean（当已经注册过，不会再次注册）
 		}
 
 		return (this.registry.getBeanDefinitionCount() - beanCountAtScanStart);
@@ -279,10 +279,10 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
 				if (candidate instanceof AbstractBeanDefinition) {
-					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName); // 填充BeanDefinition默认值
+					postProcessBeanDefinition((AbstractBeanDefinition) candidate, beanName); // 填充BeanDefinition默认属性值
 				}
 				if (candidate instanceof AnnotatedBeanDefinition) {
-					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate); // 填充BeanDefinition注解属性
+					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate); // 填充BeanDefinition注解属性（@lazy、@Primary、@DependsOn、@Role、@Description）
 				}
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName); // 初始化BeanDefinitionHolder

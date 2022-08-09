@@ -40,7 +40,7 @@ class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBea
 
 	@Override
 	@SuppressWarnings("deprecation")
-	protected Class<?> getBeanClass(Element element) { // 获取要实例化的类（钩子方法）
+	protected Class<?> getBeanClass(Element element) { // 获取element元素对应的BeanClass，封装到BeanDefinition中（钩子方法）
 		// As of Spring 3.1, the default value of system-properties-mode has changed from
 		// 'FALLBACK' to 'ENVIRONMENT'. This latter value indicates that resolution of
 		// placeholders against system properties is a function of the Environment and
@@ -56,20 +56,20 @@ class PropertyPlaceholderBeanDefinitionParser extends AbstractPropertyLoadingBea
 	}
 
 	@Override
-	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) { // 解析方法
-		super.doParse(element, parserContext, builder); // 调用父类的解析方法
+	protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) { // 解析方法，设置Element元素对应的BeanDefinition对象相关属性
+		super.doParse(element, parserContext, builder); // 调用父类的解析方法设置BeanDefinition对象相关属性
 
 		builder.addPropertyValue("ignoreUnresolvablePlaceholders",
 				Boolean.valueOf(element.getAttribute("ignore-unresolvable")));
 
-		String systemPropertiesModeName = element.getAttribute(SYSTEM_PROPERTIES_MODE_ATTRIBUTE);
+		String systemPropertiesModeName = element.getAttribute(SYSTEM_PROPERTIES_MODE_ATTRIBUTE); // 默认为ENVIRONMENT
 		if (StringUtils.hasLength(systemPropertiesModeName) &&
 				!systemPropertiesModeName.equals(SYSTEM_PROPERTIES_MODE_DEFAULT)) {
 			builder.addPropertyValue("systemPropertiesModeName", "SYSTEM_PROPERTIES_MODE_" + systemPropertiesModeName);
 		}
 
 		if (element.hasAttribute("value-separator")) {
-			builder.addPropertyValue("valueSeparator", element.getAttribute("value-separator"));
+			builder.addPropertyValue("valueSeparator", element.getAttribute("value-separator")); // 占位分隔符，默认为:
 		}
 		if (element.hasAttribute("trim-values")) {
 			builder.addPropertyValue("trimValues", element.getAttribute("trim-values"));

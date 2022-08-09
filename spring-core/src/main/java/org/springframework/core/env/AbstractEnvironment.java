@@ -120,7 +120,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * appropriate.
 	 * @see #customizePropertySources(MutablePropertySources)
 	 */
-	public AbstractEnvironment() {
+	public AbstractEnvironment() { // 初始化AbstractEnvironment（调用customizePropertySources钩子方法）
 		customizePropertySources(this.propertySources);
 	}
 
@@ -563,7 +563,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 
 	@Override
 	public String resolvePlaceholders(String text) {
-		return this.propertyResolver.resolvePlaceholders(text);
+		return this.propertyResolver.resolvePlaceholders(text); // 调用AbstractPropertyResolver对象中的resolvePlaceholders方法
 	}
 
 	@Override

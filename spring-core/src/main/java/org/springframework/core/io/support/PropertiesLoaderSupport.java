@@ -49,7 +49,7 @@ public abstract class PropertiesLoaderSupport {
 	protected boolean localOverride = false;
 
 	@Nullable
-	private Resource[] locations;
+	private Resource[] locations; // locations属性值由BeanDefinition的PropertyValue进行设置
 
 	private boolean ignoreResourceNotFound = false;
 
@@ -157,9 +157,9 @@ public abstract class PropertiesLoaderSupport {
 			}
 		}
 
-		if (!this.localOverride) {
+		if (!this.localOverride) { // 默认为false
 			// Load properties from file afterwards, to let those properties override.
-			loadProperties(result);
+			loadProperties(result); // 从指定的配置文件中加载属性并设置到Properties中
 		}
 
 		return result;

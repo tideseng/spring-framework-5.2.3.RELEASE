@@ -45,7 +45,7 @@ abstract class AbstractPropertyLoadingBeanDefinitionParser extends AbstractSingl
 		if (StringUtils.hasLength(location)) {
 			location = parserContext.getReaderContext().getEnvironment().resolvePlaceholders(location);
 			String[] locations = StringUtils.commaDelimitedListToStringArray(location);
-			builder.addPropertyValue("locations", locations); // 设置locations属性
+			builder.addPropertyValue("locations", locations); // 设置locations属性到PropertyValue中
 		}
 
 		String propertiesRef = element.getAttribute("properties-ref");
