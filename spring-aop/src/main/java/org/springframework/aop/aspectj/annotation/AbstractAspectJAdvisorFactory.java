@@ -76,7 +76,7 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	 * when compiled by ajc with the -1.5 flag, yet they cannot be consumed by Spring AOP.
 	 */
 	@Override
-	public boolean isAspect(Class<?> clazz) {
+	public boolean isAspect(Class<?> clazz) { // 判断类上是否有@Aspect注解
 		return (hasAspectAnnotation(clazz) && !compiledByAjc(clazz));
 	}
 
@@ -129,9 +129,9 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	 */
 	@SuppressWarnings("unchecked")
 	@Nullable
-	protected static AspectJAnnotation<?> findAspectJAnnotationOnMethod(Method method) {
-		for (Class<?> clazz : ASPECTJ_ANNOTATION_CLASSES) {
-			AspectJAnnotation<?> foundAnnotation = findAnnotation(method, (Class<Annotation>) clazz);
+	protected static AspectJAnnotation<?> findAspectJAnnotationOnMethod(Method method) { // 获取方法上的Aspect注解并封装到AspectJAnnotation中
+		for (Class<?> clazz : ASPECTJ_ANNOTATION_CLASSES) { // 遍历@Pointcut、@Around、@Before、@After、@AfterReturning、@AfterThrowing注解类
+			AspectJAnnotation<?> foundAnnotation = findAnnotation(method, (Class<Annotation>) clazz); // 获取方法上的Aspect注解并封装到AspectJAnnotation中
 			if (foundAnnotation != null) {
 				return foundAnnotation;
 			}
@@ -140,10 +140,10 @@ public abstract class AbstractAspectJAdvisorFactory implements AspectJAdvisorFac
 	}
 
 	@Nullable
-	private static <A extends Annotation> AspectJAnnotation<A> findAnnotation(Method method, Class<A> toLookFor) {
-		A result = AnnotationUtils.findAnnotation(method, toLookFor);
+	private static <A extends Annotation> AspectJAnnotation<A> findAnnotation(Method method, Class<A> toLookFor) { // 获取方法上的Aspect注解并封装到AspectJAnnotation中
+		A result = AnnotationUtils.findAnnotation(method, toLookFor); // 获取方法上的Aspect注解
 		if (result != null) {
-			return new AspectJAnnotation<>(result);
+			return new AspectJAnnotation<>(result); // 将方法上的Aspect注解封装到AspectJAnnotation中
 		}
 		else {
 			return null;

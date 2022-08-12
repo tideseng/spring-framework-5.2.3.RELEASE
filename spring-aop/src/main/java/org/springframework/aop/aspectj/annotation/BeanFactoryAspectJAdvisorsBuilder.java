@@ -45,7 +45,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	private final AspectJAdvisorFactory advisorFactory;
 
 	@Nullable
-	private volatile List<String> aspectBeanNames;
+	private volatile List<String> aspectBeanNames; // 类上是否有@Aspect注解beanName集合
 
 	private final Map<String, List<Advisor>> advisorsCache = new ConcurrentHashMap<>();
 
@@ -80,36 +80,36 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
-	public List<Advisor> buildAspectJAdvisors() {
-		List<String> aspectNames = this.aspectBeanNames;
+	public List<Advisor> buildAspectJAdvisors() { // 解析@Aspect注解，并创建Advisor切面
+		List<String> aspectNames = this.aspectBeanNames; // 获取所有类上有@Aspect注解beanName缓存（首次为null）
 
 		if (aspectNames == null) {
 			synchronized (this) {
 				aspectNames = this.aspectBeanNames;
-				if (aspectNames == null) {
-					List<Advisor> advisors = new ArrayList<>();
+				if (aspectNames == null) { // 双重检查锁机制
+					List<Advisor> advisors = new ArrayList<>(); // Advisor集合
 					aspectNames = new ArrayList<>();
-					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors( // 获取所有beanName
 							this.beanFactory, Object.class, true, false);
-					for (String beanName : beanNames) {
+					for (String beanName : beanNames) { // 遍历beanName
 						if (!isEligibleBean(beanName)) {
 							continue;
 						}
 						// We must be careful not to instantiate beans eagerly as in this case they
 						// would be cached by the Spring container but would not have been weaved.
-						Class<?> beanType = this.beanFactory.getType(beanName);
+						Class<?> beanType = this.beanFactory.getType(beanName); // 获取beanClass
 						if (beanType == null) {
 							continue;
 						}
-						if (this.advisorFactory.isAspect(beanType)) {
+						if (this.advisorFactory.isAspect(beanType)) { // 判断类上是否有@Aspect注解
 							aspectNames.add(beanName);
-							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+							AspectMetadata amd = new AspectMetadata(beanType, beanName); // 创建AspectMetadata
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
-										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName); // 创建BeanFactoryAspectInstanceFactory，@Aspect注解类的实例工厂，负责获取@Aspect注解类的实例
+								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory); // 创建切面Advisor对象
 								if (this.beanFactory.isSingleton(beanName)) {
-									this.advisorsCache.put(beanName, classAdvisors);
+									this.advisorsCache.put(beanName, classAdvisors); // 放入缓存
 								}
 								else {
 									this.aspectFactoryCache.put(beanName, factory);
@@ -140,7 +140,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		}
 		List<Advisor> advisors = new ArrayList<>();
 		for (String aspectName : aspectNames) {
-			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
+			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName); // 从缓存中获取
 			if (cachedAdvisors != null) {
 				advisors.addAll(cachedAdvisors);
 			}

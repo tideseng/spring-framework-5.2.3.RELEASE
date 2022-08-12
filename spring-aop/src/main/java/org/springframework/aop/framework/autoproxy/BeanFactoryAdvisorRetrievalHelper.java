@@ -45,7 +45,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 	private final ConfigurableListableBeanFactory beanFactory;
 
 	@Nullable
-	private volatile String[] cachedAdvisorBeanNames;
+	private volatile String[] cachedAdvisorBeanNames; // Advisor实现类的beanName缓存
 
 
 	/**
@@ -64,22 +64,22 @@ public class BeanFactoryAdvisorRetrievalHelper {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
-	public List<Advisor> findAdvisorBeans() {
+	public List<Advisor> findAdvisorBeans() { // 查找所有切面Bean实例
 		// Determine list of advisor bean names, if not cached already.
-		String[] advisorNames = this.cachedAdvisorBeanNames;
+		String[] advisorNames = this.cachedAdvisorBeanNames; // 获取Advisor实现类的beanName缓存（首次为null）
 		if (advisorNames == null) {
 			// Do not initialize FactoryBeans here: We need to leave all regular beans
 			// uninitialized to let the auto-proxy creator apply to them!
-			advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+			advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors( // 获取Spring容器中所有Advisor实现类的beanName
 					this.beanFactory, Advisor.class, true, false);
 			this.cachedAdvisorBeanNames = advisorNames;
 		}
-		if (advisorNames.length == 0) {
+		if (advisorNames.length == 0) { // 当没有相关beanName时直接返回
 			return new ArrayList<>();
 		}
 
 		List<Advisor> advisors = new ArrayList<>();
-		for (String name : advisorNames) {
+		for (String name : advisorNames) { // 遍历beanName
 			if (isEligibleBean(name)) {
 				if (this.beanFactory.isCurrentlyInCreation(name)) {
 					if (logger.isTraceEnabled()) {
@@ -88,7 +88,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 				}
 				else {
 					try {
-						advisors.add(this.beanFactory.getBean(name, Advisor.class));
+						advisors.add(this.beanFactory.getBean(name, Advisor.class)); // 获取bean实例并添加到集合中
 					}
 					catch (BeanCreationException ex) {
 						Throwable rootCause = ex.getMostSpecificCause();

@@ -134,7 +134,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	 * @param paramNames the parameter names for the pointcut
 	 * @param paramTypes the parameter types for the pointcut
 	 */
-	public AspectJExpressionPointcut(Class<?> declarationScope, String[] paramNames, Class<?>[] paramTypes) {
+	public AspectJExpressionPointcut(Class<?> declarationScope, String[] paramNames, Class<?>[] paramTypes) { // 初始化AspectJExpressionPointcut
 		this.pointcutDeclarationScope = declarationScope;
 		if (paramNames.length != paramTypes.length) {
 			throw new IllegalStateException(
@@ -268,11 +268,11 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	}
 
 	@Override
-	public boolean matches(Class<?> targetClass) {
-		PointcutExpression pointcutExpression = obtainPointcutExpression();
+	public boolean matches(Class<?> targetClass) { // 调用Pointcut中ClassFilter的matches方法，判断类是否匹配
+		PointcutExpression pointcutExpression = obtainPointcutExpression(); // 根据Aspect相关注解中的value值（方法），找到真正的Pointcut表达式
 		try {
 			try {
-				return pointcutExpression.couldMatchJoinPointsInType(targetClass);
+				return pointcutExpression.couldMatchJoinPointsInType(targetClass); // 判断Class是否在Pointcut表达式中
 			}
 			catch (ReflectionWorldException ex) {
 				logger.debug("PointcutExpression matching rejected target class - trying fallback expression", ex);

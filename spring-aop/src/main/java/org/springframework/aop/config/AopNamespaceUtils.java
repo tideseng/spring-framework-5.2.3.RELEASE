@@ -74,7 +74,7 @@ public abstract class AopNamespaceUtils {
 	public static void registerAspectJAnnotationAutoProxyCreatorIfNecessary(
 			ParserContext parserContext, Element sourceElement) {
 
-		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary(
+		BeanDefinition beanDefinition = AopConfigUtils.registerAspectJAnnotationAutoProxyCreatorIfNecessary( // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
 				parserContext.getRegistry(), parserContext.extractSource(sourceElement));
 		useClassProxyingIfNecessary(parserContext.getRegistry(), sourceElement);
 		registerComponentIfNecessary(beanDefinition, parserContext);

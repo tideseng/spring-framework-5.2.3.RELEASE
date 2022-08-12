@@ -58,7 +58,7 @@ public abstract class AbstractExpressionPointcut implements ExpressionPointcut, 
 		return this.location;
 	}
 
-	public void setExpression(@Nullable String expression) {
+	public void setExpression(@Nullable String expression) { // 设置注解表达式
 		this.expression = expression;
 		try {
 			onSetExpression(expression);

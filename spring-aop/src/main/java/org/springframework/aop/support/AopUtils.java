@@ -221,13 +221,13 @@ public abstract class AopUtils {
 	 * for this bean includes any introductions
 	 * @return whether the pointcut can apply on any method
 	 */
-	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
+	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) { // 调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
 		Assert.notNull(pc, "Pointcut must not be null");
-		if (!pc.getClassFilter().matches(targetClass)) {
+		if (!pc.getClassFilter().matches(targetClass)) { // 调用Pointcut中ClassFilter的matches方法，判断类是否匹配（默认为AspectJExpressionPointcut对象）
 			return false;
 		}
 
-		MethodMatcher methodMatcher = pc.getMethodMatcher();
+		MethodMatcher methodMatcher = pc.getMethodMatcher(); // 获取Pointcut的MethodMatcher
 		if (methodMatcher == MethodMatcher.TRUE) {
 			// No need to iterate the methods if we're matching any method anyway...
 			return true;
@@ -246,9 +246,9 @@ public abstract class AopUtils {
 
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
-			for (Method method : methods) {
+			for (Method method : methods) { // 遍历方法
 				if (introductionAwareMethodMatcher != null ?
-						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) :
+						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) : // 调用MethodMatcher的matches方法，判断方法是否匹配
 						methodMatcher.matches(method, targetClass)) {
 					return true;
 				}
@@ -280,13 +280,13 @@ public abstract class AopUtils {
 	 * any introductions
 	 * @return whether the pointcut can apply on any method
 	 */
-	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) {
+	public static boolean canApply(Advisor advisor, Class<?> targetClass, boolean hasIntroductions) { // 调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
 		if (advisor instanceof IntroductionAdvisor) {
 			return ((IntroductionAdvisor) advisor).getClassFilter().matches(targetClass);
 		}
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
-			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
+			return canApply(pca.getPointcut(), targetClass, hasIntroductions); // 调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
 		}
 		else {
 			// It doesn't have a pointcut so we assume it applies.
@@ -302,23 +302,23 @@ public abstract class AopUtils {
 	 * @return sublist of Advisors that can apply to an object of the given class
 	 * (may be the incoming List as-is)
 	 */
-	public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvisors, Class<?> clazz) {
+	public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvisors, Class<?> clazz) { // 判断当前类是否在这些切面的Pointcut中，调用类和方法的match过程
 		if (candidateAdvisors.isEmpty()) {
 			return candidateAdvisors;
 		}
 		List<Advisor> eligibleAdvisors = new ArrayList<>();
-		for (Advisor candidate : candidateAdvisors) {
-			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
+		for (Advisor candidate : candidateAdvisors) { // 遍历Advisor
+			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) { // 如果是引介切面且匹配
 				eligibleAdvisors.add(candidate);
 			}
 		}
 		boolean hasIntroductions = !eligibleAdvisors.isEmpty();
-		for (Advisor candidate : candidateAdvisors) {
+		for (Advisor candidate : candidateAdvisors) { // 遍历Advisor
 			if (candidate instanceof IntroductionAdvisor) {
 				// already processed
 				continue;
 			}
-			if (canApply(candidate, clazz, hasIntroductions)) {
+			if (canApply(candidate, clazz, hasIntroductions)) { // 调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
 				eligibleAdvisors.add(candidate);
 			}
 		}

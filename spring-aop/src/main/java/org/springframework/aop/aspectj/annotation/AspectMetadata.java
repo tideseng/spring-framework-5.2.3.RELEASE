@@ -78,7 +78,7 @@ public class AspectMetadata implements Serializable {
 	 * @param aspectClass the aspect class
 	 * @param aspectName the name of the aspect
 	 */
-	public AspectMetadata(Class<?> aspectClass, String aspectName) {
+	public AspectMetadata(Class<?> aspectClass, String aspectName) { // 初始化AspectMetadata
 		this.aspectName = aspectName;
 
 		Class<?> currClass = aspectClass;

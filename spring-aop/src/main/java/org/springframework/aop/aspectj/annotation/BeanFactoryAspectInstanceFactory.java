@@ -44,11 +44,11 @@ import org.springframework.util.ClassUtils;
 @SuppressWarnings("serial")
 public class BeanFactoryAspectInstanceFactory implements MetadataAwareAspectInstanceFactory, Serializable {
 
-	private final BeanFactory beanFactory;
+	private final BeanFactory beanFactory; // beanFactory
 
-	private final String name;
+	private final String name; // @Aspect注解修饰的beanName
 
-	private final AspectMetadata aspectMetadata;
+	private final AspectMetadata aspectMetadata; // @Aspect注解修饰的AspectMetadata
 
 
 	/**
@@ -58,7 +58,7 @@ public class BeanFactoryAspectInstanceFactory implements MetadataAwareAspectInst
 	 * @param beanFactory the BeanFactory to obtain instance(s) from
 	 * @param name name of the bean
 	 */
-	public BeanFactoryAspectInstanceFactory(BeanFactory beanFactory, String name) {
+	public BeanFactoryAspectInstanceFactory(BeanFactory beanFactory, String name) { // 初始化BeanFactoryAspectInstanceFactory
 		this(beanFactory, name, null);
 	}
 
@@ -71,7 +71,7 @@ public class BeanFactoryAspectInstanceFactory implements MetadataAwareAspectInst
 	 * @param type the type that should be introspected by AspectJ
 	 * ({@code null} indicates resolution through {@link BeanFactory#getType} via the bean name)
 	 */
-	public BeanFactoryAspectInstanceFactory(BeanFactory beanFactory, String name, @Nullable Class<?> type) {
+	public BeanFactoryAspectInstanceFactory(BeanFactory beanFactory, String name, @Nullable Class<?> type) { // 初始化BeanFactoryAspectInstanceFactory
 		Assert.notNull(beanFactory, "BeanFactory must not be null");
 		Assert.notNull(name, "Bean name must not be null");
 		this.beanFactory = beanFactory;

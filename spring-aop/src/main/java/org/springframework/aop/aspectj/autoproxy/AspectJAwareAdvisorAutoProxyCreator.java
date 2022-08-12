@@ -96,16 +96,16 @@ public class AspectJAwareAdvisorAutoProxyCreator extends AbstractAdvisorAutoProx
 	}
 
 	@Override
-	protected boolean shouldSkip(Class<?> beanClass, String beanName) {
+	protected boolean shouldSkip(Class<?> beanClass, String beanName) { // 判断当前类是否需要跳过
 		// TODO: Consider optimization by caching the list of the aspect names
-		List<Advisor> candidateAdvisors = findCandidateAdvisors();
-		for (Advisor advisor : candidateAdvisors) {
-			if (advisor instanceof AspectJPointcutAdvisor &&
+		List<Advisor> candidateAdvisors = findCandidateAdvisors(); // 查找候选的Advisor切面（由子类AnnotationAwareAspectJAutoProxyCreator实现）
+		for (Advisor advisor : candidateAdvisors) { // 遍历Advisor切面
+			if (advisor instanceof AspectJPointcutAdvisor && // @Aspect注解修饰的切面为InstantiationModelAwarePointcutAdvisorImpl，不属于AspectJPointcutAdvisor
 					((AspectJPointcutAdvisor) advisor).getAspectName().equals(beanName)) {
 				return true;
 			}
 		}
-		return super.shouldSkip(beanClass, beanName);
+		return super.shouldSkip(beanClass, beanName); // 调用父类方法判断当前类是否需要跳过
 	}
 
 

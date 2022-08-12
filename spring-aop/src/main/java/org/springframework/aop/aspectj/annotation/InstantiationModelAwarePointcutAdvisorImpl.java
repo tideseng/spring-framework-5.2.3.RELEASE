@@ -66,12 +66,12 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 
 	private final String aspectName;
 
-	private final Pointcut pointcut;
+	private final Pointcut pointcut; // 切点Pointcut
 
 	private final boolean lazy;
 
 	@Nullable
-	private Advice instantiatedAdvice;
+	private Advice instantiatedAdvice; // 增强Advice
 
 	@Nullable
 	private Boolean isBeforeAdvice;
@@ -80,7 +80,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	private Boolean isAfterAdvice;
 
 
-	public InstantiationModelAwarePointcutAdvisorImpl(AspectJExpressionPointcut declaredPointcut,
+	public InstantiationModelAwarePointcutAdvisorImpl(AspectJExpressionPointcut declaredPointcut, // 初始化Advisor切面类
 			Method aspectJAdviceMethod, AspectJAdvisorFactory aspectJAdvisorFactory,
 			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
 
@@ -108,9 +108,9 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 		}
 		else {
 			// A singleton aspect.
-			this.pointcut = this.declaredPointcut;
+			this.pointcut = this.declaredPointcut; // 赋值Pointcut
 			this.lazy = false;
-			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
+			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut); // 创建Advice
 		}
 	}
 
@@ -145,8 +145,8 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 		return this.instantiatedAdvice;
 	}
 
-	private Advice instantiateAdvice(AspectJExpressionPointcut pointcut) {
-		Advice advice = this.aspectJAdvisorFactory.getAdvice(this.aspectJAdviceMethod, pointcut,
+	private Advice instantiateAdvice(AspectJExpressionPointcut pointcut) { // 创建Advice
+		Advice advice = this.aspectJAdvisorFactory.getAdvice(this.aspectJAdviceMethod, pointcut, // 创建Advice
 				this.aspectInstanceFactory, this.declarationOrder, this.aspectName);
 		return (advice != null ? advice : EMPTY_ADVICE);
 	}
