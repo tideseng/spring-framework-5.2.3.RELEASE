@@ -41,12 +41,12 @@ import org.springframework.util.CollectionUtils;
  * @see InterceptingClientHttpRequestFactory
  * @see org.springframework.web.client.RestTemplate
  */
-public abstract class InterceptingHttpAccessor extends HttpAccessor {
+public abstract class InterceptingHttpAccessor extends HttpAccessor { // Http访问拦截器（在Http访问器的基础上增加了拦截器的功能）
 
-	private final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+	private final List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>(); // 请求拦截器
 
 	@Nullable
-	private volatile ClientHttpRequestFactory interceptingRequestFactory;
+	private volatile ClientHttpRequestFactory interceptingRequestFactory; // 请求工厂类，默认为null，当进行获取时如果有拦截器则赋值为InterceptingClientHttpRequestFactory
 
 
 	/**
@@ -56,12 +56,12 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 	 * @see #getRequestFactory()
 	 * @see AnnotationAwareOrderComparator
 	 */
-	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) { // 在LoadBalancerAutoConfiguration的RestTemplateCustomizer中会进行设置
+	public void setInterceptors(List<ClientHttpRequestInterceptor> interceptors) { // 设置请求拦截器（在LoadBalancerAutoConfiguration的RestTemplateCustomizer中会进行设置）
 		// Take getInterceptors() List as-is when passed in here
 		if (this.interceptors != interceptors) {
 			this.interceptors.clear();
 			this.interceptors.addAll(interceptors);
-			AnnotationAwareOrderComparator.sort(this.interceptors);
+			AnnotationAwareOrderComparator.sort(this.interceptors); // 进行排序
 		}
 	}
 
@@ -72,7 +72,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 	 * {@linkplain AnnotationAwareOrderComparator#sort(List) order} before the
 	 * {@link ClientHttpRequestFactory} is built.
 	 */
-	public List<ClientHttpRequestInterceptor> getInterceptors() {
+	public List<ClientHttpRequestInterceptor> getInterceptors() { // 获取请求拦截器
 		return this.interceptors;
 	}
 
@@ -96,7 +96,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor {
 		if (!CollectionUtils.isEmpty(interceptors)) { // 有拦截器时创建请求工厂类InterceptingClientHttpRequestFactory
 			ClientHttpRequestFactory factory = this.interceptingRequestFactory;
 			if (factory == null) {
-				factory = new InterceptingClientHttpRequestFactory(super.getRequestFactory(), interceptors);
+				factory = new InterceptingClientHttpRequestFactory(super.getRequestFactory(), interceptors); // 创建InterceptingClientHttpRequestFactory，并传入父类的请求工厂SimpleClientHttpRequestFactory
 				this.interceptingRequestFactory = factory;
 			}
 			return factory;

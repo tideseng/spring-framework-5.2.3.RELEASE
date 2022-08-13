@@ -35,22 +35,22 @@ import org.springframework.util.StreamUtils;
  * @author Arjen Poutsma
  * @since 3.1
  */
-class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
+class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest { // 客户端Http请求拦截类
 
-	private final ClientHttpRequestFactory requestFactory;
+	private final ClientHttpRequestFactory requestFactory; // 客户端Http请求工厂SimpleClientHttpRequestFactory
 
-	private final List<ClientHttpRequestInterceptor> interceptors;
+	private final List<ClientHttpRequestInterceptor> interceptors; // Http请求拦截器链
 
 	private HttpMethod method;
 
 	private URI uri;
 
 
-	protected InterceptingClientHttpRequest(ClientHttpRequestFactory requestFactory,
-			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method) { // 在InterceptingClientHttpRequestFactory中进行调用创建
+	protected InterceptingClientHttpRequest(ClientHttpRequestFactory requestFactory, // 初始化InterceptingClientHttpRequest（在InterceptingClientHttpRequestFactory中进行调用创建）
+			List<ClientHttpRequestInterceptor> interceptors, URI uri, HttpMethod method) {
 
-		this.requestFactory = requestFactory;
-		this.interceptors = interceptors;
+		this.requestFactory = requestFactory; // 客户端Http请求工厂SimpleClientHttpRequestFactory
+		this.interceptors = interceptors; // 将RestTemplate中的拦截器链进行注入
 		this.method = method;
 		this.uri = uri;
 	}
@@ -73,29 +73,29 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 
 	@Override
 	protected final ClientHttpResponse executeInternal(HttpHeaders headers, byte[] bufferedOutput) throws IOException {
-		InterceptingRequestExecution requestExecution = new InterceptingRequestExecution();
+		InterceptingRequestExecution requestExecution = new InterceptingRequestExecution(); // 创建InterceptingRequestExecution
 		return requestExecution.execute(this, bufferedOutput); // 真正的execute执行方法
 	}
 
 
-	private class InterceptingRequestExecution implements ClientHttpRequestExecution {
+	private class InterceptingRequestExecution implements ClientHttpRequestExecution { // 创建InterceptingRequestExecution
 
-		private final Iterator<ClientHttpRequestInterceptor> iterator;
+		private final Iterator<ClientHttpRequestInterceptor> iterator; // Http请求拦截器迭代器
 
-		public InterceptingRequestExecution() {
-			this.iterator = interceptors.iterator();
+		public InterceptingRequestExecution() { // 初始化InterceptingRequestExecution
+			this.iterator = interceptors.iterator(); // 在构造方法中将外部类中的拦截器链进行注入
 		}
 
 		@Override
-		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException {
-			if (this.iterator.hasNext()) { // 当前拦截器的迭代器，有拦截器时先执行拦截器的intercept方法
-				ClientHttpRequestInterceptor nextInterceptor = this.iterator.next(); // 遍历拦截器
-				return nextInterceptor.intercept(request, body, this); // 调用LoadBalancerInterceptor拦截器的intercept方法
+		public ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException { // 真正的execute执行方法
+			if (this.iterator.hasNext()) { // 判断是否还有拦截器，有拦截器时先执行拦截器的intercept方法
+				ClientHttpRequestInterceptor nextInterceptor = this.iterator.next(); // 获取当前拦截器
+				return nextInterceptor.intercept(request, body, this); // 调用ClientHttpRequestInterceptor拦截器实现类的intercept方法（是LoadBalancerInterceptor拦截方法的入口）
 			}
 			else { // 当拦截器执行完毕之后会回到该execute方法中，走else逻辑，此时delegate类型是SimpleBufferingClientHttpRequest
 				HttpMethod method = request.getMethod();
 				Assert.state(method != null, "No standard HTTP method");
-				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method); // 重构url，获取真实的uri地址
+				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method); // 重构url，获取真实的uri地址，再通过请求工厂SimpleClientHttpRequestFactory创建请求
 				request.getHeaders().forEach((key, value) -> delegate.getHeaders().addAll(key, value));
 				if (body.length > 0) {
 					if (delegate instanceof StreamingHttpOutputMessage) {

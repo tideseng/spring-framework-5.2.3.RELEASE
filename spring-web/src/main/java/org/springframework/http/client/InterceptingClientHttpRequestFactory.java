@@ -32,9 +32,9 @@ import org.springframework.lang.Nullable;
  * @see ClientHttpRequestFactory
  * @see ClientHttpRequestInterceptor
  */
-public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequestFactoryWrapper {
+public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequestFactoryWrapper { // 客户端Http请求拦截工厂
 
-	private final List<ClientHttpRequestInterceptor> interceptors;
+	private final List<ClientHttpRequestInterceptor> interceptors; // Http请求拦截器链
 
 
 	/**
@@ -42,17 +42,17 @@ public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequ
 	 * @param requestFactory the request factory to wrap
 	 * @param interceptors the interceptors that are to be applied (can be {@code null})
 	 */
-	public InterceptingClientHttpRequestFactory(ClientHttpRequestFactory requestFactory,
-			@Nullable List<ClientHttpRequestInterceptor> interceptors) {
+	public InterceptingClientHttpRequestFactory(ClientHttpRequestFactory requestFactory, // 初始化InterceptingClientHttpRequestFactory
+			@Nullable List<ClientHttpRequestInterceptor> interceptors) { // 将RestTemplate中的拦截器链进行注入
 
-		super(requestFactory);
+		super(requestFactory); // 调用父类构造方法，并传入请求工厂SimpleClientHttpRequestFactory
 		this.interceptors = (interceptors != null ? interceptors : Collections.emptyList());
 	}
 
 
 	@Override
-	protected ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory) { // 在AbstractClientHttpRequestFactoryWrapper中进行创建
-		return new InterceptingClientHttpRequest(requestFactory, this.interceptors, uri, httpMethod);
+	protected ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod, ClientHttpRequestFactory requestFactory) { // 创建ClientHttpRequest，在AbstractClientHttpRequestFactoryWrapper中进行创建
+		return new InterceptingClientHttpRequest(requestFactory, this.interceptors, uri, httpMethod); // 创建InterceptingClientHttpRequest
 	}
 
 }

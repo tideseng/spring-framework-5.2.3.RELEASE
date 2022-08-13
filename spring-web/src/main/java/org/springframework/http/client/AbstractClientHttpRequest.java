@@ -48,9 +48,9 @@ public abstract class AbstractClientHttpRequest implements ClientHttpRequest {
 	}
 
 	@Override
-	public final ClientHttpResponse execute() throws IOException {
+	public final ClientHttpResponse execute() throws IOException { // 执行请求
 		assertNotExecuted(); // 检查ClientHttpRequest是否执行过，若执行过则抛出异常
-		ClientHttpResponse result = executeInternal(this.headers); // 调用父类方法
+		ClientHttpResponse result = executeInternal(this.headers); // 调用子类AbstractBufferingClientHttpRequest#executeInternal方法
 		this.executed = true; // 执行请求后将标志位设置为true
 		return result;
 	}

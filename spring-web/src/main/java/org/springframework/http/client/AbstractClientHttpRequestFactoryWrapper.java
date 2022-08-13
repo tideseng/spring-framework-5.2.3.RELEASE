@@ -31,14 +31,14 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientHttpRequestFactory {
 
-	private final ClientHttpRequestFactory requestFactory;
+	private final ClientHttpRequestFactory requestFactory; // 请求工厂，默认为SimpleClientHttpRequestFactory
 
 
 	/**
 	 * Create a {@code AbstractClientHttpRequestFactoryWrapper} wrapping the given request factory.
 	 * @param requestFactory the request factory to be wrapped
 	 */
-	protected AbstractClientHttpRequestFactoryWrapper(ClientHttpRequestFactory requestFactory) {
+	protected AbstractClientHttpRequestFactoryWrapper(ClientHttpRequestFactory requestFactory) { // 传入请求工厂SimpleClientHttpRequestFactory
 		Assert.notNull(requestFactory, "ClientHttpRequestFactory must not be null");
 		this.requestFactory = requestFactory;
 	}
@@ -50,8 +50,8 @@ public abstract class AbstractClientHttpRequestFactoryWrapper implements ClientH
 	 * {@linkplain #AbstractClientHttpRequestFactoryWrapper(ClientHttpRequestFactory) constructor}.
 	 */
 	@Override
-	public final ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException {
-		return createRequest(uri, httpMethod, this.requestFactory); // 创建ClientHttpRequest，并注入ClientHttpRequestFactory
+	public final ClientHttpRequest createRequest(URI uri, HttpMethod httpMethod) throws IOException { // 创建ClientHttpRequest
+		return createRequest(uri, httpMethod, this.requestFactory); // 创建ClientHttpRequest，并传递SimpleClientHttpRequestFactory
 	}
 
 	/**

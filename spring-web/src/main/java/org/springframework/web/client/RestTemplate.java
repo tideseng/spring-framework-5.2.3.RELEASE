@@ -137,7 +137,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Create a new instance of the {@link RestTemplate} using default settings.
 	 * Default {@link HttpMessageConverter HttpMessageConverters} are initialized.
 	 */
-	public RestTemplate() { // 添加一系列HttpMessageConverter的实现类（将请求响应的文本转化为相应的Java对象）、初始化URI模板处理器（对URI做相关拼接等操作）
+	public RestTemplate() { // 初始化RestTemplate（不会自动注入Spring容器，需要手动申明注入），添加一系列HttpMessageConverter的实现类（将请求响应的文本转化为相应的Java对象）、初始化URI模板处理器（对URI做相关拼接等操作）
 		this.messageConverters.add(new ByteArrayHttpMessageConverter());
 		this.messageConverters.add(new StringHttpMessageConverter());
 		this.messageConverters.add(new ResourceHttpMessageConverter(false));
@@ -728,14 +728,14 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * @return an arbitrary object, as returned by the {@link ResponseExtractor}
 	 */
 	@Nullable
-	protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback,
-			@Nullable ResponseExtractor<T> responseExtractor) throws RestClientException { // 不同的请求最终都会到这里来
+	protected <T> T doExecute(URI url, @Nullable HttpMethod method, @Nullable RequestCallback requestCallback, // 不同的请求最终都会到这里来
+			@Nullable ResponseExtractor<T> responseExtractor) throws RestClientException {
 
 		Assert.notNull(url, "URI is required");
 		Assert.notNull(method, "HttpMethod is required");
 		ClientHttpResponse response = null;
 		try {
-			ClientHttpRequest request = createRequest(url, method); // 调用父类HttpAccesor的createRequest方法，有拦截器时生成InterceptingClientHttpRequest对象、反之返回SimpleClientHttpRequestFactory对象
+			ClientHttpRequest request = createRequest(url, method); // 调用父类HttpAccesor的createRequest方法，有拦截器时生成InterceptingClientHttpRequest对象、反之返回SimpleBufferingClientHttpRequest对象
 			if (requestCallback != null) {
 				requestCallback.doWithRequest(request); // 执行请求回调，设置请求头等相关信息
 			}
