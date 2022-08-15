@@ -106,7 +106,7 @@ public class AnnotationAwareOrderComparator extends OrderComparator {
 	 * @param list the List to sort
 	 * @see java.util.List#sort(java.util.Comparator)
 	 */
-	public static void sort(List<?> list) { // 对集合元素进行排序
+	public static void sort(List<?> list) { // 对集合元素进行排序（根据Ordered接口、@Order、@Priority注解进行排序）
 		if (list.size() > 1) {
 			list.sort(INSTANCE);
 		}

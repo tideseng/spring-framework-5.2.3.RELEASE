@@ -252,8 +252,8 @@ public class RootBeanDefinition extends AbstractBeanDefinition {
 	 * bean definition.
 	 * @param original the original bean definition to copy from
 	 */
-	RootBeanDefinition(BeanDefinition original) {
-		super(original);
+	RootBeanDefinition(BeanDefinition original) { // 初始化RootBeanDefinition
+		super(original); // 调用父类构造方法创建AbstractBeanDefinition
 	}
 
 

@@ -220,7 +220,7 @@ final class PostProcessorRegistrationDelegate {
 
 		// First, register the BeanPostProcessors that implement PriorityOrdered.
 		sortPostProcessors(priorityOrderedPostProcessors, beanFactory); // 排序
-		registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors); // 将实现了PriorityOrdered接口的BeanPostProcessor实现类注册到BeanFactory容器中
+		registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors); // 将实现了PriorityOrdered接口的BeanPostProcessor实现类注册到BeanFactory容器中（按批次一起注册）
 
 		// Next, register the BeanPostProcessors that implement Ordered.
 		List<BeanPostProcessor> orderedPostProcessors = new ArrayList<>(orderedPostProcessorNames.size());
@@ -232,7 +232,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 		}
 		sortPostProcessors(orderedPostProcessors, beanFactory); // 排序
-		registerBeanPostProcessors(beanFactory, orderedPostProcessors); // 将实现了Ordered接口的BeanPostProcessor实现类注册到BeanFactory容器中
+		registerBeanPostProcessors(beanFactory, orderedPostProcessors); // 将实现了Ordered接口的BeanPostProcessor实现类注册到BeanFactory容器中（按批次一起注册）
 
 		// Now, register all regular BeanPostProcessors.
 		List<BeanPostProcessor> nonOrderedPostProcessors = new ArrayList<>(nonOrderedPostProcessorNames.size());
@@ -243,7 +243,7 @@ final class PostProcessorRegistrationDelegate {
 				internalPostProcessors.add(pp); // 添加内置的BeanFactoryPostProcessor实现类
 			}
 		}
-		registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors); // 将未实现PriorityOrdered、Ordered接口的BeanPostProcessor实现类注册到BeanFactory容器中
+		registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors); // 将未实现PriorityOrdered、Ordered接口的BeanPostProcessor实现类注册到BeanFactory容器中（按批次一起注册）
 
 		// Finally, re-register all internal BeanPostProcessors.
 		sortPostProcessors(internalPostProcessors, beanFactory); // 排序
