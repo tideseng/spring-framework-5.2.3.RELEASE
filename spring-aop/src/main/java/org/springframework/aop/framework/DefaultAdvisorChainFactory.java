@@ -48,22 +48,22 @@ import org.springframework.lang.Nullable;
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
 	@Override
-	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(
+	public List<Object> getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链
 			Advised config, Method method, @Nullable Class<?> targetClass) {
 
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
-		Advisor[] advisors = config.getAdvisors();
+		Advisor[] advisors = config.getAdvisors(); // 从ProxyFactory中获取被代理类的所有Advisor切面
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
-		for (Advisor advisor : advisors) {
-			if (advisor instanceof PointcutAdvisor) {
+		for (Advisor advisor : advisors) { // 遍历Advisor切面
+			if (advisor instanceof PointcutAdvisor) { // PointcutAdvisor的切面类型
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
-				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
+				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) { // 先判断切面Pointcut与被代理对象类是否匹配
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
 					if (mm instanceof IntroductionAwareMethodMatcher) {
@@ -73,10 +73,10 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
 					}
 					else {
-						match = mm.matches(method, actualClass);
+						match = mm.matches(method, actualClass); // 再判断切面Pointcut与被代理对象方法是否匹配
 					}
-					if (match) {
-						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
+					if (match) { // 如果类和方法都匹配
+						MethodInterceptor[] interceptors = registry.getInterceptors(advisor); // 获取Advisor切面中的Advice，并封装到MethodInterceptor对象中
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
@@ -85,7 +85,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 							}
 						}
 						else {
-							interceptorList.addAll(Arrays.asList(interceptors));
+							interceptorList.addAll(Arrays.asList(interceptors)); // 返回需要增强的Advice
 						}
 					}
 				}

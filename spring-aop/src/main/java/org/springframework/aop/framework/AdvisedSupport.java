@@ -72,7 +72,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/** Package-protected to allow direct access for efficiency. */
-	TargetSource targetSource = EMPTY_TARGET_SOURCE;
+	TargetSource targetSource = EMPTY_TARGET_SOURCE; // targetSource持有被代理对象
 
 	/** Whether the Advisors are already filtered for the specific target class. */
 	private boolean preFiltered = false;
@@ -93,7 +93,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * List of Advisors. If an Advice is added, it will be wrapped
 	 * in an Advisor before being added to this List.
 	 */
-	private List<Advisor> advisors = new ArrayList<>();
+	private List<Advisor> advisors = new ArrayList<>(); // 当前bean的切面实例列表
 
 	/**
 	 * Array updated on changes to the advisors list, which is easier
@@ -319,7 +319,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * Add all of the given advisors to this proxy configuration.
 	 * @param advisors the advisors to register
 	 */
-	public void addAdvisors(Advisor... advisors) {
+	public void addAdvisors(Advisor... advisors) { // 添加Advisor切面
 		addAdvisors(Arrays.asList(advisors));
 	}
 
@@ -475,13 +475,13 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * @param targetClass the target class
 	 * @return a List of MethodInterceptors (may also include InterceptorAndDynamicMethodMatchers)
 	 */
-	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) {
+	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) { // 获取该方法的Advice拦截器链
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
-		List<Object> cached = this.methodCache.get(cacheKey);
-		if (cached == null) {
-			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice(
+		List<Object> cached = this.methodCache.get(cacheKey); // 从缓存中获取值
+		if (cached == null) { // 缓存不存在时
+			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链
 					this, method, targetClass);
-			this.methodCache.put(cacheKey, cached);
+			this.methodCache.put(cacheKey, cached); // 放入缓存
 		}
 		return cached;
 	}

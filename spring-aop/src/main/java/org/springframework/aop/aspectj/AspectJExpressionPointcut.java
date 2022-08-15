@@ -189,7 +189,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	 * Check whether this pointcut is ready to match,
 	 * lazily building the underlying AspectJ pointcut expression.
 	 */
-	private PointcutExpression obtainPointcutExpression() {
+	private PointcutExpression obtainPointcutExpression() { // 根据Aspect相关注解中的value值（方法），找到真正的Pointcut表达式
 		if (getExpression() == null) {
 			throw new IllegalStateException("Must set property 'expression' before attempting to match");
 		}
@@ -290,7 +290,7 @@ public class AspectJExpressionPointcut extends AbstractExpressionPointcut
 	}
 
 	@Override
-	public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) {
+	public boolean matches(Method method, Class<?> targetClass, boolean hasIntroductions) { // 调用MethodMatcher的matches方法，判断方法是否匹配
 		obtainPointcutExpression();
 		ShadowMatch shadowMatch = getTargetShadowMatch(method, targetClass);
 

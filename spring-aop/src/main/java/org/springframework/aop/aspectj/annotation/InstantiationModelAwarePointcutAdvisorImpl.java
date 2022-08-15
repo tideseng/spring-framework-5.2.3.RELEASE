@@ -48,7 +48,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	private static final Advice EMPTY_ADVICE = new Advice() {};
 
 
-	private final AspectJExpressionPointcut declaredPointcut;
+	private final AspectJExpressionPointcut declaredPointcut; // 赋值Pointcut
 
 	private final Class<?> declaringClass;
 
@@ -146,7 +146,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	}
 
 	private Advice instantiateAdvice(AspectJExpressionPointcut pointcut) { // 创建Advice
-		Advice advice = this.aspectJAdvisorFactory.getAdvice(this.aspectJAdviceMethod, pointcut, // 创建Advice
+		Advice advice = this.aspectJAdvisorFactory.getAdvice(this.aspectJAdviceMethod, pointcut, // 根据Method创建Advice
 				this.aspectInstanceFactory, this.declarationOrder, this.aspectName);
 		return (advice != null ? advice : EMPTY_ADVICE);
 	}

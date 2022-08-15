@@ -121,7 +121,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	private boolean freezeProxy = false;
 
 	/** Default is no common interceptors. */
-	private String[] interceptorNames = new String[0];
+	private String[] interceptorNames = new String[0]; // 全局拦截切面，默认为空数组，可以通过提前getBean进行设置、实现PriorityOrdered接口的BeanPostProcessor在初始化后置方法中进行设置
 
 	private boolean applyCommonInterceptorsFirst = true;
 
@@ -338,16 +338,16 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
-		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) { // 判断当前类是否为Advisor等Aspect相关类、或判断当前类是否需要跳过
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
 		// Create proxy if we have advice.
-		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null); // 获取当前bean的切面集合
+		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null); // 调用子类获取当前bean的切面集合
 		if (specificInterceptors != DO_NOT_PROXY) { // 如果当前bean的切面不集合为空，则标记该beanName有对应切面，并生成该代理对象返回
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
-			Object proxy = createProxy(
+			Object proxy = createProxy( // 创建代理对象，并将被代理对象bean实例封装到SingletonTargetSource对象中（被代理对象在TargetSource中，TargetSource在ProxyFactory中，ProxyFactory在AopProxy中，四者一一对应）
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean)); // 将被代理对象bean实例封装到SingletonTargetSource对象中
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
@@ -439,17 +439,17 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @return the AOP proxy for the bean
 	 * @see #buildAdvisors
 	 */
-	protected Object createProxy(Class<?> beanClass, @Nullable String beanName,
+	protected Object createProxy(Class<?> beanClass, @Nullable String beanName, // 创建代理对象
 			@Nullable Object[] specificInterceptors, TargetSource targetSource) {
 
 		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
-			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
+			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass); // 设置BeanDefinition的originalTargetClass属性
 		}
 
-		ProxyFactory proxyFactory = new ProxyFactory();
-		proxyFactory.copyFrom(this);
+		ProxyFactory proxyFactory = new ProxyFactory(); // 创建ProxyFactory
+		proxyFactory.copyFrom(this); // 将AnnotationAwareAspectJAutoProxyCreator中的proxyTargetClass、exposeProxy等属性copy到ProxyFactory中
 
-		if (!proxyFactory.isProxyTargetClass()) {
+		if (!proxyFactory.isProxyTargetClass()) { // 当配置为JDK代理时，如果配置错误，则强制改为CGLIB代理
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
 			}
@@ -458,17 +458,17 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			}
 		}
 
-		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
-		proxyFactory.addAdvisors(advisors);
-		proxyFactory.setTargetSource(targetSource);
+		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors); // 组装Advisor切面（如果有全局拦截切面则添加到对头）
+		proxyFactory.addAdvisors(advisors); // 将Advisor切面添加到ProxyFactory中
+		proxyFactory.setTargetSource(targetSource); // 将TargetSource切面添加到ProxyFactory中（TargetSource中持有被代理对象）
 		customizeProxyFactory(proxyFactory);
 
 		proxyFactory.setFrozen(this.freezeProxy);
-		if (advisorsPreFiltered()) {
-			proxyFactory.setPreFiltered(true);
+		if (advisorsPreFiltered()) { // 默认为true
+			proxyFactory.setPreFiltered(true); // 默认将preFiltered设置为true
 		}
 
-		return proxyFactory.getProxy(getProxyClassLoader());
+		return proxyFactory.getProxy(getProxyClassLoader()); // 创建代理对象（当前实例化的Bean与TargetSource、ProxyFactory、AopProxyFactory、AopProxy(jdk动态代理与cglib代理)一一对应）
 	}
 
 	/**
@@ -507,19 +507,19 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * specific to this bean (may be empty, but not null)
 	 * @return the list of Advisors for the given bean
 	 */
-	protected Advisor[] buildAdvisors(@Nullable String beanName, @Nullable Object[] specificInterceptors) {
+	protected Advisor[] buildAdvisors(@Nullable String beanName, @Nullable Object[] specificInterceptors) { // 组装Advisor切面（如果有全局拦截切面则添加到对头）
 		// Handle prototypes correctly...
-		Advisor[] commonInterceptors = resolveInterceptorNames();
+		Advisor[] commonInterceptors = resolveInterceptorNames(); // 获取全局拦截切面
 
-		List<Object> allInterceptors = new ArrayList<>();
+		List<Object> allInterceptors = new ArrayList<>(); // 所有的拦截切面（Advice和MethodInterceptor）
 		if (specificInterceptors != null) {
 			allInterceptors.addAll(Arrays.asList(specificInterceptors));
 			if (commonInterceptors.length > 0) {
-				if (this.applyCommonInterceptorsFirst) {
-					allInterceptors.addAll(0, Arrays.asList(commonInterceptors));
+				if (this.applyCommonInterceptorsFirst) { // 默认为true
+					allInterceptors.addAll(0, Arrays.asList(commonInterceptors)); // 加入全局拦截切面到对头
 				}
 				else {
-					allInterceptors.addAll(Arrays.asList(commonInterceptors));
+					allInterceptors.addAll(Arrays.asList(commonInterceptors)); // 加入全局拦截切面到队尾
 				}
 			}
 		}
@@ -532,7 +532,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 		Advisor[] advisors = new Advisor[allInterceptors.size()];
 		for (int i = 0; i < allInterceptors.size(); i++) {
-			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
+			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i)); // 包装成Advisor
 		}
 		return advisors;
 	}
@@ -541,14 +541,14 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * Resolves the specified interceptor names to Advisor objects.
 	 * @see #setInterceptorNames
 	 */
-	private Advisor[] resolveInterceptorNames() {
+	private Advisor[] resolveInterceptorNames() { // 获取全局拦截切面
 		BeanFactory bf = this.beanFactory;
 		ConfigurableBeanFactory cbf = (bf instanceof ConfigurableBeanFactory ? (ConfigurableBeanFactory) bf : null);
 		List<Advisor> advisors = new ArrayList<>();
-		for (String beanName : this.interceptorNames) {
+		for (String beanName : this.interceptorNames) { // 遍历设置的全局拦截切面
 			if (cbf == null || !cbf.isCurrentlyInCreation(beanName)) {
 				Assert.state(bf != null, "BeanFactory required for resolving interceptor names");
-				Object next = bf.getBean(beanName);
+				Object next = bf.getBean(beanName); // 调用getBean获取全局拦截切面实例
 				advisors.add(this.advisorAdapterRegistry.wrap(next));
 			}
 		}

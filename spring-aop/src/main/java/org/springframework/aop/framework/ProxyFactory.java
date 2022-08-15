@@ -33,12 +33,12 @@ import org.springframework.util.ClassUtils;
  * @since 14.03.2003
  */
 @SuppressWarnings("serial")
-public class ProxyFactory extends ProxyCreatorSupport {
+public class ProxyFactory extends ProxyCreatorSupport { // ProxyFactory代理工厂，维护了TargetSource、当前bean的切面实例列表（当前实例化的Bean与TargetSource、ProxyFactory、AopProxyFactory、AopProxy(jdk动态代理与cglib代理)一一对应）
 
 	/**
 	 * Create a new ProxyFactory.
 	 */
-	public ProxyFactory() {
+	public ProxyFactory() { // 初始化ProxyFactory，会调用父类ProxyCreatorSupport无参构造函数创建DefaultAopProxyFactory对象
 	}
 
 	/**
@@ -106,8 +106,8 @@ public class ProxyFactory extends ProxyCreatorSupport {
 	 * (or {@code null} for the low-level proxy facility's default)
 	 * @return the proxy object
 	 */
-	public Object getProxy(@Nullable ClassLoader classLoader) {
-		return createAopProxy().getProxy(classLoader);
+	public Object getProxy(@Nullable ClassLoader classLoader) { // 创建代理对象
+		return createAopProxy().getProxy(classLoader); // 获取Aop代理，并创建代理对象
 	}
 
 

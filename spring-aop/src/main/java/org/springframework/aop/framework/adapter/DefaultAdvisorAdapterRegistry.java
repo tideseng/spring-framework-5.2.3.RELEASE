@@ -46,23 +46,23 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	/**
 	 * Create a new DefaultAdvisorAdapterRegistry, registering well-known adapters.
 	 */
-	public DefaultAdvisorAdapterRegistry() {
-		registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
-		registerAdvisorAdapter(new AfterReturningAdviceAdapter());
-		registerAdvisorAdapter(new ThrowsAdviceAdapter());
+	public DefaultAdvisorAdapterRegistry() { // 初始化DefaultAdvisorAdapterRegistry
+		registerAdvisorAdapter(new MethodBeforeAdviceAdapter()); // 注册MethodBeforeAdviceAdapter到adapters
+		registerAdvisorAdapter(new AfterReturningAdviceAdapter()); // 注册AfterReturningAdviceAdapter到adapters
+		registerAdvisorAdapter(new ThrowsAdviceAdapter()); // 注册ThrowsAdviceAdapter到adapters
 	}
 
 
 	@Override
-	public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException {
-		if (adviceObject instanceof Advisor) {
+	public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException { // 包装成Advisor
+		if (adviceObject instanceof Advisor) { // Advisor类型
 			return (Advisor) adviceObject;
 		}
-		if (!(adviceObject instanceof Advice)) {
-			throw new UnknownAdviceTypeException(adviceObject);
+		if (!(adviceObject instanceof Advice)) { // Advice类型
+			throw new UnknownAdviceTypeException(adviceObject); // 如果既不是Advisor类型、也不是Advice类型，则抛出异常
 		}
 		Advice advice = (Advice) adviceObject;
-		if (advice instanceof MethodInterceptor) {
+		if (advice instanceof MethodInterceptor) { // 实现了MethodInterceptor接口类型的Advice时
 			// So well-known it doesn't even need an adapter.
 			return new DefaultPointcutAdvisor(advice);
 		}

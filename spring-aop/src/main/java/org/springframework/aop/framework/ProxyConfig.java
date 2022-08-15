@@ -151,7 +151,7 @@ public class ProxyConfig implements Serializable {
 	 * Copy configuration from the other config object.
 	 * @param other object to copy configuration from
 	 */
-	public void copyFrom(ProxyConfig other) {
+	public void copyFrom(ProxyConfig other) { // 将AnnotationAwareAspectJAutoProxyCreator中的proxyTargetClass、exposeProxy等属性copy到ProxyFactory中
 		Assert.notNull(other, "Other ProxyConfig object must not be null");
 		this.proxyTargetClass = other.proxyTargetClass;
 		this.optimize = other.optimize;

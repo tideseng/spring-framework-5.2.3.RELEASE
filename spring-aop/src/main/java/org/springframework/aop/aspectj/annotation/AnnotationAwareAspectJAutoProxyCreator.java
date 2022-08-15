@@ -89,7 +89,7 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	@Override
 	protected List<Advisor> findCandidateAdvisors() { // 查找候选的Advisor切面
 		// Add all the Spring advisors found according to superclass rules.
-		List<Advisor> advisors = super.findCandidateAdvisors(); // 1.调用父类获取所有切面bean实例
+		List<Advisor> advisors = super.findCandidateAdvisors(); // 1.调用父类获取所有Advisor切面实现类的bean实例
 		// Build Advisors for all AspectJ aspects in the bean factory.
 		if (this.aspectJAdvisorsBuilder != null) {
 			advisors.addAll(this.aspectJAdvisorsBuilder.buildAspectJAdvisors()); // 2.解析@Aspect注解，并创建Advisor切面

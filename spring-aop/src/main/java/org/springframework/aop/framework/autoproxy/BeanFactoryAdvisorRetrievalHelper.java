@@ -64,7 +64,7 @@ public class BeanFactoryAdvisorRetrievalHelper {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
-	public List<Advisor> findAdvisorBeans() { // 查找所有切面Bean实例
+	public List<Advisor> findAdvisorBeans() { // 获取所有Advisor切面实现类的bean实例
 		// Determine list of advisor bean names, if not cached already.
 		String[] advisorNames = this.cachedAdvisorBeanNames; // 获取Advisor实现类的beanName缓存（首次为null）
 		if (advisorNames == null) {

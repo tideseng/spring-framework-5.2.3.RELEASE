@@ -219,7 +219,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 	@Override
 	@Nullable
-	public Advice getAdvice(Method candidateAdviceMethod, AspectJExpressionPointcut expressionPointcut, // 创建Advice
+	public Advice getAdvice(Method candidateAdviceMethod, AspectJExpressionPointcut expressionPointcut, // 根据方法创建Advice
 			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
 
 		Class<?> candidateAspectClass = aspectInstanceFactory.getAspectMetadata().getAspectClass(); // 获取Aspect注解方法的类，即@Aspect注解修饰的类

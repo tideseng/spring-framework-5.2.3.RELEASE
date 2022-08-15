@@ -35,7 +35,7 @@ import org.springframework.aop.ProxyMethodInvocation;
  * @since 2.0
  */
 @SuppressWarnings("serial")
-public class AspectJAroundAdvice extends AbstractAspectJAdvice implements MethodInterceptor, Serializable {
+public class AspectJAroundAdvice extends AbstractAspectJAdvice implements MethodInterceptor, Serializable { // @Around注解切面
 
 	public AspectJAroundAdvice(
 			Method aspectJAroundAdviceMethod, AspectJExpressionPointcut pointcut, AspectInstanceFactory aif) {

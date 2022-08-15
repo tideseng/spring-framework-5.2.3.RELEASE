@@ -43,8 +43,8 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 	/**
 	 * Create a new ProxyCreatorSupport instance.
 	 */
-	public ProxyCreatorSupport() {
-		this.aopProxyFactory = new DefaultAopProxyFactory();
+	public ProxyCreatorSupport() { // 初始化ProxyCreatorSupport
+		this.aopProxyFactory = new DefaultAopProxyFactory(); // 创建DefaultAopProxyFactory，并赋值给全局变量
 	}
 
 	/**
@@ -98,11 +98,11 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 	 * Subclasses should call this to get a new AOP proxy. They should <b>not</b>
 	 * create an AOP proxy with {@code this} as an argument.
 	 */
-	protected final synchronized AopProxy createAopProxy() {
+	protected final synchronized AopProxy createAopProxy() { // 获取Aop代理
 		if (!this.active) {
 			activate();
 		}
-		return getAopProxyFactory().createAopProxy(this);
+		return getAopProxyFactory().createAopProxy(this); // 获取Aop代理，并传入ProxyFactory
 	}
 
 	/**

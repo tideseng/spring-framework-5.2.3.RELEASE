@@ -94,7 +94,7 @@ public abstract class AopConfigUtils {
 	}
 
 	@Nullable
-	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary( // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 
 		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
