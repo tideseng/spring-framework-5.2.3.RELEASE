@@ -48,14 +48,14 @@ import org.springframework.lang.Nullable;
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
 	@Override
-	public List<Object> getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链
+	public List<Object> getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链（MethodInterceptor或InterceptorAndDynamicMethodMatcher）
 			Advised config, Method method, @Nullable Class<?> targetClass) {
 
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
 		Advisor[] advisors = config.getAdvisors(); // 从ProxyFactory中获取被代理类的所有Advisor切面
-		List<Object> interceptorList = new ArrayList<>(advisors.length);
+		List<Object> interceptorList = new ArrayList<>(advisors.length); // 泛型为Object，不一定都是Advice
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
@@ -77,11 +77,11 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					}
 					if (match) { // 如果类和方法都匹配
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor); // 获取Advisor切面中的Advice，并封装到MethodInterceptor对象中
-						if (mm.isRuntime()) {
+						if (mm.isRuntime()) { // 是否需要参数级别匹配，默认为false，除非自定义
 							// Creating a new object instance in the getInterceptors() method
 							// isn't a problem as we normally cache created chains.
 							for (MethodInterceptor interceptor : interceptors) {
-								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm));
+								interceptorList.add(new InterceptorAndDynamicMethodMatcher(interceptor, mm)); // 创建InterceptorAndDynamicMethodMatcher
 							}
 						}
 						else {

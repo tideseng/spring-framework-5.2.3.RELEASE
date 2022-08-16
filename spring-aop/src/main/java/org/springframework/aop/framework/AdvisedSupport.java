@@ -394,7 +394,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * Cannot add introductions this way unless the advice implements IntroductionInfo.
 	 */
 	@Override
-	public void addAdvice(int pos, Advice advice) throws AopConfigException {
+	public void addAdvice(int pos, Advice advice) throws AopConfigException { // 添加Advice增强
 		Assert.notNull(advice, "Advice must not be null");
 		if (advice instanceof IntroductionInfo) {
 			// We don't need an IntroductionAdvisor for this kind of introduction:
@@ -406,7 +406,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 			throw new AopConfigException("DynamicIntroductionAdvice may only be added as part of IntroductionAdvisor");
 		}
 		else {
-			addAdvisor(pos, new DefaultPointcutAdvisor(advice));
+			addAdvisor(pos, new DefaultPointcutAdvisor(advice)); // 将Advice增强封装到默认Advisor中
 		}
 	}
 
@@ -475,11 +475,11 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 	 * @param targetClass the target class
 	 * @return a List of MethodInterceptors (may also include InterceptorAndDynamicMethodMatchers)
 	 */
-	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) { // 获取该方法的Advice拦截器链
+	public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, @Nullable Class<?> targetClass) { // 获取该方法的Advice拦截器链（MethodInterceptor或InterceptorAndDynamicMethodMatcher）
 		MethodCacheKey cacheKey = new MethodCacheKey(method);
 		List<Object> cached = this.methodCache.get(cacheKey); // 从缓存中获取值
 		if (cached == null) { // 缓存不存在时
-			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链
+			cached = this.advisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice( // 获取该方法的Advice拦截器链（MethodInterceptor或InterceptorAndDynamicMethodMatcher）
 					this, method, targetClass);
 			this.methodCache.put(cacheKey, cached); // 放入缓存
 		}

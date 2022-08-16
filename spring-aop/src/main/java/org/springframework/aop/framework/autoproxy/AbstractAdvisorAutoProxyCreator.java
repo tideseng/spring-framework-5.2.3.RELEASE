@@ -92,7 +92,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 */
 	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) { // 获取bean的切面集合
 		List<Advisor> candidateAdvisors = findCandidateAdvisors(); // 找到候选的切面（其实就是一个寻找有Advisor接口、@Aspectj注解的过程，将工程中所有Advisor实现类和被@Aspectj注解修饰的类封装成Advisor）
-		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName); // 判断候选的切面是否作用在当前beanClass上，即调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
+		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName); // 判断候选的切面是否作用在当前beanClass上和任意一个方法上，即调用Pointcut中ClassFilter和MethodMatcher的matches方法进行匹配
 		extendAdvisors(eligibleAdvisors); // 针对@Aspect注解切面添加一个默认的切面DefaultPointcutAdvisor到对头，解决注解切面参数传递问题
 		if (!eligibleAdvisors.isEmpty()) {
 			eligibleAdvisors = sortAdvisors(eligibleAdvisors); // 调用子类方法对自定义的切面实现类根据Ordered接口、@Order、@Priority注解进行排序

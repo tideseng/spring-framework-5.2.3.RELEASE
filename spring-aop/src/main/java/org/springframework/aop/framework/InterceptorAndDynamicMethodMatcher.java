@@ -32,7 +32,7 @@ class InterceptorAndDynamicMethodMatcher {
 
 	final MethodMatcher methodMatcher;
 
-	public InterceptorAndDynamicMethodMatcher(MethodInterceptor interceptor, MethodMatcher methodMatcher) {
+	public InterceptorAndDynamicMethodMatcher(MethodInterceptor interceptor, MethodMatcher methodMatcher) { // 初始化InterceptorAndDynamicMethodMatcher
 		this.interceptor = interceptor;
 		this.methodMatcher = methodMatcher;
 	}

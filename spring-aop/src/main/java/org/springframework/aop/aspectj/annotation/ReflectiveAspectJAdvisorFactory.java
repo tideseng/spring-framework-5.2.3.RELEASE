@@ -111,7 +111,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 
 	@Override
-	public List<Advisor> getAdvisors(MetadataAwareAspectInstanceFactory aspectInstanceFactory) { // 创建切面Advisor对象
+	public List<Advisor> getAdvisors(MetadataAwareAspectInstanceFactory aspectInstanceFactory) { // 创建切面Advisor对象（已经排好序）
 		Class<?> aspectClass = aspectInstanceFactory.getAspectMetadata().getAspectClass(); // 从工厂中获取有@Aspect注解类的beanClass
 		String aspectName = aspectInstanceFactory.getAspectMetadata().getAspectName(); // 从工厂中获取有@Aspect注解类的beannName
 		validate(aspectClass);
@@ -122,7 +122,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory); // 创建工厂的装饰类，获取实例只会获取一次
 
 		List<Advisor> advisors = new ArrayList<>();
-		for (Method method : getAdvisorMethods(aspectClass)) { // 循环没有@Pointcut注解的方法，即有@Around、@Before、@After、@AfterReturning、@AfterThrowing注解的方法
+		for (Method method : getAdvisorMethods(aspectClass)) { // 循环没有@Pointcut注解的方法，即有@Around、@Before、@After、@AfterReturning、@AfterThrowing注解的方法，并排序
 			Advisor advisor = getAdvisor(method, lazySingletonAspectInstanceFactory, advisors.size(), aspectName); // 创建切面Advisor对象InstantiationModelAwarePointcutAdvisorImpl
 			if (advisor != null) {
 				advisors.add(advisor);
@@ -268,7 +268,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
 				AfterReturning afterReturningAnnotation = (AfterReturning) aspectJAnnotation.getAnnotation();
 				if (StringUtils.hasText(afterReturningAnnotation.returning())) {
-					springAdvice.setReturningName(afterReturningAnnotation.returning());
+					springAdvice.setReturningName(afterReturningAnnotation.returning()); // 设置返回值参数名
 				}
 				break;
 			case AtAfterThrowing:
@@ -276,7 +276,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 						candidateAdviceMethod, expressionPointcut, aspectInstanceFactory);
 				AfterThrowing afterThrowingAnnotation = (AfterThrowing) aspectJAnnotation.getAnnotation();
 				if (StringUtils.hasText(afterThrowingAnnotation.throwing())) {
-					springAdvice.setThrowingName(afterThrowingAnnotation.throwing());
+					springAdvice.setThrowingName(afterThrowingAnnotation.throwing()); // 设置异常参数名
 				}
 				break;
 			default:

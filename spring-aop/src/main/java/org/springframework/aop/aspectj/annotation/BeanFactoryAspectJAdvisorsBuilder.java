@@ -80,7 +80,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
-	public List<Advisor> buildAspectJAdvisors() { // 解析@Aspect注解，并创建Advisor切面
+	public List<Advisor> buildAspectJAdvisors() { // 解析@Aspect注解，并创建Advisor切面（已经排好序）
 		List<String> aspectNames = this.aspectBeanNames; // 获取所有类上有@Aspect注解beanName缓存（首次为null）
 
 		if (aspectNames == null) {
@@ -107,7 +107,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName); // 创建BeanFactoryAspectInstanceFactory，@Aspect注解类的实例工厂，负责获取@Aspect注解类的实例
-								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory); // 创建切面Advisor对象
+								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory); // 创建切面Advisor对象（已经排好序）
 								if (this.beanFactory.isSingleton(beanName)) {
 									this.advisorsCache.put(beanName, classAdvisors); // 放入缓存
 								}

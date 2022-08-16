@@ -257,12 +257,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		// Create proxy here if we have a custom TargetSource.
 		// Suppresses unnecessary default instantiation of the target bean:
 		// The TargetSource will handle target instances in a custom fashion.
-		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
+		TargetSource targetSource = getCustomTargetSource(beanClass, beanName); // 获取TargetSource
 		if (targetSource != null) {
 			if (StringUtils.hasLength(beanName)) {
 				this.targetSourcedBeans.add(beanName);
 			}
-			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource);
+			Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(beanClass, beanName, targetSource); // 获取bean的切面集合
 			Object proxy = createProxy(beanClass, beanName, specificInterceptors, targetSource);
 			this.proxyTypes.put(cacheKey, proxy.getClass());
 			return proxy;
@@ -407,12 +407,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @see #setCustomTargetSourceCreators
 	 */
 	@Nullable
-	protected TargetSource getCustomTargetSource(Class<?> beanClass, String beanName) {
+	protected TargetSource getCustomTargetSource(Class<?> beanClass, String beanName) { // 获取TargetSource
 		// We can't create fancy target sources for directly registered singletons.
-		if (this.customTargetSourceCreators != null &&
+		if (this.customTargetSourceCreators != null && // 当customTargetSourceCreators不为空时才会生效，需要手动设置
 				this.beanFactory != null && this.beanFactory.containsBean(beanName)) {
 			for (TargetSourceCreator tsc : this.customTargetSourceCreators) {
-				TargetSource ts = tsc.getTargetSource(beanClass, beanName);
+				TargetSource ts = tsc.getTargetSource(beanClass, beanName); // 获取TargetSource
 				if (ts != null) {
 					// Found a matching TargetSource.
 					if (logger.isTraceEnabled()) {

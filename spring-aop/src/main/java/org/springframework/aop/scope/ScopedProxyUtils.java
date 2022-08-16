@@ -62,7 +62,7 @@ public abstract class ScopedProxyUtils {
 
 		// Create a scoped proxy definition for the original bean name,
 		// "hiding" the target bean in an internal target definition.
-		RootBeanDefinition proxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class);
+		RootBeanDefinition proxyDefinition = new RootBeanDefinition(ScopedProxyFactoryBean.class); // 创建新的BeanDefinition，指定beanClass为ScopedProxyFactoryBean.class
 		proxyDefinition.setDecoratedDefinition(new BeanDefinitionHolder(targetDefinition, targetBeanName));
 		proxyDefinition.setOriginatingBeanDefinition(targetDefinition);
 		proxyDefinition.setSource(definition.getSource());

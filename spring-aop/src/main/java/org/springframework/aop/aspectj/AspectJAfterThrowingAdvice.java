@@ -34,10 +34,10 @@ import org.springframework.aop.AfterAdvice;
 public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice
 		implements MethodInterceptor, AfterAdvice, Serializable {
 
-	public AspectJAfterThrowingAdvice(
+	public AspectJAfterThrowingAdvice( // 初始化AspectJAfterThrowingAdvice
 			Method aspectJBeforeAdviceMethod, AspectJExpressionPointcut pointcut, AspectInstanceFactory aif) {
 
-		super(aspectJBeforeAdviceMethod, pointcut, aif);
+		super(aspectJBeforeAdviceMethod, pointcut, aif); // 创建AbstractAspectJAdvice
 	}
 
 
@@ -52,18 +52,18 @@ public class AspectJAfterThrowingAdvice extends AbstractAspectJAdvice
 	}
 
 	@Override
-	public void setThrowingName(String name) {
-		setThrowingNameNoCheck(name);
+	public void setThrowingName(String name) { // 设置异常参数名
+		setThrowingNameNoCheck(name); // 设置异常参数名
 	}
 
 	@Override
-	public Object invoke(MethodInvocation mi) throws Throwable {
+	public Object invoke(MethodInvocation mi) throws Throwable { // AfterThrowingAdvice增强逻辑
 		try {
-			return mi.proceed();
+			return mi.proceed(); // 执行拦截器链
 		}
-		catch (Throwable ex) {
+		catch (Throwable ex) { // 捕获异常
 			if (shouldInvokeOnThrowing(ex)) {
-				invokeAdviceMethod(getJoinPointMatch(), null, ex);
+				invokeAdviceMethod(getJoinPointMatch(), null, ex); // 当产生异常时，反射调用@AfterThrowing修饰的方法
 			}
 			throw ex;
 		}

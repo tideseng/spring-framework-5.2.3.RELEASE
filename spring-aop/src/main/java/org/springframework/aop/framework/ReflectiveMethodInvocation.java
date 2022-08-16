@@ -83,7 +83,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 * List of MethodInterceptor and InterceptorAndDynamicMethodMatcher
 	 * that need dynamic checks.
 	 */
-	protected final List<?> interceptorsAndDynamicMethodMatchers;
+	protected final List<?> interceptorsAndDynamicMethodMatchers; // 拦截器链
 
 	/**
 	 * Index from 0 of the current interceptor we're invoking.
@@ -114,7 +114,7 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 		this.targetClass = targetClass;
 		this.method = BridgeMethodResolver.findBridgedMethod(method);
 		this.arguments = AopProxyUtils.adaptArgumentsIfNecessary(method, arguments);
-		this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers;
+		this.interceptorsAndDynamicMethodMatchers = interceptorsAndDynamicMethodMatchers; // 传入 // 拦截器链
 	}
 
 
@@ -157,33 +157,33 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 
 	@Override
 	@Nullable
-	public Object proceed() throws Throwable {
+	public Object proceed() throws Throwable { // 执行拦截器链
 		// We start with an index of -1 and increment early.
-		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
-			return invokeJoinpoint();
+		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) { // currentInterceptorIndex默认为-1，判断最后一个拦截器是否已经执行
+			return invokeJoinpoint(); // 调用被代理对象的方法
 		}
 
 		Object interceptorOrInterceptionAdvice =
-				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
-		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
+				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex); // 获取当前拦截器链中的当前拦截器
+		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) { // 判断是否为InterceptorAndDynamicMethodMatcher类型（需要参数级别匹配）
 			// Evaluate dynamic method matcher here: static part will already have
 			// been evaluated and found to match.
 			InterceptorAndDynamicMethodMatcher dm =
 					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
 			Class<?> targetClass = (this.targetClass != null ? this.targetClass : this.method.getDeclaringClass());
-			if (dm.methodMatcher.matches(this.method, targetClass, this.arguments)) {
-				return dm.interceptor.invoke(this);
+			if (dm.methodMatcher.matches(this.method, targetClass, this.arguments)) { // 进行参数级别的匹配
+				return dm.interceptor.invoke(this); // 当参数匹配时，调用Advice增强逻辑并传入ReflectiveMethodInvocation对象
 			}
 			else {
 				// Dynamic matching failed.
 				// Skip this interceptor and invoke the next in the chain.
-				return proceed();
+				return proceed(); // 当参数不匹配时，递归调用下一个拦截器
 			}
 		}
-		else {
+		else { // 为MethodInterceptor类型（一般都为MethodInterceptor类型）
 			// It's an interceptor, so we just invoke it: The pointcut will have
 			// been evaluated statically before this object was constructed.
-			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);
+			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this); // 调用Advice增强逻辑并传入ReflectiveMethodInvocation对象
 		}
 	}
 
@@ -194,8 +194,8 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 * @throws Throwable if invoking the joinpoint resulted in an exception
 	 */
 	@Nullable
-	protected Object invokeJoinpoint() throws Throwable {
-		return AopUtils.invokeJoinpointUsingReflection(this.target, this.method, this.arguments);
+	protected Object invokeJoinpoint() throws Throwable { // 调用被代理对象的方法
+		return AopUtils.invokeJoinpointUsingReflection(this.target, this.method, this.arguments); // 调用被代理对象的方法
 	}
 
 

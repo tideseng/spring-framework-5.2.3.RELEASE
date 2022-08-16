@@ -85,7 +85,7 @@ public class MethodInvocationProceedingJoinPoint implements ProceedingJoinPoint,
 
 	@Override
 	public Object proceed() throws Throwable {
-		return this.methodInvocation.invocableClone().proceed();
+		return this.methodInvocation.invocableClone().proceed(); // 先克隆ReflectiveMethodInvocation，再调用克隆后的proceed方法执行拦截器链
 	}
 
 	@Override

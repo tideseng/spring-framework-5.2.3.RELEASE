@@ -38,10 +38,10 @@ import org.springframework.util.TypeUtils;
 public class AspectJAfterReturningAdvice extends AbstractAspectJAdvice
 		implements AfterReturningAdvice, AfterAdvice, Serializable {
 
-	public AspectJAfterReturningAdvice(
+	public AspectJAfterReturningAdvice( // 初始化AspectJAfterReturningAdvice
 			Method aspectJBeforeAdviceMethod, AspectJExpressionPointcut pointcut, AspectInstanceFactory aif) {
 
-		super(aspectJBeforeAdviceMethod, pointcut, aif);
+		super(aspectJBeforeAdviceMethod, pointcut, aif); // 创建AbstractAspectJAdvice
 	}
 
 
@@ -56,8 +56,8 @@ public class AspectJAfterReturningAdvice extends AbstractAspectJAdvice
 	}
 
 	@Override
-	public void setReturningName(String name) {
-		setReturningNameNoCheck(name);
+	public void setReturningName(String name) { // 设置返回值参数名
+		setReturningNameNoCheck(name); // 设置返回值参数名
 	}
 
 	@Override
