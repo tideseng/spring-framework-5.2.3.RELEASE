@@ -60,7 +60,7 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 
 	/** The name of the target bean. */
 	@Nullable
-	private String targetBeanName;
+	private String targetBeanName; // 通过BeanDefinition的PropertyValue设置
 
 	/** The cached singleton proxy. */
 	@Nullable
@@ -90,11 +90,11 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 		}
 		ConfigurableBeanFactory cbf = (ConfigurableBeanFactory) beanFactory;
 
-		this.scopedTargetSource.setBeanFactory(beanFactory);
+		this.scopedTargetSource.setBeanFactory(beanFactory); // 给AbstractBeanFactoryBasedTargetSource设置BeanFactory
 
 		ProxyFactory pf = new ProxyFactory();
 		pf.copyFrom(this);
-		pf.setTargetSource(this.scopedTargetSource);
+		pf.setTargetSource(this.scopedTargetSource); // 设置TargetSource
 
 		Assert.notNull(this.targetBeanName, "Property 'targetBeanName' is required");
 		Class<?> beanType = beanFactory.getType(this.targetBeanName);
@@ -108,13 +108,13 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 
 		// Add an introduction that implements only the methods on ScopedObject.
 		ScopedObject scopedObject = new DefaultScopedObject(cbf, this.scopedTargetSource.getTargetBeanName());
-		pf.addAdvice(new DelegatingIntroductionInterceptor(scopedObject));
+		pf.addAdvice(new DelegatingIntroductionInterceptor(scopedObject)); // 添加Advice
 
 		// Add the AopInfrastructureBean marker to indicate that the scoped proxy
 		// itself is not subject to auto-proxying! Only its target bean is.
 		pf.addInterface(AopInfrastructureBean.class);
 
-		this.proxy = pf.getProxy(cbf.getBeanClassLoader());
+		this.proxy = pf.getProxy(cbf.getBeanClassLoader()); // 创建代理对象
 	}
 
 

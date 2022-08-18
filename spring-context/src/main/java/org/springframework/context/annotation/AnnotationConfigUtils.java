@@ -268,10 +268,10 @@ public abstract class AnnotationConfigUtils {
 			ScopeMetadata metadata, BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
 
 		ScopedProxyMode scopedProxyMode = metadata.getScopedProxyMode();
-		if (scopedProxyMode.equals(ScopedProxyMode.NO)) {
+		if (scopedProxyMode.equals(ScopedProxyMode.NO)) { // 如果@Scope注解中的proxyMode为默认值，则直接返回刚创建的BeanDefinitionHolder
 			return definition;
 		}
-		boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS);
+		boolean proxyTargetClass = scopedProxyMode.equals(ScopedProxyMode.TARGET_CLASS); // 判断@Scope注解中的proxyMode是否为ScopedProxyMode.TARGET_CLASS
 		return ScopedProxyCreator.createScopedProxy(definition, registry, proxyTargetClass);
 	}
 

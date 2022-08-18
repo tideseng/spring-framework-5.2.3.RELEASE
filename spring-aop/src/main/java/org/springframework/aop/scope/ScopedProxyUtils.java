@@ -57,7 +57,7 @@ public abstract class ScopedProxyUtils {
 			BeanDefinitionRegistry registry, boolean proxyTargetClass) {
 
 		String originalBeanName = definition.getBeanName();
-		BeanDefinition targetDefinition = definition.getBeanDefinition();
+		BeanDefinition targetDefinition = definition.getBeanDefinition(); // 原BeabDefinition
 		String targetBeanName = getTargetBeanName(originalBeanName);
 
 		// Create a scoped proxy definition for the original bean name,
@@ -69,8 +69,8 @@ public abstract class ScopedProxyUtils {
 		proxyDefinition.setRole(targetDefinition.getRole());
 
 		proxyDefinition.getPropertyValues().add("targetBeanName", targetBeanName);
-		if (proxyTargetClass) {
-			targetDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
+		if (proxyTargetClass) { // 是否使用cglib代理
+			targetDefinition.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE); // 设置原BeabDefinition的preserveTargetClass的attribute为true
 			// ScopedProxyFactoryBean's "proxyTargetClass" default is TRUE, so we don't need to set it explicitly here.
 		}
 		else {
@@ -85,8 +85,8 @@ public abstract class ScopedProxyUtils {
 		}
 
 		// The target bean should be ignored in favor of the scoped proxy.
-		targetDefinition.setAutowireCandidate(false);
-		targetDefinition.setPrimary(false);
+		targetDefinition.setAutowireCandidate(false); // 修改原BeabDefinition的autowireCandidate属性为false
+		targetDefinition.setPrimary(false); // 修改原BeabDefinition的primary属性为false
 
 		// Register the target bean as separate bean in the factory.
 		registry.registerBeanDefinition(targetBeanName, targetDefinition);

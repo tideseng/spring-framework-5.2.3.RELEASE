@@ -72,7 +72,7 @@ public class AdvisedSupport extends ProxyConfig implements Advised {
 
 
 	/** Package-protected to allow direct access for efficiency. */
-	TargetSource targetSource = EMPTY_TARGET_SOURCE; // targetSource持有被代理对象
+	TargetSource targetSource = EMPTY_TARGET_SOURCE; // targetSource持有或会生成被代理对象
 
 	/** Whether the Advisors are already filtered for the specific target class. */
 	private boolean preFiltered = false;

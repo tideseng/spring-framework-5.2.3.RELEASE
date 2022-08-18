@@ -157,7 +157,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		Object oldProxy = null;
 		boolean setProxyContext = false;
 
-		TargetSource targetSource = this.advised.targetSource; // 从代理工厂中获取TargetSource对象，TargetSource对象持有被代理对象
+		TargetSource targetSource = this.advised.targetSource; // 从代理工厂中获取TargetSource对象，TargetSource对象持有或会生成被代理对象
 		Object target = null;
 
 		try {
@@ -189,7 +189,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 
 			// Get as late as possible to minimize the time we "own" the target,
 			// in case it comes from a pool.
-			target = targetSource.getTarget(); // 获取被代理对象
+			target = targetSource.getTarget(); // 获取被代理对象或生成被代理对象
 			Class<?> targetClass = (target != null ? target.getClass() : null); // 获取被代理对象的Class
 
 			// Get the interception chain for this method.
