@@ -383,7 +383,7 @@ public abstract class ReflectionUtils {
 	 * @param leafClass the class to introspect
 	 * @throws IllegalStateException if introspection fails
 	 */
-	public static Method[] getAllDeclaredMethods(Class<?> leafClass) {
+	public static Method[] getAllDeclaredMethods(Class<?> leafClass) { // 获取类中的所有方法
 		final List<Method> methods = new ArrayList<>(32);
 		doWithMethods(leafClass, methods::add);
 		return methods.toArray(EMPTY_METHOD_ARRAY);

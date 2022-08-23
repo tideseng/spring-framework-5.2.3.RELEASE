@@ -66,7 +66,7 @@ public final class BridgeMethodResolver {
 	 * if no more specific one could be found)
 	 */
 	public static Method findBridgedMethod(Method bridgeMethod) {
-		if (!bridgeMethod.isBridge()) {
+		if (!bridgeMethod.isBridge()) { // 判断方法是否为桥接方法，如果不是直接返回
 			return bridgeMethod;
 		}
 		Method bridgedMethod = cache.get(bridgeMethod);
@@ -77,7 +77,7 @@ public final class BridgeMethodResolver {
 					isBridgedCandidateFor(candidateMethod, bridgeMethod);
 			ReflectionUtils.doWithMethods(bridgeMethod.getDeclaringClass(), candidateMethods::add, filter);
 			if (!candidateMethods.isEmpty()) {
-				bridgedMethod = candidateMethods.size() == 1 ?
+				bridgedMethod = candidateMethods.size() == 1 ? // 根据桥接方法去目标类中查找方法名、参数类型、个数相同的方法
 						candidateMethods.get(0) :
 						searchCandidates(candidateMethods, bridgeMethod);
 			}
