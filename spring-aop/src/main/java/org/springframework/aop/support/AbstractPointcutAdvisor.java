@@ -42,7 +42,7 @@ public abstract class AbstractPointcutAdvisor implements PointcutAdvisor, Ordere
 	private Integer order;
 
 
-	public void setOrder(int order) {
+	public void setOrder(int order) { // 设置排序
 		this.order = order;
 	}
 

@@ -73,7 +73,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
 					}
 					else {
-						match = mm.matches(method, actualClass); // 再判断切面Pointcut与被代理对象方法是否匹配
+						match = mm.matches(method, actualClass); // 第二次判断切面Pointcut与被代理对象方法是否匹配
 					}
 					if (match) { // 如果类和方法都匹配
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor); // 获取Advisor切面中的Advice，并封装到MethodInterceptor对象中

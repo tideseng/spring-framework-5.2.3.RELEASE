@@ -30,27 +30,27 @@ import org.springframework.aop.Pointcut;
  * @author Rod Johnson
  * @author Juergen Hoeller
  */
-public abstract class StaticMethodMatcherPointcut extends StaticMethodMatcher implements Pointcut {
+public abstract class StaticMethodMatcherPointcut extends StaticMethodMatcher implements Pointcut { // 实现了MethodMatcher接口
 
-	private ClassFilter classFilter = ClassFilter.TRUE;
+	private ClassFilter classFilter = ClassFilter.TRUE; // 默认的ClassFilter为ClassFilter.TRUE
 
 
 	/**
 	 * Set the {@link ClassFilter} to use for this pointcut.
 	 * Default is {@link ClassFilter#TRUE}.
 	 */
-	public void setClassFilter(ClassFilter classFilter) {
+	public void setClassFilter(ClassFilter classFilter) { // 设置ClassFilter
 		this.classFilter = classFilter;
 	}
 
 	@Override
-	public ClassFilter getClassFilter() {
+	public ClassFilter getClassFilter() { // 获取ClassFilter
 		return this.classFilter;
 	}
 
 
 	@Override
-	public final MethodMatcher getMethodMatcher() {
+	public final MethodMatcher getMethodMatcher() { // 获取MethodMatcher
 		return this;
 	}
 

@@ -50,7 +50,7 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 	private BeanFactory beanFactory;
 
 	@Nullable
-	private transient volatile Advice advice;
+	private transient volatile Advice advice; // Advice增强
 
 	private transient volatile Object adviceMonitor = new Object();
 
@@ -95,7 +95,7 @@ public abstract class AbstractBeanFactoryPointcutAdvisor extends AbstractPointcu
 	 * avoiding lazy resolution in {@link #getAdvice()}.
 	 * @since 3.1
 	 */
-	public void setAdvice(Advice advice) {
+	public void setAdvice(Advice advice) { // 设置Advice
 		synchronized (this.adviceMonitor) {
 			this.advice = advice;
 		}
