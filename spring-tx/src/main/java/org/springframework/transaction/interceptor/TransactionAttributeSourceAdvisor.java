@@ -43,7 +43,7 @@ public class TransactionAttributeSourceAdvisor extends AbstractPointcutAdvisor {
 	@Nullable
 	private TransactionInterceptor transactionInterceptor;
 
-	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
+	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() { // 创建TransactionAttributeSourcePointcut匿名内部类
 		@Override
 		@Nullable
 		protected TransactionAttributeSource getTransactionAttributeSource() {

@@ -40,32 +40,32 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 
 	@Bean(name = TransactionManagementConfigUtils.TRANSACTION_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(
-			TransactionAttributeSource transactionAttributeSource,
-			TransactionInterceptor transactionInterceptor) {
-		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
-		advisor.setTransactionAttributeSource(transactionAttributeSource);
-		advisor.setAdvice(transactionInterceptor);
-		if (this.enableTx != null) {
-			advisor.setOrder(this.enableTx.<Integer>getNumber("order"));
+	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor( // 注入事务切面类
+			TransactionAttributeSource transactionAttributeSource, // 获取事务属性处理器
+			TransactionInterceptor transactionInterceptor) { // 获取事务切面的Advice
+		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor(); // 创建事务切面类BeanFactoryTransactionAttributeSourceAdvisor
+		advisor.setTransactionAttributeSource(transactionAttributeSource); // 设置事务属性处理器
+		advisor.setAdvice(transactionInterceptor); // 设置切面的Advice
+		if (this.enableTx != null) { // 根据@EnableTransactionManagement注解信息设置切面排序
+			advisor.setOrder(this.enableTx.<Integer>getNumber("order")); // 设置切面排序
 		}
 		return advisor;
 	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public TransactionAttributeSource transactionAttributeSource() {
-		return new AnnotationTransactionAttributeSource();
+	public TransactionAttributeSource transactionAttributeSource() { // 注入事务属性处理器
+		return new AnnotationTransactionAttributeSource(); // 创建事务属性处理器（解析@Transaction事务注解并封装成TransactionAttribute对象）
 	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public TransactionInterceptor transactionInterceptor(
-			TransactionAttributeSource transactionAttributeSource) {
-		TransactionInterceptor interceptor = new TransactionInterceptor();
-		interceptor.setTransactionAttributeSource(transactionAttributeSource);
+	public TransactionInterceptor transactionInterceptor( // 注入事务切面的Advice
+			TransactionAttributeSource transactionAttributeSource) { // 获取事务属性处理器
+		TransactionInterceptor interceptor = new TransactionInterceptor(); // 创建事务切面增强，实现了MethodInterceptor接口
+		interceptor.setTransactionAttributeSource(transactionAttributeSource); // 设置事务属性处理器
 		if (this.txManager != null) {
-			interceptor.setTransactionManager(this.txManager);
+			interceptor.setTransactionManager(this.txManager); // 设置事务管理器（程序启动时不一定需要设置，在调用的过程中会获取到）
 		}
 		return interceptor;
 	}

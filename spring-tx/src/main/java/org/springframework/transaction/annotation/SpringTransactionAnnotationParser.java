@@ -40,17 +40,17 @@ import org.springframework.transaction.interceptor.TransactionAttribute;
 public class SpringTransactionAnnotationParser implements TransactionAnnotationParser, Serializable {
 
 	@Override
-	public boolean isCandidateClass(Class<?> targetClass) {
-		return AnnotationUtils.isCandidateClass(targetClass, Transactional.class);
+	public boolean isCandidateClass(Class<?> targetClass) { // 判断是否为候选Class（默认返回true）
+		return AnnotationUtils.isCandidateClass(targetClass, Transactional.class); // 判断是否为候选Class（默认返回true）
 	}
 
 	@Override
 	@Nullable
-	public TransactionAttribute parseTransactionAnnotation(AnnotatedElement element) {
-		AnnotationAttributes attributes = AnnotatedElementUtils.findMergedAnnotationAttributes(
+	public TransactionAttribute parseTransactionAnnotation(AnnotatedElement element) { // 获取事务属性
+		AnnotationAttributes attributes = AnnotatedElementUtils.findMergedAnnotationAttributes( // 获取注解属性
 				element, Transactional.class, false, false);
 		if (attributes != null) {
-			return parseTransactionAnnotation(attributes);
+			return parseTransactionAnnotation(attributes); // 获取事务属性
 		}
 		else {
 			return null;
@@ -61,9 +61,9 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		return parseTransactionAnnotation(AnnotationUtils.getAnnotationAttributes(ann, false, false));
 	}
 
-	protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) {
-		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute();
-
+	protected TransactionAttribute parseTransactionAnnotation(AnnotationAttributes attributes) { // 获取事务属性
+		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute(); // 创建事务属性RuleBasedTransactionAttribute
+		// 封装事务属性
 		Propagation propagation = attributes.getEnum("propagation");
 		rbta.setPropagationBehavior(propagation.value());
 		Isolation isolation = attributes.getEnum("isolation");

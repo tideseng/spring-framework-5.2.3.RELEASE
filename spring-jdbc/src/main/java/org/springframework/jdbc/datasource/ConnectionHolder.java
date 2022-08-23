@@ -39,7 +39,7 @@ import org.springframework.util.Assert;
  * @see DataSourceTransactionManager
  * @see DataSourceUtils
  */
-public class ConnectionHolder extends ResourceHolderSupport {
+public class ConnectionHolder extends ResourceHolderSupport { // 连接对象的包装类
 
 	/**
 	 * Prefix for savepoint names.
@@ -51,7 +51,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	private ConnectionHandle connectionHandle;
 
 	@Nullable
-	private Connection currentConnection;
+	private Connection currentConnection; // 连接对象
 
 	private boolean transactionActive = false;
 
@@ -78,7 +78,7 @@ public class ConnectionHolder extends ResourceHolderSupport {
 	 * @see SimpleConnectionHandle
 	 * @see #ConnectionHolder(java.sql.Connection, boolean)
 	 */
-	public ConnectionHolder(Connection connection) {
+	public ConnectionHolder(Connection connection) { // 初始化ConnectionHolder
 		this.connectionHandle = new SimpleConnectionHandle(connection);
 	}
 

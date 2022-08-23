@@ -65,15 +65,15 @@ public abstract class AopConfigUtils {
 
 
 	@Nullable
-	public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
-		return registerAutoProxyCreatorIfNecessary(registry, null);
+	public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) { // 注册Aop的入口类InfrastructureAdvisorAutoProxyCreator对应的BeanDefinition
+		return registerAutoProxyCreatorIfNecessary(registry, null); // 注册Aop的入口类InfrastructureAdvisorAutoProxyCreator对应的BeanDefinition
 	}
 
 	@Nullable
-	public static BeanDefinition registerAutoProxyCreatorIfNecessary(
+	public static BeanDefinition registerAutoProxyCreatorIfNecessary( // 注册Aop的入口类InfrastructureAdvisorAutoProxyCreator对应的BeanDefinition
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 
-		return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
+		return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source); // 注册Aop的入口类InfrastructureAdvisorAutoProxyCreator对应的BeanDefinition
 	}
 
 	@Nullable
@@ -89,25 +89,25 @@ public abstract class AopConfigUtils {
 	}
 
 	@Nullable
-	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
-		return registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry, null);
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) { // 注册Aop的入口类AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
+		return registerAspectJAnnotationAutoProxyCreatorIfNecessary(registry, null); // // 注册Aop的入口类AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
 	}
 
 	@Nullable
-	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary( // 注册AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
+	public static BeanDefinition registerAspectJAnnotationAutoProxyCreatorIfNecessary( // 注册Aop的入口类AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
 			BeanDefinitionRegistry registry, @Nullable Object source) {
 
-		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source);
+		return registerOrEscalateApcAsRequired(AnnotationAwareAspectJAutoProxyCreator.class, registry, source); // 注册Aop的入口类AnnotationAwareAspectJAutoProxyCreator的BeanDefinition
 	}
 
-	public static void forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry) {
+	public static void forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry) { // 设置proxyTargetClass属性
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			definition.getPropertyValues().add("proxyTargetClass", Boolean.TRUE);
 		}
 	}
 
-	public static void forceAutoProxyCreatorToExposeProxy(BeanDefinitionRegistry registry) {
+	public static void forceAutoProxyCreatorToExposeProxy(BeanDefinitionRegistry registry) { // 设置exposeProxy属性
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition definition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			definition.getPropertyValues().add("exposeProxy", Boolean.TRUE);
@@ -115,7 +115,7 @@ public abstract class AopConfigUtils {
 	}
 
 	@Nullable
-	private static BeanDefinition registerOrEscalateApcAsRequired(
+	private static BeanDefinition registerOrEscalateApcAsRequired( // 注册Aop的入口类（AnnotationAwareAspectJAutoProxyCreator、InfrastructureAdvisorAutoProxyCreator等）
 			Class<?> cls, BeanDefinitionRegistry registry, @Nullable Object source) {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");

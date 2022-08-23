@@ -35,7 +35,7 @@ import org.springframework.core.type.AnnotationMetadata;
  * @since 3.1
  * @see EnableAspectJAutoProxy
  */
-public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
+public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar { // 实现了ImportBeanDefinitionRegistrar接口，注册Aop的入口类InfrastructureAdvisorAutoProxyCreator
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -57,21 +57,22 @@ public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 	@Override
 	public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 		boolean candidateFound = false;
-		Set<String> annTypes = importingClassMetadata.getAnnotationTypes();
-		for (String annType : annTypes) {
-			AnnotationAttributes candidate = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
+		Set<String> annTypes = importingClassMetadata.getAnnotationTypes(); // 获取所有注解类
+		for (String annType : annTypes) { // 遍历注解类
+			AnnotationAttributes candidate = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType); // 获取注解信息
 			if (candidate == null) {
 				continue;
 			}
-			Object mode = candidate.get("mode");
-			Object proxyTargetClass = candidate.get("proxyTargetClass");
-			if (mode != null && proxyTargetClass != null && AdviceMode.class == mode.getClass() &&
+			Object mode = candidate.get("mode"); // @EnableTransactionManagement注解的mode属性
+			Object proxyTargetClass = candidate.get("proxyTargetClass"); // @EnableTransactionManagement注解的proxyTargetClass属性
+			if (mode != null && proxyTargetClass != null && AdviceMode.class == mode.getClass() && // 如果是@EnableTransactionManagement注解
 					Boolean.class == proxyTargetClass.getClass()) {
 				candidateFound = true;
 				if (mode == AdviceMode.PROXY) {
-					AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry);
+					AopConfigUtils.registerAutoProxyCreatorIfNecessary(registry); // 注册Aop的入口类InfrastructureAdvisorAutoProxyCreator对应的BeanDefinition
 					if ((Boolean) proxyTargetClass) {
-						AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry);
+						// 将属性设置到入口类的BeanDefinition中，最终会copy到ProxyFactory中
+						AopConfigUtils.forceAutoProxyCreatorToUseClassProxying(registry); // 设置proxyTargetClass属性
 						return;
 					}
 				}

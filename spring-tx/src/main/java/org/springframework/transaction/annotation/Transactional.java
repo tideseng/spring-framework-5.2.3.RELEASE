@@ -86,7 +86,7 @@ public @interface Transactional {
 	 * <p>Defaults to {@link Propagation#REQUIRED}.
 	 * @see org.springframework.transaction.interceptor.TransactionAttribute#getPropagationBehavior()
 	 */
-	Propagation propagation() default Propagation.REQUIRED;
+	Propagation propagation() default Propagation.REQUIRED; // 事务传播属性，用于控制事务流转
 
 	/**
 	 * The transaction isolation level.

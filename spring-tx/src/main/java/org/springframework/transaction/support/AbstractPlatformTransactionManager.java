@@ -192,7 +192,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * <p>Typically initialized with an appropriate default by the
 	 * concrete transaction manager subclass.
 	 */
-	public final void setNestedTransactionAllowed(boolean nestedTransactionAllowed) {
+	public final void setNestedTransactionAllowed(boolean nestedTransactionAllowed) { // 设置nestedTransactionAllowed属性
 		this.nestedTransactionAllowed = nestedTransactionAllowed;
 	}
 
@@ -338,16 +338,16 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * @see #doBegin
 	 */
 	@Override
-	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition)
+	public final TransactionStatus getTransaction(@Nullable TransactionDefinition definition) // 开启事务
 			throws TransactionException {
 
 		// Use defaults if no transaction definition given.
 		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
 
-		Object transaction = doGetTransaction();
+		Object transaction = doGetTransaction(); // 获取DataSourceTransactionObject事务对象（第一次进来时ConnectionHolder为null）
 		boolean debugEnabled = logger.isDebugEnabled();
 
-		if (isExistingTransaction(transaction)) {
+		if (isExistingTransaction(transaction)) { // 第一次进来时ConnectionHolder为null，所以不存在事务
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(def, transaction, debugEnabled);
 		}
@@ -358,23 +358,23 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
-		if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
+		if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) { // 如果传播属性为mandatory
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
 		}
-		else if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED ||
+		else if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRED || // 如果传播属性为required、requires_new、nested（默认为required）
 				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
 				def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
-			SuspendedResourcesHolder suspendedResources = suspend(null);
+			SuspendedResourcesHolder suspendedResources = suspend(null); // 挂起事务
 			if (debugEnabled) {
 				logger.debug("Creating new transaction with name [" + def.getName() + "]: " + def);
 			}
 			try {
 				boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
-				DefaultTransactionStatus status = newTransactionStatus(
+				DefaultTransactionStatus status = newTransactionStatus( // 创建一个新的事务状态（其中newTransaction值为true）
 						def, transaction, true, newSynchronization, debugEnabled, suspendedResources);
-				doBegin(transaction, def);
-				prepareSynchronization(status, def);
+				doBegin(transaction, def); // 根据事务对象和事务属性开启事务
+				prepareSynchronization(status, def); // 开启事务后改变事务状态
 				return status;
 			}
 			catch (RuntimeException | Error ex) {
@@ -526,7 +526,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	/**
 	 * Initialize transaction synchronization as appropriate.
 	 */
-	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) {
+	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) { // 开启事务后改变事务状态
 		if (status.isNewSynchronization()) {
 			TransactionSynchronizationManager.setActualTransactionActive(status.hasTransaction());
 			TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(
@@ -686,7 +686,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * @see #rollback
 	 */
 	@Override
-	public final void commit(TransactionStatus status) throws TransactionException {
+	public final void commit(TransactionStatus status) throws TransactionException { // 提交事务
 		if (status.isCompleted()) {
 			throw new IllegalTransactionStateException(
 					"Transaction is already completed - do not call commit or rollback more than once per transaction");
@@ -709,7 +709,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			return;
 		}
 
-		processCommit(defStatus);
+		processCommit(defStatus); // 执行提交事务
 	}
 
 	/**
@@ -718,30 +718,30 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * @param status object representing the transaction
 	 * @throws TransactionException in case of commit failure
 	 */
-	private void processCommit(DefaultTransactionStatus status) throws TransactionException {
+	private void processCommit(DefaultTransactionStatus status) throws TransactionException { // 执行提交事务
 		try {
 			boolean beforeCompletionInvoked = false;
 
 			try {
 				boolean unexpectedRollback = false;
 				prepareForCommit(status);
-				triggerBeforeCommit(status);
+				triggerBeforeCommit(status); // 调用beforeCommint方法，事务提交之前处理业务逻辑
 				triggerBeforeCompletion(status);
 				beforeCompletionInvoked = true;
 
-				if (status.hasSavepoint()) {
+				if (status.hasSavepoint()) { // 如果有回滚点
 					if (status.isDebug()) {
 						logger.debug("Releasing transaction savepoint");
 					}
 					unexpectedRollback = status.isGlobalRollbackOnly();
 					status.releaseHeldSavepoint();
 				}
-				else if (status.isNewTransaction()) {
+				else if (status.isNewTransaction()) { // 如果是新事务，则提交事务
 					if (status.isDebug()) {
 						logger.debug("Initiating transaction commit");
 					}
 					unexpectedRollback = status.isGlobalRollbackOnly();
-					doCommit(status);
+					doCommit(status); // 提交事务
 				}
 				else if (isFailEarlyOnGlobalRollbackOnly()) {
 					unexpectedRollback = status.isGlobalRollbackOnly();
@@ -780,7 +780,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// Trigger afterCommit callbacks, with an exception thrown there
 			// propagated to callers but the transaction still considered as committed.
 			try {
-				triggerAfterCommit(status);
+				triggerAfterCommit(status); // 触发afterCommint方法，事务提交后处理业务逻辑
 			}
 			finally {
 				triggerAfterCompletion(status, TransactionSynchronization.STATUS_COMMITTED);
@@ -788,7 +788,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 		}
 		finally {
-			cleanupAfterCompletion(status);
+			cleanupAfterCompletion(status); // 处理挂起事务，在这里恢复绑定关系
 		}
 	}
 

@@ -66,7 +66,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 	 * @see #setName
 	 * @see #setRollbackRules
 	 */
-	public RuleBasedTransactionAttribute() {
+	public RuleBasedTransactionAttribute() { // 创建事务属性RuleBasedTransactionAttribute
 		super();
 	}
 

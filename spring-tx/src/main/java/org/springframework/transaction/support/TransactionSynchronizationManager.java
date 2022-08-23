@@ -135,9 +135,9 @@ public abstract class TransactionSynchronizationManager {
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
 	@Nullable
-	public static Object getResource(Object key) {
-		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
-		Object value = doGetResource(actualKey);
+	public static Object getResource(Object key) { // 从ThreadLocal中获取连接对象（key一般情况下是数据源）
+		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key); // 一般情况下直接返回
+		Object value = doGetResource(actualKey); // 从ThreadLocal中获取值（第一次为null）
 		if (value != null && logger.isTraceEnabled()) {
 			logger.trace("Retrieved value [" + value + "] for key [" + actualKey + "] bound to thread [" +
 					Thread.currentThread().getName() + "]");
@@ -150,8 +150,8 @@ public abstract class TransactionSynchronizationManager {
 	 */
 	@Nullable
 	private static Object doGetResource(Object actualKey) {
-		Map<Object, Object> map = resources.get();
-		if (map == null) {
+		Map<Object, Object> map = resources.get(); // 获取ThreadLocal中的Map对象
+		if (map == null) { // 第一次默认为null
 			return null;
 		}
 		Object value = map.get(actualKey);
@@ -174,16 +174,16 @@ public abstract class TransactionSynchronizationManager {
 	 * @throws IllegalStateException if there is already a value bound to the thread
 	 * @see ResourceTransactionManager#getResourceFactory()
 	 */
-	public static void bindResource(Object key, Object value) throws IllegalStateException {
+	public static void bindResource(Object key, Object value) throws IllegalStateException { // 建立数据源对象DataSource和连接对象ConnectionHolder的绑定关系，并设置到ThreadLocal中
 		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
 		Assert.notNull(value, "Value must not be null");
-		Map<Object, Object> map = resources.get();
+		Map<Object, Object> map = resources.get(); // 获取ThreadLocal中的map对象
 		// set ThreadLocal Map if none found
-		if (map == null) {
+		if (map == null) { // 为null是进行初始化
 			map = new HashMap<>();
 			resources.set(map);
 		}
-		Object oldValue = map.put(actualKey, value);
+		Object oldValue = map.put(actualKey, value); // 将映射关系放入ThreadLocal
 		// Transparently suppress a ResourceHolder that was marked as void...
 		if (oldValue instanceof ResourceHolder && ((ResourceHolder) oldValue).isVoid()) {
 			oldValue = null;

@@ -45,18 +45,18 @@ import org.springframework.util.CollectionUtils;
 public abstract class AbstractTransactionManagementConfiguration implements ImportAware {
 
 	@Nullable
-	protected AnnotationAttributes enableTx;
+	protected AnnotationAttributes enableTx; // @EnableTransactionManagement注解信息
 
 	/**
 	 * Default transaction manager, as configured through a {@link TransactionManagementConfigurer}.
 	 */
 	@Nullable
-	protected TransactionManager txManager;
+	protected TransactionManager txManager; // 事务管理器
 
 
 	@Override
 	public void setImportMetadata(AnnotationMetadata importMetadata) {
-		this.enableTx = AnnotationAttributes.fromMap(
+		this.enableTx = AnnotationAttributes.fromMap( // 获取@EnableTransactionManagement注解信息
 				importMetadata.getAnnotationAttributes(EnableTransactionManagement.class.getName(), false));
 		if (this.enableTx == null) {
 			throw new IllegalArgumentException(
@@ -65,15 +65,15 @@ public abstract class AbstractTransactionManagementConfiguration implements Impo
 	}
 
 	@Autowired(required = false)
-	void setConfigurers(Collection<TransactionManagementConfigurer> configurers) {
+	void setConfigurers(Collection<TransactionManagementConfigurer> configurers) { // 注入TransactionManagementConfigurer集合（该方法不常用，默认为空）
 		if (CollectionUtils.isEmpty(configurers)) {
 			return;
 		}
 		if (configurers.size() > 1) {
 			throw new IllegalStateException("Only one TransactionManagementConfigurer may exist");
 		}
-		TransactionManagementConfigurer configurer = configurers.iterator().next();
-		this.txManager = configurer.annotationDrivenTransactionManager();
+		TransactionManagementConfigurer configurer = configurers.iterator().next(); // 获取集合中的第一个元素
+		this.txManager = configurer.annotationDrivenTransactionManager(); // 获取事务管理器
 	}
 
 

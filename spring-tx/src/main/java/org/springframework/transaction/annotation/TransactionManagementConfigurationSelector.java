@@ -35,7 +35,7 @@ import org.springframework.util.ClassUtils;
  * @see TransactionManagementConfigUtils#TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME
  * @see TransactionManagementConfigUtils#JTA_TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME
  */
-public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement> {
+public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement> { // 实现了ImportSelector接口
 
 	/**
 	 * Returns {@link ProxyTransactionManagementConfiguration} or
@@ -44,11 +44,11 @@ public class TransactionManagementConfigurationSelector extends AdviceModeImport
 	 * respectively.
 	 */
 	@Override
-	protected String[] selectImports(AdviceMode adviceMode) {
+	protected String[] selectImports(AdviceMode adviceMode) { // 父类抽象方法
 		switch (adviceMode) {
-			case PROXY:
-				return new String[] {AutoProxyRegistrar.class.getName(),
-						ProxyTransactionManagementConfiguration.class.getName()};
+			case PROXY: // 默认为PROXY
+				return new String[] {AutoProxyRegistrar.class.getName(), // 导入AutoProxyRegistrar类，注册Aop的入口类InfrastructureAdvisorAutoProxyCreator（在实例化后会根据情况生成代理）
+						ProxyTransactionManagementConfiguration.class.getName()}; // 导入ProxyTransactionManagementConfiguration类，注册事务切面等
 			case ASPECTJ:
 				return new String[] {determineTransactionAspectClass()};
 			default:

@@ -32,15 +32,15 @@ import org.springframework.lang.Nullable;
  * @see TransactionAttributeSourceAdvisor
  */
 @SuppressWarnings("serial")
-public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFactoryPointcutAdvisor {
+public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFactoryPointcutAdvisor { // 事务切面类，实现了PointcutAdvisor接口
 
 	@Nullable
-	private TransactionAttributeSource transactionAttributeSource;
+	private TransactionAttributeSource transactionAttributeSource; // 事务属性处理器
 
-	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() {
+	private final TransactionAttributeSourcePointcut pointcut = new TransactionAttributeSourcePointcut() { // 定义Pointcut（Advice在父类中设置）
 		@Override
 		@Nullable
-		protected TransactionAttributeSource getTransactionAttributeSource() {
+		protected TransactionAttributeSource getTransactionAttributeSource() { // 获取事务属性处理器
 			return transactionAttributeSource;
 		}
 	};
@@ -52,7 +52,7 @@ public class BeanFactoryTransactionAttributeSourceAdvisor extends AbstractBeanFa
 	 * set on the transaction interceptor itself.
 	 * @see TransactionInterceptor#setTransactionAttributeSource
 	 */
-	public void setTransactionAttributeSource(TransactionAttributeSource transactionAttributeSource) {
+	public void setTransactionAttributeSource(TransactionAttributeSource transactionAttributeSource) { // 设置事务属性处理器
 		this.transactionAttributeSource = transactionAttributeSource;
 	}
 

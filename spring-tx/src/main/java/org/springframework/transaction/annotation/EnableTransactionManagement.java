@@ -152,8 +152,8 @@ import org.springframework.core.Ordered;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(TransactionManagementConfigurationSelector.class)
-public @interface EnableTransactionManagement {
+@Import(TransactionManagementConfigurationSelector.class) // 导入TransactionManagementConfigurationSelector类
+public @interface EnableTransactionManagement { // 开启事务的注解
 
 	/**
 	 * Indicate whether subclass-based (CGLIB) proxies are to be created ({@code true}) as
@@ -167,7 +167,7 @@ public @interface EnableTransactionManagement {
 	 * time. This approach has no negative impact in practice unless one is explicitly
 	 * expecting one type of proxy vs another, e.g. in tests.
 	 */
-	boolean proxyTargetClass() default false;
+	boolean proxyTargetClass() default false; // 决定是JDK代理（false），还是CGLIB代理（true），该值会被Spring判断并修正
 
 	/**
 	 * Indicate how transactional advice should be applied.

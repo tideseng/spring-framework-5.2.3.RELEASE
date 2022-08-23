@@ -34,17 +34,17 @@ import org.springframework.util.ObjectUtils;
  * @since 2.5.5
  */
 @SuppressWarnings("serial")
-abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPointcut implements Serializable {
+abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPointcut implements Serializable { // 事务Pointcut
 
-	protected TransactionAttributeSourcePointcut() {
-		setClassFilter(new TransactionAttributeSourceClassFilter());
+	protected TransactionAttributeSourcePointcut() { // 创建事务Pointcut
+		setClassFilter(new TransactionAttributeSourceClassFilter()); // 设置ClassFilter，覆盖默认的ClassFilter，但类级别的匹配基本没校验
 	}
 
 
 	@Override
-	public boolean matches(Method method, Class<?> targetClass) {
-		TransactionAttributeSource tas = getTransactionAttributeSource();
-		return (tas == null || tas.getTransactionAttribute(method, targetClass) != null);
+	public boolean matches(Method method, Class<?> targetClass) { // 方法级别的匹配
+		TransactionAttributeSource tas = getTransactionAttributeSource(); // 获取事务属性处理器
+		return (tas == null || tas.getTransactionAttribute(method, targetClass) != null); // 判断方法上或类上的事务属性不为空（不为空时生成代理）
 	}
 
 	@Override
@@ -75,24 +75,24 @@ abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPoi
 	 * To be implemented by subclasses.
 	 */
 	@Nullable
-	protected abstract TransactionAttributeSource getTransactionAttributeSource();
+	protected abstract TransactionAttributeSource getTransactionAttributeSource(); // 抽象方法，由子类实现
 
 
 	/**
 	 * {@link ClassFilter} that delegates to {@link TransactionAttributeSource#isCandidateClass}
 	 * for filtering classes whose methods are not worth searching to begin with.
 	 */
-	private class TransactionAttributeSourceClassFilter implements ClassFilter {
+	private class TransactionAttributeSourceClassFilter implements ClassFilter { // 事务的ClassFilter（类级别的匹配基本没校验）
 
 		@Override
-		public boolean matches(Class<?> clazz) {
+		public boolean matches(Class<?> clazz) { // 匹配类（基本没进行校验）
 			if (TransactionalProxy.class.isAssignableFrom(clazz) ||
 					PlatformTransactionManager.class.isAssignableFrom(clazz) ||
 					PersistenceExceptionTranslator.class.isAssignableFrom(clazz)) {
 				return false;
 			}
-			TransactionAttributeSource tas = getTransactionAttributeSource();
-			return (tas == null || tas.isCandidateClass(clazz));
+			TransactionAttributeSource tas = getTransactionAttributeSource(); // 获取事务属性处理器
+			return (tas == null || tas.isCandidateClass(clazz)); // 默认返回true
 		}
 	}
 
