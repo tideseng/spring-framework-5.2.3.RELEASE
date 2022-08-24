@@ -106,7 +106,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 	 * @see RollbackRuleAttribute
 	 * @see NoRollbackRuleAttribute
 	 */
-	public void setRollbackRules(List<RollbackRuleAttribute> rollbackRules) {
+	public void setRollbackRules(List<RollbackRuleAttribute> rollbackRules) { // 设置异常回滚规则
 		this.rollbackRules = rollbackRules;
 	}
 
@@ -129,20 +129,20 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 	 * @see TransactionAttribute#rollbackOn(java.lang.Throwable)
 	 */
 	@Override
-	public boolean rollbackOn(Throwable ex) {
+	public boolean rollbackOn(Throwable ex) { // 判断事务回滚异常类型
 		if (logger.isTraceEnabled()) {
 			logger.trace("Applying rules to determine whether transaction should rollback on " + ex);
 		}
 
-		RollbackRuleAttribute winner = null;
+		RollbackRuleAttribute winner = null; // 异常回滚规则
 		int deepest = Integer.MAX_VALUE;
 
 		if (this.rollbackRules != null) {
-			for (RollbackRuleAttribute rule : this.rollbackRules) {
-				int depth = rule.getDepth(ex);
+			for (RollbackRuleAttribute rule : this.rollbackRules) { // 遍历异常回滚规则
+				int depth = rule.getDepth(ex); // 是否匹配到异常回滚规则（-1表示未匹配到）
 				if (depth >= 0 && depth < deepest) {
 					deepest = depth;
-					winner = rule;
+					winner = rule; // 匹配到的异常回滚规则
 				}
 			}
 		}
@@ -152,12 +152,12 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 		}
 
 		// User superclass behavior (rollback on unchecked) if no rule matches.
-		if (winner == null) {
+		if (winner == null) { // 未匹配到异常回滚规则时，调用父类方法进行匹配
 			logger.trace("No relevant rollback rule found: applying default rules");
-			return super.rollbackOn(ex);
+			return super.rollbackOn(ex); // 调用父类方法（判断是否为RuntimeException或Error异常）
 		}
 
-		return !(winner instanceof NoRollbackRuleAttribute);
+		return !(winner instanceof NoRollbackRuleAttribute); // 匹配到异常回滚规则时，判断是否需要回滚
 	}
 
 

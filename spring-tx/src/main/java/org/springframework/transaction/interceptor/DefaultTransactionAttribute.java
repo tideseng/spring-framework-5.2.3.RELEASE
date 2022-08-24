@@ -131,7 +131,7 @@ public class DefaultTransactionAttribute extends DefaultTransactionDefinition im
 	 * @see org.springframework.transaction.support.TransactionTemplate#execute
 	 */
 	@Override
-	public boolean rollbackOn(Throwable ex) {
+	public boolean rollbackOn(Throwable ex) { // 判断是否为RuntimeException或Error异常
 		return (ex instanceof RuntimeException || ex instanceof Error);
 	}
 

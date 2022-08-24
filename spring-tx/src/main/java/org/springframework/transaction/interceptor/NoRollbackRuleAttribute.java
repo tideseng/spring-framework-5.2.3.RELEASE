@@ -24,7 +24,7 @@ package org.springframework.transaction.interceptor;
  * @since 09.04.2003
  */
 @SuppressWarnings("serial")
-public class NoRollbackRuleAttribute extends RollbackRuleAttribute {
+public class NoRollbackRuleAttribute extends RollbackRuleAttribute { // 继承自RollbackRuleAttribute
 
 	/**
 	 * Create a new instance of the {@code NoRollbackRuleAttribute} class
@@ -32,7 +32,7 @@ public class NoRollbackRuleAttribute extends RollbackRuleAttribute {
 	 * @param clazz the {@code Throwable} class
 	 * @see RollbackRuleAttribute#RollbackRuleAttribute(Class)
 	 */
-	public NoRollbackRuleAttribute(Class<?> clazz) {
+	public NoRollbackRuleAttribute(Class<?> clazz) { // 初始化NoRollbackRuleAttribute
 		super(clazz);
 	}
 
@@ -42,7 +42,7 @@ public class NoRollbackRuleAttribute extends RollbackRuleAttribute {
 	 * @param exceptionName the exception name pattern
 	 * @see RollbackRuleAttribute#RollbackRuleAttribute(String)
 	 */
-	public NoRollbackRuleAttribute(String exceptionName) {
+	public NoRollbackRuleAttribute(String exceptionName) { // 初始化NoRollbackRuleAttribute
 		super(exceptionName);
 	}
 

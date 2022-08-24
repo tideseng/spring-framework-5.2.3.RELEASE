@@ -65,27 +65,27 @@ public class SpringTransactionAnnotationParser implements TransactionAnnotationP
 		RuleBasedTransactionAttribute rbta = new RuleBasedTransactionAttribute(); // 创建事务属性RuleBasedTransactionAttribute
 		// 封装事务属性
 		Propagation propagation = attributes.getEnum("propagation");
-		rbta.setPropagationBehavior(propagation.value());
+		rbta.setPropagationBehavior(propagation.value()); // 设置传播属性
 		Isolation isolation = attributes.getEnum("isolation");
-		rbta.setIsolationLevel(isolation.value());
-		rbta.setTimeout(attributes.getNumber("timeout").intValue());
-		rbta.setReadOnly(attributes.getBoolean("readOnly"));
+		rbta.setIsolationLevel(isolation.value()); // 设置隔离级别
+		rbta.setTimeout(attributes.getNumber("timeout").intValue()); // 设置超时时间
+		rbta.setReadOnly(attributes.getBoolean("readOnly")); // 设置是否只读
 		rbta.setQualifier(attributes.getString("value"));
-
+		// 封装异常回滚规则
 		List<RollbackRuleAttribute> rollbackRules = new ArrayList<>();
 		for (Class<?> rbRule : attributes.getClassArray("rollbackFor")) {
-			rollbackRules.add(new RollbackRuleAttribute(rbRule));
+			rollbackRules.add(new RollbackRuleAttribute(rbRule)); // 创建RollbackRuleAttribute
 		}
 		for (String rbRule : attributes.getStringArray("rollbackForClassName")) {
-			rollbackRules.add(new RollbackRuleAttribute(rbRule));
+			rollbackRules.add(new RollbackRuleAttribute(rbRule)); // 创建RollbackRuleAttribute
 		}
 		for (Class<?> rbRule : attributes.getClassArray("noRollbackFor")) {
-			rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+			rollbackRules.add(new NoRollbackRuleAttribute(rbRule)); // 创建NoRollbackRuleAttribute
 		}
 		for (String rbRule : attributes.getStringArray("noRollbackForClassName")) {
-			rollbackRules.add(new NoRollbackRuleAttribute(rbRule));
+			rollbackRules.add(new NoRollbackRuleAttribute(rbRule)); // 创建NoRollbackRuleAttribute
 		}
-		rbta.setRollbackRules(rollbackRules);
+		rbta.setRollbackRules(rollbackRules); // 设置异常回滚规则
 
 		return rbta;
 	}

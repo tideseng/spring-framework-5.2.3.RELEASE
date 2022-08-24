@@ -173,7 +173,7 @@ public abstract class DataSourceUtils {
 	 * @see Connection#setReadOnly
 	 */
 	@Nullable
-	public static Integer prepareConnectionForTransaction(Connection con, @Nullable TransactionDefinition definition)
+	public static Integer prepareConnectionForTransaction(Connection con, @Nullable TransactionDefinition definition) // 设置连接是否只读和事务隔离级别到连接对象中
 			throws SQLException {
 
 		Assert.notNull(con, "No Connection specified");
@@ -184,7 +184,7 @@ public abstract class DataSourceUtils {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Setting JDBC Connection [" + con + "] read-only");
 				}
-				con.setReadOnly(true);
+				con.setReadOnly(true); // Connection连接设置只读
 			}
 			catch (SQLException | RuntimeException ex) {
 				Throwable exToCheck = ex;
@@ -210,7 +210,7 @@ public abstract class DataSourceUtils {
 			int currentIsolation = con.getTransactionIsolation();
 			if (currentIsolation != definition.getIsolationLevel()) {
 				previousIsolationLevel = currentIsolation;
-				con.setTransactionIsolation(definition.getIsolationLevel());
+				con.setTransactionIsolation(definition.getIsolationLevel()); // Connection连接设置隔离级别
 			}
 		}
 

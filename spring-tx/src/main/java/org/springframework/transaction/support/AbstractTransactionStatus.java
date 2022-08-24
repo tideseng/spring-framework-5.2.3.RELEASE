@@ -136,36 +136,36 @@ public abstract class AbstractTransactionStatus implements TransactionStatus {
 	 * @throws org.springframework.transaction.NestedTransactionNotSupportedException
 	 * if the underlying transaction does not support savepoints
 	 */
-	public void createAndHoldSavepoint() throws TransactionException {
-		setSavepoint(getSavepointManager().createSavepoint());
+	public void createAndHoldSavepoint() throws TransactionException { // 创建回滚点
+		setSavepoint(getSavepointManager().createSavepoint()); // 创建回滚点
 	}
 
 	/**
 	 * Roll back to the savepoint that is held for the transaction
 	 * and release the savepoint right afterwards.
 	 */
-	public void rollbackToHeldSavepoint() throws TransactionException {
+	public void rollbackToHeldSavepoint() throws TransactionException { // 回滚到保存点，并设置rollbackOnly属性为false
 		Object savepoint = getSavepoint();
 		if (savepoint == null) {
 			throw new TransactionUsageException(
 					"Cannot roll back to savepoint - no savepoint associated with current transaction");
 		}
-		getSavepointManager().rollbackToSavepoint(savepoint);
-		getSavepointManager().releaseSavepoint(savepoint);
+		getSavepointManager().rollbackToSavepoint(savepoint); // 回滚到保存点，并设置rollbackOnly属性为false
+		getSavepointManager().releaseSavepoint(savepoint); // 擦出回滚点
 		setSavepoint(null);
 	}
 
 	/**
 	 * Release the savepoint that is held for the transaction.
 	 */
-	public void releaseHeldSavepoint() throws TransactionException {
+	public void releaseHeldSavepoint() throws TransactionException { // 擦除回滚点
 		Object savepoint = getSavepoint();
 		if (savepoint == null) {
 			throw new TransactionUsageException(
 					"Cannot release savepoint - no savepoint associated with current transaction");
 		}
-		getSavepointManager().releaseSavepoint(savepoint);
-		setSavepoint(null);
+		getSavepointManager().releaseSavepoint(savepoint); // 擦除回滚点
+		setSavepoint(null); // 清除回滚点
 	}
 
 

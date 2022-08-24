@@ -182,9 +182,9 @@ public class ConnectionHolder extends ResourceHolderSupport { // 连接对象的
 	 * @return the new Savepoint
 	 * @throws SQLException if thrown by the JDBC driver
 	 */
-	public Savepoint createSavepoint() throws SQLException {
+	public Savepoint createSavepoint() throws SQLException { // 创建回滚点
 		this.savepointCounter++;
-		return getConnection().setSavepoint(SAVEPOINT_NAME_PREFIX + this.savepointCounter);
+		return getConnection().setSavepoint(SAVEPOINT_NAME_PREFIX + this.savepointCounter); // 创建回滚点
 	}
 
 	/**

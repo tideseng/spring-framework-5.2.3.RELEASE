@@ -48,7 +48,7 @@ public class RollbackRuleAttribute implements Serializable{
 	 * This way does multiple string comparisons, but how often do we decide
 	 * whether to roll back a transaction following an exception?
 	 */
-	private final String exceptionName;
+	private final String exceptionName; // 指定回滚或不回滚的异常类全路径名称
 
 
 	/**
@@ -60,7 +60,7 @@ public class RollbackRuleAttribute implements Serializable{
 	 * @throws IllegalArgumentException if the supplied {@code clazz} is
 	 * not a {@code Throwable} type or is {@code null}
 	 */
-	public RollbackRuleAttribute(Class<?> clazz) {
+	public RollbackRuleAttribute(Class<?> clazz) { // 初始化RollbackRuleAttribute
 		Assert.notNull(clazz, "'clazz' cannot be null");
 		if (!Throwable.class.isAssignableFrom(clazz)) {
 			throw new IllegalArgumentException(
@@ -87,7 +87,7 @@ public class RollbackRuleAttribute implements Serializable{
 	 * @throws IllegalArgumentException if the supplied
 	 * {@code exceptionName} is {@code null} or empty
 	 */
-	public RollbackRuleAttribute(String exceptionName) {
+	public RollbackRuleAttribute(String exceptionName) { // 初始化RollbackRuleAttribute
 		Assert.hasText(exceptionName, "'exceptionName' cannot be null or empty");
 		this.exceptionName = exceptionName;
 	}
@@ -106,21 +106,21 @@ public class RollbackRuleAttribute implements Serializable{
 	 * {@code -1} if there is no match. Otherwise, returns depth with the
 	 * lowest depth winning.
 	 */
-	public int getDepth(Throwable ex) {
-		return getDepth(ex.getClass(), 0);
+	public int getDepth(Throwable ex) { // 是否匹配到异常回滚规则（-1表示未匹配到）
+		return getDepth(ex.getClass(), 0); // 是否匹配到异常回滚规则（-1表示未匹配到）
 	}
 
 
-	private int getDepth(Class<?> exceptionClass, int depth) {
+	private int getDepth(Class<?> exceptionClass, int depth) { // 是否匹配到异常回滚规则（-1表示未匹配到）
 		if (exceptionClass.getName().contains(this.exceptionName)) {
 			// Found it!
 			return depth;
 		}
 		// If we've gone as far as we can go and haven't found it...
-		if (exceptionClass == Throwable.class) {
+		if (exceptionClass == Throwable.class) { // 异常规则匹配不到则返回-1
 			return -1;
 		}
-		return getDepth(exceptionClass.getSuperclass(), depth + 1);
+		return getDepth(exceptionClass.getSuperclass(), depth + 1); // 获取异常类的父类再次进行匹配
 	}
 
 

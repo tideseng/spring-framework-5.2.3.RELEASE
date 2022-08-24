@@ -87,7 +87,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	/**
 	 * Set the previous isolation level to retain, if any.
 	 */
-	public void setPreviousIsolationLevel(@Nullable Integer previousIsolationLevel) {
+	public void setPreviousIsolationLevel(@Nullable Integer previousIsolationLevel) { // 设置上一个隔离级别到事务对象中
 		this.previousIsolationLevel = previousIsolationLevel;
 	}
 
@@ -104,7 +104,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	 * The default is {@code false}.
 	 * @since 5.2.1
 	 */
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) { // 设置连接是否只读到事务对象中
 		this.readOnly = readOnly;
 	}
 
@@ -146,7 +146,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	 * @see java.sql.Connection#setSavepoint
 	 */
 	@Override
-	public Object createSavepoint() throws TransactionException {
+	public Object createSavepoint() throws TransactionException { // 创建回滚点
 		ConnectionHolder conHolder = getConnectionHolderForSavepoint();
 		try {
 			if (!conHolder.supportsSavepoints()) {
@@ -157,7 +157,7 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 				throw new CannotCreateTransactionException(
 						"Cannot create savepoint for transaction which is already marked as rollback-only");
 			}
-			return conHolder.createSavepoint();
+			return conHolder.createSavepoint(); // 创建回滚点
 		}
 		catch (SQLException ex) {
 			throw new CannotCreateTransactionException("Could not create JDBC savepoint", ex);
@@ -169,11 +169,11 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	 * @see java.sql.Connection#rollback(java.sql.Savepoint)
 	 */
 	@Override
-	public void rollbackToSavepoint(Object savepoint) throws TransactionException {
+	public void rollbackToSavepoint(Object savepoint) throws TransactionException { // 回滚到保存点
 		ConnectionHolder conHolder = getConnectionHolderForSavepoint();
 		try {
-			conHolder.getConnection().rollback((Savepoint) savepoint);
-			conHolder.resetRollbackOnly();
+			conHolder.getConnection().rollback((Savepoint) savepoint); // 回滚到保存点
+			conHolder.resetRollbackOnly(); // 设置rollbackOnly属性为false（嵌套事务与默认事务相反）
 		}
 		catch (Throwable ex) {
 			throw new TransactionSystemException("Could not roll back to JDBC savepoint", ex);
@@ -185,10 +185,10 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	 * @see java.sql.Connection#releaseSavepoint
 	 */
 	@Override
-	public void releaseSavepoint(Object savepoint) throws TransactionException {
+	public void releaseSavepoint(Object savepoint) throws TransactionException { // 擦除回滚点
 		ConnectionHolder conHolder = getConnectionHolderForSavepoint();
 		try {
-			conHolder.getConnection().releaseSavepoint((Savepoint) savepoint);
+			conHolder.getConnection().releaseSavepoint((Savepoint) savepoint); // 擦除回滚点
 		}
 		catch (Throwable ex) {
 			logger.debug("Could not explicitly release JDBC savepoint", ex);

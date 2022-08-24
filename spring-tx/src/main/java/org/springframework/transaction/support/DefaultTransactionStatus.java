@@ -51,18 +51,18 @@ import org.springframework.util.Assert;
 public class DefaultTransactionStatus extends AbstractTransactionStatus {
 
 	@Nullable
-	private final Object transaction;
+	private final Object transaction; // 事务对象
 
-	private final boolean newTransaction;
+	private final boolean newTransaction; // 是否为新创建的事务（一个事务对应一个连接，谁创建谁提交）
 
 	private final boolean newSynchronization;
 
-	private final boolean readOnly;
+	private final boolean readOnly; // 是否只读（拷贝自事务属性，默认为false）
 
 	private final boolean debug;
 
 	@Nullable
-	private final Object suspendedResources;
+	private final Object suspendedResources; // 挂起对象
 
 
 	/**
@@ -80,16 +80,16 @@ public class DefaultTransactionStatus extends AbstractTransactionStatus {
 	 * @param suspendedResources a holder for resources that have been suspended
 	 * for this transaction, if any
 	 */
-	public DefaultTransactionStatus(
+	public DefaultTransactionStatus( // 创建事务状态DefaultTransactionStatus
 			@Nullable Object transaction, boolean newTransaction, boolean newSynchronization,
 			boolean readOnly, boolean debug, @Nullable Object suspendedResources) {
 
-		this.transaction = transaction;
-		this.newTransaction = newTransaction;
+		this.transaction = transaction; // 事务对象
+		this.newTransaction = newTransaction; // 是否为新创建的事务
 		this.newSynchronization = newSynchronization;
-		this.readOnly = readOnly;
+		this.readOnly = readOnly; // 是否只读
 		this.debug = debug;
-		this.suspendedResources = suspendedResources;
+		this.suspendedResources = suspendedResources; // 挂起对象
 	}
 
 

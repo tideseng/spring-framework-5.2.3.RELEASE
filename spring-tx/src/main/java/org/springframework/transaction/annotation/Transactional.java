@@ -100,7 +100,7 @@ public @interface Transactional {
 	 * @see org.springframework.transaction.interceptor.TransactionAttribute#getIsolationLevel()
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#setValidateExistingTransaction
 	 */
-	Isolation isolation() default Isolation.DEFAULT;
+	Isolation isolation() default Isolation.DEFAULT; // 隔离级别，默认使用数据库默认的隔离级别
 
 	/**
 	 * The timeout for this transaction (in seconds).
@@ -124,7 +124,7 @@ public @interface Transactional {
 	 * @see org.springframework.transaction.interceptor.TransactionAttribute#isReadOnly()
 	 * @see org.springframework.transaction.support.TransactionSynchronizationManager#isCurrentTransactionReadOnly()
 	 */
-	boolean readOnly() default false;
+	boolean readOnly() default false; // 是否只读，默认为false
 
 	/**
 	 * Defines zero (0) or more exception {@link Class classes}, which must be
@@ -140,7 +140,7 @@ public @interface Transactional {
 	 * @see #rollbackForClassName
 	 * @see org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn(Throwable)
 	 */
-	Class<? extends Throwable>[] rollbackFor() default {};
+	Class<? extends Throwable>[] rollbackFor() default {}; // 异常规则
 
 	/**
 	 * Defines zero (0) or more exception names (for exceptions which must be a
@@ -160,7 +160,7 @@ public @interface Transactional {
 	 * @see #rollbackFor
 	 * @see org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn(Throwable)
 	 */
-	String[] rollbackForClassName() default {};
+	String[] rollbackForClassName() default {}; // 异常规则
 
 	/**
 	 * Defines zero (0) or more exception {@link Class Classes}, which must be
@@ -173,7 +173,7 @@ public @interface Transactional {
 	 * @see #noRollbackForClassName
 	 * @see org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn(Throwable)
 	 */
-	Class<? extends Throwable>[] noRollbackFor() default {};
+	Class<? extends Throwable>[] noRollbackFor() default {}; // 异常规则
 
 	/**
 	 * Defines zero (0) or more exception names (for exceptions which must be a
@@ -185,6 +185,6 @@ public @interface Transactional {
 	 * @see #noRollbackFor
 	 * @see org.springframework.transaction.interceptor.DefaultTransactionAttribute#rollbackOn(Throwable)
 	 */
-	String[] noRollbackForClassName() default {};
+	String[] noRollbackForClassName() default {}; // 异常规则
 
 }

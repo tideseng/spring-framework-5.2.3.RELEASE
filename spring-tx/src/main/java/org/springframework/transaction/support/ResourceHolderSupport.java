@@ -90,15 +90,15 @@ public abstract class ResourceHolderSupport implements ResourceHolder {
 	 * Set the timeout for this object in seconds.
 	 * @param seconds number of seconds until expiration
 	 */
-	public void setTimeoutInSeconds(int seconds) {
-		setTimeoutInMillis(seconds * 1000L);
+	public void setTimeoutInSeconds(int seconds) { // 设置事务超时时间
+		setTimeoutInMillis(seconds * 1000L); // 设置事务超时时间
 	}
 
 	/**
 	 * Set the timeout for this object in milliseconds.
 	 * @param millis number of milliseconds until expiration
 	 */
-	public void setTimeoutInMillis(long millis) {
+	public void setTimeoutInMillis(long millis) { // 设置事务超时时间
 		this.deadline = new Date(System.currentTimeMillis() + millis);
 	}
 

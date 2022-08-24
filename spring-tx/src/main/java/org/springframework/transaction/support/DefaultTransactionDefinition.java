@@ -228,7 +228,7 @@ public class DefaultTransactionDefinition implements TransactionDefinition, Seri
 	 * A transaction manager which cannot interpret the read-only hint will
 	 * <i>not</i> throw an exception when asked for a read-only transaction.
 	 */
-	public final void setReadOnly(boolean readOnly) {
+	public final void setReadOnly(boolean readOnly) { // 设置是否只读
 		this.readOnly = readOnly;
 	}
 
