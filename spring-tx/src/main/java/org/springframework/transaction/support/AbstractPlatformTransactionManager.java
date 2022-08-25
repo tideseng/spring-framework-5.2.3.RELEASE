@@ -374,7 +374,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				DefaultTransactionStatus status = newTransactionStatus( // 创建事务状态DefaultTransactionStatus（其中newTransaction值为true）
 						def, transaction, true, newSynchronization, debugEnabled, suspendedResources);
 				doBegin(transaction, def); // 根据事务对象和事务属性开启事务（创建/获取连接、填充事务对象、关闭自动提交、建立绑定关系[新事务]）
-				prepareSynchronization(status, def); // 开启事务后改变事务状态
+				prepareSynchronization(status, def); // 开启事务后设置TransactionSynchronizationManager相关属性
 				return status;
 			}
 			catch (RuntimeException | Error ex) {
@@ -526,7 +526,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	/**
 	 * Initialize transaction synchronization as appropriate.
 	 */
-	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) { // 开启事务后改变事务状态
+	protected void prepareSynchronization(DefaultTransactionStatus status, TransactionDefinition definition) { // 开启事务后设置TransactionSynchronizationManager相关属性
 		if (status.isNewSynchronization()) {
 			TransactionSynchronizationManager.setActualTransactionActive(status.hasTransaction());
 			TransactionSynchronizationManager.setCurrentTransactionIsolationLevel(
@@ -534,7 +534,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 							definition.getIsolationLevel() : null);
 			TransactionSynchronizationManager.setCurrentTransactionReadOnly(definition.isReadOnly());
 			TransactionSynchronizationManager.setCurrentTransactionName(definition.getName());
-			TransactionSynchronizationManager.initSynchronization();
+			TransactionSynchronizationManager.initSynchronization(); // 初始化synchronizations
 		}
 	}
 
@@ -725,7 +725,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			try {
 				boolean unexpectedRollback = false;
 				prepareForCommit(status);
-				triggerBeforeCommit(status); // 调用beforeCommint方法，事务提交之前处理业务逻辑
+				triggerBeforeCommit(status); // 触发调用beforeCommint方法，在事务提交之前处理业务逻辑（需要先手动调用TransactionSynchronizationManager#registerSynchronization(...)进行注册）
 				triggerBeforeCompletion(status);
 				beforeCompletionInvoked = true;
 
@@ -780,7 +780,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			// Trigger afterCommit callbacks, with an exception thrown there
 			// propagated to callers but the transaction still considered as committed.
 			try {
-				triggerAfterCommit(status); // 触发afterCommint方法，事务提交后处理业务逻辑
+				triggerAfterCommit(status); // 触发调用afterCommint方法，在事务提交后处理业务逻辑
 			}
 			finally {
 				triggerAfterCompletion(status, TransactionSynchronization.STATUS_COMMITTED);
@@ -788,7 +788,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 		}
 		finally {
-			cleanupAfterCompletion(status); // 处理挂起事务，恢复原绑定关系
+			cleanupAfterCompletion(status); // 释放连接、处理挂起事务，恢复原绑定关系
 		}
 	}
 
@@ -912,12 +912,12 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * Trigger {@code beforeCommit} callbacks.
 	 * @param status object representing the transaction
 	 */
-	protected final void triggerBeforeCommit(DefaultTransactionStatus status) {
+	protected final void triggerBeforeCommit(DefaultTransactionStatus status) { // 触发调用beforeCommint方法，在事务提交之前处理业务逻辑
 		if (status.isNewSynchronization()) {
 			if (status.isDebug()) {
 				logger.trace("Triggering beforeCommit synchronization");
 			}
-			TransactionSynchronizationUtils.triggerBeforeCommit(status.isReadOnly());
+			TransactionSynchronizationUtils.triggerBeforeCommit(status.isReadOnly()); // 调用当前ThreadLocal中TransactionSynchronization的beforeCommit方法
 		}
 	}
 
@@ -996,7 +996,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * @param status object representing the transaction
 	 * @see #doCleanupAfterCompletion
 	 */
-	private void cleanupAfterCompletion(DefaultTransactionStatus status) { // 处理挂起事务，恢复原绑定关系
+	private void cleanupAfterCompletion(DefaultTransactionStatus status) { // 释放连接、处理挂起事务，恢复原绑定关系
 		status.setCompleted();
 		if (status.isNewSynchronization()) {
 			TransactionSynchronizationManager.clear();

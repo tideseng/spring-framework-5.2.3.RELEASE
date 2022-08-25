@@ -270,7 +270,7 @@ public abstract class TransactionSynchronizationManager {
 	 * Called by a transaction manager on transaction begin.
 	 * @throws IllegalStateException if synchronization is already active
 	 */
-	public static void initSynchronization() throws IllegalStateException {
+	public static void initSynchronization() throws IllegalStateException { // 初始化synchronizations
 		if (isSynchronizationActive()) {
 			throw new IllegalStateException("Cannot activate transaction synchronization - already active");
 		}
@@ -288,7 +288,7 @@ public abstract class TransactionSynchronizationManager {
 	 * @throws IllegalStateException if transaction synchronization is not active
 	 * @see org.springframework.core.Ordered
 	 */
-	public static void registerSynchronization(TransactionSynchronization synchronization)
+	public static void registerSynchronization(TransactionSynchronization synchronization) // 添加TransactionSynchronization到ThreadLocal中
 			throws IllegalStateException {
 
 		Assert.notNull(synchronization, "TransactionSynchronization must not be null");
@@ -306,7 +306,7 @@ public abstract class TransactionSynchronizationManager {
 	 * @throws IllegalStateException if synchronization is not active
 	 * @see TransactionSynchronization
 	 */
-	public static List<TransactionSynchronization> getSynchronizations() throws IllegalStateException {
+	public static List<TransactionSynchronization> getSynchronizations() throws IllegalStateException { // 从ThreadLocal获取所有的TransactionSynchronization
 		Set<TransactionSynchronization> synchs = synchronizations.get();
 		if (synchs == null) {
 			throw new IllegalStateException("Transaction synchronization is not active");

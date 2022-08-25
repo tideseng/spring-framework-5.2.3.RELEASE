@@ -62,14 +62,14 @@ import org.springframework.util.Assert;
  * @see org.springframework.transaction.PlatformTransactionManager
  */
 @SuppressWarnings("serial")
-public class TransactionTemplate extends DefaultTransactionDefinition
+public class TransactionTemplate extends DefaultTransactionDefinition // TransactionTemplate继承自DefaultTransactionDefinition
 		implements TransactionOperations, InitializingBean {
 
 	/** Logger available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Nullable
-	private PlatformTransactionManager transactionManager;
+	private PlatformTransactionManager transactionManager; // 事务管理器
 
 
 	/**
@@ -78,15 +78,15 @@ public class TransactionTemplate extends DefaultTransactionDefinition
 	 * any {@code execute} calls.
 	 * @see #setTransactionManager
 	 */
-	public TransactionTemplate() {
+	public TransactionTemplate() { // 初始化TransactionTemplate
 	}
 
 	/**
 	 * Construct a new TransactionTemplate using the given transaction manager.
 	 * @param transactionManager the transaction management strategy to be used
 	 */
-	public TransactionTemplate(PlatformTransactionManager transactionManager) {
-		this.transactionManager = transactionManager;
+	public TransactionTemplate(PlatformTransactionManager transactionManager) { // 初始化TransactionTemplate，传入事务管理器
+		this.transactionManager = transactionManager; // 赋值事务管理器
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class TransactionTemplate extends DefaultTransactionDefinition
 	/**
 	 * Set the transaction management strategy to be used.
 	 */
-	public void setTransactionManager(@Nullable PlatformTransactionManager transactionManager) {
+	public void setTransactionManager(@Nullable PlatformTransactionManager transactionManager) { // 设置事务管理器
 		this.transactionManager = transactionManager;
 	}
 
@@ -118,7 +118,7 @@ public class TransactionTemplate extends DefaultTransactionDefinition
 	}
 
 	@Override
-	public void afterPropertiesSet() {
+	public void afterPropertiesSet() { // 判断事务管理器是否赋值
 		if (this.transactionManager == null) {
 			throw new IllegalArgumentException("Property 'transactionManager' is required");
 		}
@@ -127,29 +127,29 @@ public class TransactionTemplate extends DefaultTransactionDefinition
 
 	@Override
 	@Nullable
-	public <T> T execute(TransactionCallback<T> action) throws TransactionException {
+	public <T> T execute(TransactionCallback<T> action) throws TransactionException { // 执行编程式事务（控制粒度更细，但不涉及传播属性）
 		Assert.state(this.transactionManager != null, "No PlatformTransactionManager set");
 
 		if (this.transactionManager instanceof CallbackPreferringPlatformTransactionManager) {
 			return ((CallbackPreferringPlatformTransactionManager) this.transactionManager).execute(this, action);
 		}
-		else {
-			TransactionStatus status = this.transactionManager.getTransaction(this);
+		else { // 默认走这里
+			TransactionStatus status = this.transactionManager.getTransaction(this); // 开启事务（没有传播属性）
 			T result;
 			try {
-				result = action.doInTransaction(status);
+				result = action.doInTransaction(status); // 执行业务逻辑
 			}
-			catch (RuntimeException | Error ex) {
+			catch (RuntimeException | Error ex) { // 捕获RuntimeException、Error异常
 				// Transactional code threw application exception -> rollback
-				rollbackOnException(status, ex);
+				rollbackOnException(status, ex); // 回滚事务
 				throw ex;
 			}
-			catch (Throwable ex) {
+			catch (Throwable ex) { // 捕获Throwable异常
 				// Transactional code threw unexpected exception -> rollback
-				rollbackOnException(status, ex);
+				rollbackOnException(status, ex); // 回滚事务
 				throw new UndeclaredThrowableException(ex, "TransactionCallback threw undeclared checked exception");
 			}
-			this.transactionManager.commit(status);
+			this.transactionManager.commit(status); // 提交事务
 			return result;
 		}
 	}

@@ -91,9 +91,9 @@ public abstract class TransactionSynchronizationUtils {
 	 * @throws RuntimeException if thrown by a {@code beforeCommit} callback
 	 * @see TransactionSynchronization#beforeCommit(boolean)
 	 */
-	public static void triggerBeforeCommit(boolean readOnly) {
-		for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
-			synchronization.beforeCommit(readOnly);
+	public static void triggerBeforeCommit(boolean readOnly) { // 调用当前ThreadLocal中TransactionSynchronization的beforeCommit方法
+		for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) { // 从ThreadLocal获取所有的TransactionSynchronization
+			synchronization.beforeCommit(readOnly); // 遍历TransactionSynchronization并调用beforeCommit方法
 		}
 	}
 
