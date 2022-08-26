@@ -41,16 +41,16 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  */
 @SuppressWarnings("serial")
-public class CacheInterceptor extends CacheAspectSupport implements MethodInterceptor, Serializable {
+public class CacheInterceptor extends CacheAspectSupport implements MethodInterceptor, Serializable { // 缓存切面增强，实现了MethodInterceptor接口
 
 	@Override
 	@Nullable
-	public Object invoke(final MethodInvocation invocation) throws Throwable {
+	public Object invoke(final MethodInvocation invocation) throws Throwable { // 缓存切面Advice的invoke方法
 		Method method = invocation.getMethod();
 
-		CacheOperationInvoker aopAllianceInvoker = () -> {
+		CacheOperationInvoker aopAllianceInvoker = () -> { // 定义函数式接口，创建CacheOperationInvoker接口匿名实现类
 			try {
-				return invocation.proceed();
+				return invocation.proceed(); // 火炬传递，执行目标方法
 			}
 			catch (Throwable ex) {
 				throw new CacheOperationInvoker.ThrowableWrapper(ex);
@@ -58,7 +58,7 @@ public class CacheInterceptor extends CacheAspectSupport implements MethodInterc
 		};
 
 		try {
-			return execute(aopAllianceInvoker, invocation.getThis(), method, invocation.getArguments());
+			return execute(aopAllianceInvoker, invocation.getThis(), method, invocation.getArguments()); // 执行缓存增强逻辑
 		}
 		catch (CacheOperationInvoker.ThrowableWrapper th) {
 			throw th.getOriginal();

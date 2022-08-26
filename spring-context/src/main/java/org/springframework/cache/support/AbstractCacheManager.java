@@ -39,16 +39,16 @@ import org.springframework.lang.Nullable;
  */
 public abstract class AbstractCacheManager implements CacheManager, InitializingBean {
 
-	private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>(16);
+	private final ConcurrentMap<String, Cache> cacheMap = new ConcurrentHashMap<>(16); // 存放Cache缓存实现类的容器
 
-	private volatile Set<String> cacheNames = Collections.emptySet();
+	private volatile Set<String> cacheNames = Collections.emptySet(); // 存放Cache缓存的缓存名容器
 
 
 	// Early cache initialization on startup
 
 	@Override
-	public void afterPropertiesSet() {
-		initializeCaches();
+	public void afterPropertiesSet() { // InitializingBean接口的方法实现
+		initializeCaches(); // 初始化Cache缓存容器
 	}
 
 	/**
@@ -58,15 +58,15 @@ public abstract class AbstractCacheManager implements CacheManager, Initializing
 	 * @since 4.2.2
 	 * @see #loadCaches()
 	 */
-	public void initializeCaches() {
-		Collection<? extends Cache> caches = loadCaches();
+	public void initializeCaches() { // 初始化Cache缓存容器
+		Collection<? extends Cache> caches = loadCaches(); // 调用子类实现的抽象方法，获取当前Cache缓存实现类
 
 		synchronized (this.cacheMap) {
 			this.cacheNames = Collections.emptySet();
 			this.cacheMap.clear();
 			Set<String> cacheNames = new LinkedHashSet<>(caches.size());
-			for (Cache cache : caches) {
-				String name = cache.getName();
+			for (Cache cache : caches) { // 遍历Cache缓存实现类
+				String name = cache.getName(); // 获取
 				this.cacheMap.put(name, decorateCache(cache));
 				cacheNames.add(name);
 			}

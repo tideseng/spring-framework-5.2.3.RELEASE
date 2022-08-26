@@ -48,7 +48,7 @@ public class BeanFactoryCacheOperationSourceAdvisor extends AbstractBeanFactoryP
 	 * attributes. This should usually be identical to the source reference
 	 * set on the cache interceptor itself.
 	 */
-	public void setCacheOperationSource(CacheOperationSource cacheOperationSource) {
+	public void setCacheOperationSource(CacheOperationSource cacheOperationSource) { // 设置缓存操作处理器
 		this.cacheOperationSource = cacheOperationSource;
 	}
 

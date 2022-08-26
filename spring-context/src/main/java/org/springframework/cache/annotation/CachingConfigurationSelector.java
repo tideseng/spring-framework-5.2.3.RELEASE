@@ -38,7 +38,7 @@ import org.springframework.util.StringUtils;
  * @see EnableCaching
  * @see ProxyCachingConfiguration
  */
-public class CachingConfigurationSelector extends AdviceModeImportSelector<EnableCaching> {
+public class CachingConfigurationSelector extends AdviceModeImportSelector<EnableCaching> { // 实现了ImportSelector接口
 
 	private static final String PROXY_JCACHE_CONFIGURATION_CLASS =
 			"org.springframework.cache.jcache.config.ProxyJCacheConfiguration";
@@ -67,10 +67,10 @@ public class CachingConfigurationSelector extends AdviceModeImportSelector<Enabl
 	 * respectively. Potentially includes corresponding JCache configuration as well.
 	 */
 	@Override
-	public String[] selectImports(AdviceMode adviceMode) {
+	public String[] selectImports(AdviceMode adviceMode) { // 父类抽象方法
 		switch (adviceMode) {
-			case PROXY:
-				return getProxyImports();
+			case PROXY: // 默认为PROXY
+				return getProxyImports(); // 导入类
 			case ASPECTJ:
 				return getAspectJImports();
 			default:
@@ -82,10 +82,10 @@ public class CachingConfigurationSelector extends AdviceModeImportSelector<Enabl
 	 * Return the imports to use if the {@link AdviceMode} is set to {@link AdviceMode#PROXY}.
 	 * <p>Take care of adding the necessary JSR-107 import if it is available.
 	 */
-	private String[] getProxyImports() {
+	private String[] getProxyImports() { // 导入类
 		List<String> result = new ArrayList<>(3);
-		result.add(AutoProxyRegistrar.class.getName());
-		result.add(ProxyCachingConfiguration.class.getName());
+		result.add(AutoProxyRegistrar.class.getName()); // 导入AutoProxyRegistrar类，注册Aop的入口类InfrastructureAdvisorAutoProxyCreator（在实例化后会根据情况生成代理）
+		result.add(ProxyCachingConfiguration.class.getName()); // 导入ProxyCachingConfiguration类，注册缓存切面等
 		if (jsr107Present && jcacheImplPresent) {
 			result.add(PROXY_JCACHE_CONFIGURATION_CLASS);
 		}

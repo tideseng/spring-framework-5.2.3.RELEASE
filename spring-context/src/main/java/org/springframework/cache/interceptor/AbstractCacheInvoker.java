@@ -113,13 +113,13 @@ public abstract class AbstractCacheInvoker {
 	 * Execute {@link Cache#clear()} on the specified {@link Cache} and
 	 * invoke the error handler if an exception occurs.
 	 */
-	protected void doClear(Cache cache, boolean immediate) {
+	protected void doClear(Cache cache, boolean immediate) { // 调用clear方法
 		try {
 			if (immediate) {
 				cache.invalidate();
 			}
 			else {
-				cache.clear();
+				cache.clear(); // 调用clear方法
 			}
 		}
 		catch (RuntimeException ex) {

@@ -37,10 +37,10 @@ import org.springframework.util.StringUtils;
  * @author Juergen Hoeller
  * @since 3.1
  */
-public class ConcurrentMapCacheFactoryBean
+public class ConcurrentMapCacheFactoryBean // Spring本地缓存实现
 		implements FactoryBean<ConcurrentMapCache>, BeanNameAware, InitializingBean {
 
-	private String name = "";
+	private String name = ""; // 缓存实现name标识
 
 	@Nullable
 	private ConcurrentMap<Object, Object> store;
@@ -55,7 +55,7 @@ public class ConcurrentMapCacheFactoryBean
 	 * Specify the name of the cache.
 	 * <p>Default is "" (empty String).
 	 */
-	public void setName(String name) {
+	public void setName(String name) { // 设置缓存实现name标识
 		this.name = name;
 	}
 
@@ -85,7 +85,7 @@ public class ConcurrentMapCacheFactoryBean
 	}
 
 	@Override
-	public void afterPropertiesSet() {
+	public void afterPropertiesSet() { // InitializingBean接口的方法实现，初始化cache
 		this.cache = (this.store != null ? new ConcurrentMapCache(this.name, this.store, this.allowNullValues) :
 				new ConcurrentMapCache(this.name, this.allowNullValues));
 	}

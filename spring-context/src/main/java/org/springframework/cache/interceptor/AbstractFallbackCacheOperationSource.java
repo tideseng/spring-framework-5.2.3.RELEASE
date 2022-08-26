@@ -84,29 +84,29 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 	 */
 	@Override
 	@Nullable
-	public Collection<CacheOperation> getCacheOperations(Method method, @Nullable Class<?> targetClass) {
+	public Collection<CacheOperation> getCacheOperations(Method method, @Nullable Class<?> targetClass) { // 根据缓存操作处理器获取缓存操作
 		if (method.getDeclaringClass() == Object.class) {
 			return null;
 		}
 
-		Object cacheKey = getCacheKey(method, targetClass);
-		Collection<CacheOperation> cached = this.attributeCache.get(cacheKey);
+		Object cacheKey = getCacheKey(method, targetClass); // 获取缓存Key
+		Collection<CacheOperation> cached = this.attributeCache.get(cacheKey); // 获取缓存
 
-		if (cached != null) {
-			return (cached != NULL_CACHING_ATTRIBUTE ? cached : null);
+		if (cached != null) { // 缓存存在时
+			return (cached != NULL_CACHING_ATTRIBUTE ? cached : null); // 如果缓存为默认值，则返回null
 		}
-		else {
-			Collection<CacheOperation> cacheOps = computeCacheOperations(method, targetClass);
+		else { // 缓存不存在时
+			Collection<CacheOperation> cacheOps = computeCacheOperations(method, targetClass); // 获取方法上或类上的缓存操作
 			if (cacheOps != null) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Adding cacheable method '" + method.getName() + "' with attribute: " + cacheOps);
 				}
-				this.attributeCache.put(cacheKey, cacheOps);
+				this.attributeCache.put(cacheKey, cacheOps); // 放入缓存
 			}
 			else {
-				this.attributeCache.put(cacheKey, NULL_CACHING_ATTRIBUTE);
+				this.attributeCache.put(cacheKey, NULL_CACHING_ATTRIBUTE); // 放入缓存
 			}
-			return cacheOps;
+			return cacheOps; // 返回缓存操作
 		}
 	}
 
@@ -123,24 +123,24 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 	}
 
 	@Nullable
-	private Collection<CacheOperation> computeCacheOperations(Method method, @Nullable Class<?> targetClass) {
+	private Collection<CacheOperation> computeCacheOperations(Method method, @Nullable Class<?> targetClass) { // 获取方法上或类上的缓存操作
 		// Don't allow no-public methods as required.
-		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
+		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) { // 如果是非public方法，则返回null不生成代理对象
 			return null;
 		}
 
 		// The method may be on an interface, but we need attributes from the target class.
 		// If the target class is null, the method will be unchanged.
-		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
+		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass); // 获取被代理对象的原始方法
 
 		// First try is the method in the target class.
-		Collection<CacheOperation> opDef = findCacheOperations(specificMethod);
+		Collection<CacheOperation> opDef = findCacheOperations(specificMethod); // 获取方法上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		if (opDef != null) {
 			return opDef;
 		}
 
 		// Second try is the caching operation on the target class.
-		opDef = findCacheOperations(specificMethod.getDeclaringClass());
+		opDef = findCacheOperations(specificMethod.getDeclaringClass()); // 获取类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		if (opDef != null && ClassUtils.isUserLevelMethod(method)) {
 			return opDef;
 		}

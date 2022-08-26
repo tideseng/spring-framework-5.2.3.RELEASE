@@ -41,28 +41,28 @@ public class ProxyCachingConfiguration extends AbstractCachingConfiguration {
 
 	@Bean(name = CacheManagementConfigUtils.CACHE_ADVISOR_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public BeanFactoryCacheOperationSourceAdvisor cacheAdvisor() {
-		BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor();
-		advisor.setCacheOperationSource(cacheOperationSource());
-		advisor.setAdvice(cacheInterceptor());
-		if (this.enableCaching != null) {
-			advisor.setOrder(this.enableCaching.<Integer>getNumber("order"));
+	public BeanFactoryCacheOperationSourceAdvisor cacheAdvisor() { // 注入缓存切面类
+		BeanFactoryCacheOperationSourceAdvisor advisor = new BeanFactoryCacheOperationSourceAdvisor(); // 创建缓存切面类BeanFactoryCacheOperationSourceAdvisor
+		advisor.setCacheOperationSource(cacheOperationSource()); // 设置缓存操作处理器
+		advisor.setAdvice(cacheInterceptor()); // 设置切面的Advice
+		if (this.enableCaching != null) { // 根据@EnableCaching注解信息设置切面排序
+			advisor.setOrder(this.enableCaching.<Integer>getNumber("order")); // 设置切面排序
 		}
 		return advisor;
 	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public CacheOperationSource cacheOperationSource() {
-		return new AnnotationCacheOperationSource();
+	public CacheOperationSource cacheOperationSource() { // 注入缓存操作处理器
+		return new AnnotationCacheOperationSource(); // 创建缓存操作处理器（解析@Cacheable、@CacheEvict、@CachePut、@Caching缓存注解并封装成CacheOperation对象）
 	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	public CacheInterceptor cacheInterceptor() {
-		CacheInterceptor interceptor = new CacheInterceptor();
-		interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager);
-		interceptor.setCacheOperationSource(cacheOperationSource());
+	public CacheInterceptor cacheInterceptor() { // 注入缓存切面的Advice
+		CacheInterceptor interceptor = new CacheInterceptor(); // 创建缓存切面增强，实现了MethodInterceptor接口
+		interceptor.configure(this.errorHandler, this.keyGenerator, this.cacheResolver, this.cacheManager); // 配置errorHandler、keyGenerator、cacheResolver相关属性
+		interceptor.setCacheOperationSource(cacheOperationSource()); // 设置缓存操作处理器
 		return interceptor;
 	}
 

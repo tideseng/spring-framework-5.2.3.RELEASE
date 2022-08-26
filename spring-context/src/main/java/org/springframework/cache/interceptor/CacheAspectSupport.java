@@ -95,7 +95,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	private SingletonSupplier<KeyGenerator> keyGenerator = SingletonSupplier.of(SimpleKeyGenerator::new);
 
 	@Nullable
-	private SingletonSupplier<CacheResolver> cacheResolver;
+	private SingletonSupplier<CacheResolver> cacheResolver; // 维护了缓存管理器
 
 	@Nullable
 	private BeanFactory beanFactory;
@@ -136,7 +136,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	 * @since 5.1
 	 * @see #setCacheOperationSources
 	 */
-	public void setCacheOperationSource(@Nullable CacheOperationSource cacheOperationSource) {
+	public void setCacheOperationSource(@Nullable CacheOperationSource cacheOperationSource) { // 设置缓存操作处理器
 		this.cacheOperationSource = cacheOperationSource;
 	}
 
@@ -212,7 +212,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	}
 
 	@Override
-	public void afterSingletonsInstantiated() {
+	public void afterSingletonsInstantiated() { // SmartInitializingSingleton接口的实现方法，在所有类完成实例化后调用
 		if (getCacheResolver() == null) {
 			// Lazily initialize cache resolver via default cache manager...
 			Assert.state(this.beanFactory != null, "CacheResolver or BeanFactory must be set on cache aspect");
@@ -334,16 +334,16 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	}
 
 	@Nullable
-	protected Object execute(CacheOperationInvoker invoker, Object target, Method method, Object[] args) {
+	protected Object execute(CacheOperationInvoker invoker, Object target, Method method, Object[] args) { // 执行缓存增强逻辑
 		// Check whether aspect is enabled (to cope with cases where the AJ is pulled in automatically)
 		if (this.initialized) {
 			Class<?> targetClass = getTargetClass(target);
-			CacheOperationSource cacheOperationSource = getCacheOperationSource();
+			CacheOperationSource cacheOperationSource = getCacheOperationSource(); // 获取缓存操作处理器
 			if (cacheOperationSource != null) {
-				Collection<CacheOperation> operations = cacheOperationSource.getCacheOperations(method, targetClass);
+				Collection<CacheOperation> operations = cacheOperationSource.getCacheOperations(method, targetClass); // 根据缓存操作处理器获取缓存操作
 				if (!CollectionUtils.isEmpty(operations)) {
-					return execute(invoker, method,
-							new CacheOperationContexts(operations, method, args, target, targetClass));
+					return execute(invoker, method, // 执行缓存增强逻辑
+							new CacheOperationContexts(operations, method, args, target, targetClass)); // 创建CacheOperationContexts
 				}
 			}
 		}
@@ -370,9 +370,9 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	}
 
 	@Nullable
-	private Object execute(final CacheOperationInvoker invoker, Method method, CacheOperationContexts contexts) {
+	private Object execute(final CacheOperationInvoker invoker, Method method, CacheOperationContexts contexts) { // 执行缓存增强逻辑
 		// Special handling of synchronized invocation
-		if (contexts.isSynchronized()) {
+		if (contexts.isSynchronized()) { // 默认为false
 			CacheOperationContext context = contexts.get(CacheableOperation.class).iterator().next();
 			if (isConditionPassing(context, CacheOperationExpressionEvaluator.NO_RESULT)) {
 				Object key = generateKey(context, CacheOperationExpressionEvaluator.NO_RESULT);
@@ -394,43 +394,43 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 
 		// Process any early evictions
-		processCacheEvicts(contexts.get(CacheEvictOperation.class), true,
+		processCacheEvicts(contexts.get(CacheEvictOperation.class), true, // 处理@CacheEvicts注解前置删除缓存，调用clear方法（默认不执行）
 				CacheOperationExpressionEvaluator.NO_RESULT);
 
 		// Check if we have a cached item matching the conditions
-		Cache.ValueWrapper cacheHit = findCachedItem(contexts.get(CacheableOperation.class));
+		Cache.ValueWrapper cacheHit = findCachedItem(contexts.get(CacheableOperation.class)); // 处理@Cacheable注解获取缓存，调用get方法获取缓存返回值
 
 		// Collect puts from any @Cacheable miss, if no cached item is found
 		List<CachePutRequest> cachePutRequests = new LinkedList<>();
-		if (cacheHit == null) {
-			collectPutRequests(contexts.get(CacheableOperation.class),
+		if (cacheHit == null) { // 如果缓存没命中，则收集插入请求
+			collectPutRequests(contexts.get(CacheableOperation.class), // 处理@Cacheable逻辑，收集put请求，put的缓存值稍后需要调用被代理方法
 					CacheOperationExpressionEvaluator.NO_RESULT, cachePutRequests);
 		}
 
 		Object cacheValue;
 		Object returnValue;
 
-		if (cacheHit != null && !hasCachePut(contexts)) {
+		if (cacheHit != null && !hasCachePut(contexts)) { // 如果缓存命中且没有@CachePut注解，则直接返回缓存值
 			// If there are no put requests, just use the cache hit
-			cacheValue = cacheHit.get();
-			returnValue = wrapCacheValue(method, cacheValue);
+			cacheValue = cacheHit.get(); // 获取缓存值
+			returnValue = wrapCacheValue(method, cacheValue); // 包装缓存值
 		}
 		else {
 			// Invoke the method if we don't have a cache hit
-			returnValue = invokeOperation(invoker);
-			cacheValue = unwrapReturnValue(returnValue);
+			returnValue = invokeOperation(invoker); // 调用被代理方法获取返回值
+			cacheValue = unwrapReturnValue(returnValue); // 包装返回值
 		}
 
 		// Collect any explicit @CachePuts
-		collectPutRequests(contexts.get(CachePutOperation.class), cacheValue, cachePutRequests);
+		collectPutRequests(contexts.get(CachePutOperation.class), cacheValue, cachePutRequests); // 处理@CachePut注解，收集put请求
 
 		// Process any collected put requests, either from @CachePut or a @Cacheable miss
-		for (CachePutRequest cachePutRequest : cachePutRequests) {
+		for (CachePutRequest cachePutRequest : cachePutRequests) { // 处理put请求，调用put方法，设置返回值
 			cachePutRequest.apply(cacheValue);
 		}
 
 		// Process any late evictions
-		processCacheEvicts(contexts.get(CacheEvictOperation.class), false, cacheValue);
+		processCacheEvicts(contexts.get(CacheEvictOperation.class), false, cacheValue); // 处理@CacheEvicts注解后置删除缓存，调用clear方法（默认执行）
 
 		return returnValue;
 	}
@@ -467,13 +467,13 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 		return (cachePutContexts.size() != excluded.size());
 	}
 
-	private void processCacheEvicts(
+	private void processCacheEvicts( // @CachaEvicts前置删除缓存
 			Collection<CacheOperationContext> contexts, boolean beforeInvocation, @Nullable Object result) {
 
 		for (CacheOperationContext context : contexts) {
 			CacheEvictOperation operation = (CacheEvictOperation) context.metadata.operation;
-			if (beforeInvocation == operation.isBeforeInvocation() && isConditionPassing(context, result)) {
-				performCacheEvict(context, operation, result);
+			if (beforeInvocation == operation.isBeforeInvocation() && isConditionPassing(context, result)) { // 默认operation.isBeforeInvocation为false
+				performCacheEvict(context, operation, result); // @CachaEvicts前置删除缓存
 			}
 		}
 	}
@@ -485,7 +485,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 		for (Cache cache : context.getCaches()) {
 			if (operation.isCacheWide()) {
 				logInvalidating(context, operation, null);
-				doClear(cache, operation.isBeforeInvocation());
+				doClear(cache, operation.isBeforeInvocation()); // 调用clear方法
 			}
 			else {
 				if (key == null) {
@@ -590,7 +590,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 		private final boolean sync;
 
-		public CacheOperationContexts(Collection<? extends CacheOperation> operations, Method method,
+		public CacheOperationContexts(Collection<? extends CacheOperation> operations, Method method, // 初始化CacheOperationContexts
 				Object[] args, Object target, Class<?> targetClass) {
 
 			this.contexts = new LinkedMultiValueMap<>(operations.size());
@@ -693,7 +693,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 		private final Object target;
 
-		private final Collection<? extends Cache> caches;
+		private final Collection<? extends Cache> caches; // Cache实现类列表
 
 		private final Collection<String> cacheNames;
 
@@ -704,7 +704,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 			this.metadata = metadata;
 			this.args = extractArgs(metadata.method, args);
 			this.target = target;
-			this.caches = CacheAspectSupport.this.getCaches(this, metadata.cacheResolver);
+			this.caches = CacheAspectSupport.this.getCaches(this, metadata.cacheResolver); // 获取所有Cache实现类
 			this.cacheNames = createCacheNames(this.caches);
 		}
 

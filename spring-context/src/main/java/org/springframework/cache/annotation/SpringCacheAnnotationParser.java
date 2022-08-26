@@ -66,20 +66,20 @@ public class SpringCacheAnnotationParser implements CacheAnnotationParser, Seria
 
 	@Override
 	@Nullable
-	public Collection<CacheOperation> parseCacheAnnotations(Class<?> type) {
+	public Collection<CacheOperation> parseCacheAnnotations(Class<?> type) { // 获取类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		DefaultCacheConfig defaultConfig = new DefaultCacheConfig(type);
-		return parseCacheAnnotations(defaultConfig, type);
+		return parseCacheAnnotations(defaultConfig, type); // 获取方法上或类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 	}
 
 	@Override
 	@Nullable
-	public Collection<CacheOperation> parseCacheAnnotations(Method method) {
+	public Collection<CacheOperation> parseCacheAnnotations(Method method) { // 获取方法上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		DefaultCacheConfig defaultConfig = new DefaultCacheConfig(method.getDeclaringClass());
-		return parseCacheAnnotations(defaultConfig, method);
+		return parseCacheAnnotations(defaultConfig, method); // 获取方法上或类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 	}
 
 	@Nullable
-	private Collection<CacheOperation> parseCacheAnnotations(DefaultCacheConfig cachingConfig, AnnotatedElement ae) {
+	private Collection<CacheOperation> parseCacheAnnotations(DefaultCacheConfig cachingConfig, AnnotatedElement ae) { // 获取方法上或类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		Collection<CacheOperation> ops = parseCacheAnnotations(cachingConfig, ae, false);
 		if (ops != null && ops.size() > 1) {
 			// More than one operation found -> local declarations override interface-declared ones...

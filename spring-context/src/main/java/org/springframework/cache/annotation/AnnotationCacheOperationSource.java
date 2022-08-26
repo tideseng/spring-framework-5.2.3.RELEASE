@@ -115,13 +115,13 @@ public class AnnotationCacheOperationSource extends AbstractFallbackCacheOperati
 
 	@Override
 	@Nullable
-	protected Collection<CacheOperation> findCacheOperations(Class<?> clazz) {
+	protected Collection<CacheOperation> findCacheOperations(Class<?> clazz) { // 获取类上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		return determineCacheOperations(parser -> parser.parseCacheAnnotations(clazz));
 	}
 
 	@Override
 	@Nullable
-	protected Collection<CacheOperation> findCacheOperations(Method method) {
+	protected Collection<CacheOperation> findCacheOperations(Method method) { // 获取方法上@Cacheable、@CacheEvict、@CachePut、@Caching注解对应的缓存操作
 		return determineCacheOperations(parser -> parser.parseCacheAnnotations(method));
 	}
 

@@ -28,20 +28,20 @@ import org.springframework.cache.Cache;
  * @author Costin Leau
  * @since 3.1
  */
-public class SimpleCacheManager extends AbstractCacheManager {
+public class SimpleCacheManager extends AbstractCacheManager { // 缓存管理器基本实现，将当前应用的Cache实现类交给Spring来管理
 
-	private Collection<? extends Cache> caches = Collections.emptySet();
+	private Collection<? extends Cache> caches = Collections.emptySet(); // 存放Cache缓存实现类的容器（从外部设置，并交给Spring内部使用）
 
 
 	/**
 	 * Specify the collection of Cache instances to use for this CacheManager.
 	 */
-	public void setCaches(Collection<? extends Cache> caches) {
+	public void setCaches(Collection<? extends Cache> caches) { // 设置Cache缓存（外部调用）
 		this.caches = caches;
 	}
 
 	@Override
-	protected Collection<? extends Cache> loadCaches() {
+	protected Collection<? extends Cache> loadCaches() { // 获取Cache缓存（由Spring调用）
 		return this.caches;
 	}
 

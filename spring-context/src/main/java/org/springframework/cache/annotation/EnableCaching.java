@@ -169,8 +169,8 @@ import org.springframework.core.Ordered;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(CachingConfigurationSelector.class)
-public @interface EnableCaching {
+@Import(CachingConfigurationSelector.class) // 导入CachingConfigurationSelector类
+public @interface EnableCaching { // 开启缓存的注解
 
 	/**
 	 * Indicate whether subclass-based (CGLIB) proxies are to be created as opposed
@@ -183,7 +183,7 @@ public @interface EnableCaching {
 	 * impact in practice unless one is explicitly expecting one type of proxy vs another,
 	 * e.g. in tests.
 	 */
-	boolean proxyTargetClass() default false;
+	boolean proxyTargetClass() default false; // 决定是JDK代理（false），还是CGLIB代理（true），该值会被Spring判断并修正
 
 	/**
 	 * Indicate how caching advice should be applied.
