@@ -46,8 +46,8 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-		registerContextLoaderListener(servletContext);
+	public void onStartup(ServletContext servletContext) throws ServletException { // 创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中
+		registerContextLoaderListener(servletContext); // 创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中
 	}
 
 	/**
@@ -56,12 +56,12 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 	 * from the {@link #createRootApplicationContext()} template method.
 	 * @param servletContext the servlet context to register the listener against
 	 */
-	protected void registerContextLoaderListener(ServletContext servletContext) {
-		WebApplicationContext rootAppContext = createRootApplicationContext();
+	protected void registerContextLoaderListener(ServletContext servletContext) { // 创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中
+		WebApplicationContext rootAppContext = createRootApplicationContext(); // 创建Spring上下文（钩子方法，需要子类实现）
 		if (rootAppContext != null) {
-			ContextLoaderListener listener = new ContextLoaderListener(rootAppContext);
+			ContextLoaderListener listener = new ContextLoaderListener(rootAppContext); // 创建监听器ContextLoaderListener，并注入Spring上下文（在ServletContextListener#contextInitialized(...)回调方法中初始化Spring上下文/容器）
 			listener.setContextInitializers(getRootApplicationContextInitializers());
-			servletContext.addListener(listener);
+			servletContext.addListener(listener); // 将监听器ContextLoaderListener添加到Servlet上下文中
 		}
 		else {
 			logger.debug("No ContextLoaderListener registered, as " +

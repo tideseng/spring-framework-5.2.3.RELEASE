@@ -40,13 +40,13 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  * @since 3.1
  */
 @Configuration(proxyBeanMethods = false)
-public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
+public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport { // 父类有@Bean注解方法，定义了默认的配置
 
 	private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
 
 
 	@Autowired(required = false)
-	public void setConfigurers(List<WebMvcConfigurer> configurers) {
+	public void setConfigurers(List<WebMvcConfigurer> configurers) { // 注入WebMvcConfigurer所有实现类（通过WebMvcConfigurer实现类完成自定义配置）
 		if (!CollectionUtils.isEmpty(configurers)) {
 			this.configurers.addWebMvcConfigurers(configurers);
 		}

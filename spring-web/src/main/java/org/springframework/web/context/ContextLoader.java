@@ -167,7 +167,7 @@ public class ContextLoader {
 	 * The root WebApplicationContext instance that this loader manages.
 	 */
 	@Nullable
-	private WebApplicationContext context;
+	private WebApplicationContext context; // Spring上下文
 
 	/** Actual ApplicationContextInitializer instances to apply to the context. */
 	private final List<ApplicationContextInitializer<ConfigurableApplicationContext>> contextInitializers =
@@ -225,8 +225,8 @@ public class ContextLoader {
 	 * @see #initWebApplicationContext(ServletContext)
 	 * @see #closeWebApplicationContext(ServletContext)
 	 */
-	public ContextLoader(WebApplicationContext context) {
-		this.context = context;
+	public ContextLoader(WebApplicationContext context) { // 初始化ContextLoader，注入Spring上下文
+		this.context = context; // 赋值Spring上下文
 	}
 
 
@@ -258,7 +258,7 @@ public class ContextLoader {
 	 * @see #CONTEXT_CLASS_PARAM
 	 * @see #CONFIG_LOCATION_PARAM
 	 */
-	public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
+	public WebApplicationContext initWebApplicationContext(ServletContext servletContext) { // 初始化Spring容器
 		if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
 			throw new IllegalStateException(
 					"Cannot initialize context because there is already a root application context present - " +
@@ -286,13 +286,13 @@ public class ContextLoader {
 					if (cwac.getParent() == null) {
 						// The context instance was injected without an explicit parent ->
 						// determine parent for root web application context, if any.
-						ApplicationContext parent = loadParentContext(servletContext);
+						ApplicationContext parent = loadParentContext(servletContext); // 默认为null
 						cwac.setParent(parent);
 					}
-					configureAndRefreshWebApplicationContext(cwac, servletContext);
+					configureAndRefreshWebApplicationContext(cwac, servletContext); // 初始化/启动Spring容器
 				}
 			}
-			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
+			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context); // 将Spring上下文设置到Servlet上下文属性中
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
 			if (ccl == ContextLoader.class.getClassLoader()) {
@@ -368,7 +368,7 @@ public class ContextLoader {
 		}
 	}
 
-	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac, ServletContext sc) {
+	protected void configureAndRefreshWebApplicationContext(ConfigurableWebApplicationContext wac, ServletContext sc) { // 初始化/启动Spring容器
 		if (ObjectUtils.identityToString(wac).equals(wac.getId())) {
 			// The application context id is still set to its original default value
 			// -> assign a more useful id based on available information
@@ -378,12 +378,12 @@ public class ContextLoader {
 			}
 			else {
 				// Generate default id...
-				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX +
+				wac.setId(ConfigurableWebApplicationContext.APPLICATION_CONTEXT_ID_PREFIX + // 设置Id
 						ObjectUtils.getDisplayString(sc.getContextPath()));
 			}
 		}
 
-		wac.setServletContext(sc);
+		wac.setServletContext(sc); // 设置ServletContext
 		String configLocationParam = sc.getInitParameter(CONFIG_LOCATION_PARAM);
 		if (configLocationParam != null) {
 			wac.setConfigLocation(configLocationParam);
@@ -398,7 +398,7 @@ public class ContextLoader {
 		}
 
 		customizeContext(sc, wac);
-		wac.refresh();
+		wac.refresh(); // 初始化Spring容器
 	}
 
 	/**

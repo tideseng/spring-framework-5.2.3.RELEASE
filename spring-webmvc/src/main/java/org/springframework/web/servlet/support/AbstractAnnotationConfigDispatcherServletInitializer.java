@@ -52,11 +52,11 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 */
 	@Override
 	@Nullable
-	protected WebApplicationContext createRootApplicationContext() {
-		Class<?>[] configClasses = getRootConfigClasses();
+	protected WebApplicationContext createRootApplicationContext() { // 创建Spring上下文
+		Class<?>[] configClasses = getRootConfigClasses(); // 获取Spring容器配置类（钩子方法，需要子类实现）
 		if (!ObjectUtils.isEmpty(configClasses)) {
-			AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-			context.register(configClasses);
+			AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext(); // 创建Spring容器
+			context.register(configClasses); // 添加Spring容器配置类到Spring容器中（没有进行注册操作）
 			return context;
 		}
 		else {
@@ -70,11 +70,11 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * providing it the annotated classes returned by {@link #getServletConfigClasses()}.
 	 */
 	@Override
-	protected WebApplicationContext createServletApplicationContext() {
-		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-		Class<?>[] configClasses = getServletConfigClasses();
+	protected WebApplicationContext createServletApplicationContext() { // 创建SpringMVC上下文
+		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext(); // 创建SpringMVC容器
+		Class<?>[] configClasses = getServletConfigClasses(); // 获取SpringMVC容器配置类（钩子方法，需要子类实现）
 		if (!ObjectUtils.isEmpty(configClasses)) {
-			context.register(configClasses);
+			context.register(configClasses); // 添加SpringMVC容器配置类到SpringMVC容器中（没有进行注册操作）
 		}
 		return context;
 	}
@@ -86,7 +86,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * if creation and registration of a root context is not desired
 	 */
 	@Nullable
-	protected abstract Class<?>[] getRootConfigClasses();
+	protected abstract Class<?>[] getRootConfigClasses(); // 获取父容器/Spring容器配置类
 
 	/**
 	 * Specify {@code @Configuration} and/or {@code @Component} classes for the
@@ -95,6 +95,6 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * {@code null} if all configuration is specified through root config classes.
 	 */
 	@Nullable
-	protected abstract Class<?>[] getServletConfigClasses();
+	protected abstract Class<?>[] getServletConfigClasses(); // 获取子容器/SpringMVC容器配置类
 
 }

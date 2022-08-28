@@ -52,7 +52,7 @@ public interface WebApplicationContext extends ApplicationContext {
 	 * @see org.springframework.web.context.support.WebApplicationContextUtils#getWebApplicationContext
 	 * @see org.springframework.web.context.support.WebApplicationContextUtils#getRequiredWebApplicationContext
 	 */
-	String ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE = WebApplicationContext.class.getName() + ".ROOT";
+	String ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE = WebApplicationContext.class.getName() + ".ROOT"; // 获取Spring上下文的属性key
 
 	/**
 	 * Scope identifier for request scope: "request".

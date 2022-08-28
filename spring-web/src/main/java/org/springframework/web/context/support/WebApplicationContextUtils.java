@@ -97,8 +97,8 @@ public abstract class WebApplicationContextUtils {
 	 * @see org.springframework.web.context.WebApplicationContext#ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
 	 */
 	@Nullable
-	public static WebApplicationContext getWebApplicationContext(ServletContext sc) {
-		return getWebApplicationContext(sc, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+	public static WebApplicationContext getWebApplicationContext(ServletContext sc) { // 从Servlet上下文中获取Spring上下文
+		return getWebApplicationContext(sc, WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE); // 从Servlet上下文属性中获取Spring上下文
 	}
 
 	/**
@@ -108,7 +108,7 @@ public abstract class WebApplicationContextUtils {
 	 * @return the desired WebApplicationContext for this web app, or {@code null} if none
 	 */
 	@Nullable
-	public static WebApplicationContext getWebApplicationContext(ServletContext sc, String attrName) {
+	public static WebApplicationContext getWebApplicationContext(ServletContext sc, String attrName) { // 从Servlet上下文属性中获取Spring上下文
 		Assert.notNull(sc, "ServletContext must not be null");
 		Object attr = sc.getAttribute(attrName);
 		if (attr == null) {

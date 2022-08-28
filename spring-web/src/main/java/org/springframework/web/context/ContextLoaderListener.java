@@ -34,7 +34,7 @@ import javax.servlet.ServletContextListener;
  * @see #setContextInitializers
  * @see org.springframework.web.WebApplicationInitializer
  */
-public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
+public class ContextLoaderListener extends ContextLoader implements ServletContextListener { // 实现ServletContextListener接口
 
 	/**
 	 * Create a new {@code ContextLoaderListener} that will create a web application
@@ -90,8 +90,8 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 	 * @see #contextInitialized(ServletContextEvent)
 	 * @see #contextDestroyed(ServletContextEvent)
 	 */
-	public ContextLoaderListener(WebApplicationContext context) {
-		super(context);
+	public ContextLoaderListener(WebApplicationContext context) { // 初始化监听器ContextLoaderListener，注入Spring上下文
+		super(context); // 调用父类方法创建ContextLoader
 	}
 
 
@@ -99,8 +99,8 @@ public class ContextLoaderListener extends ContextLoader implements ServletConte
 	 * Initialize the root web application context.
 	 */
 	@Override
-	public void contextInitialized(ServletContextEvent event) {
-		initWebApplicationContext(event.getServletContext());
+	public void contextInitialized(ServletContextEvent event) { // 实现ServletContextListener接口的contextInitialized方法，Servlet容器启动时会调用该方法
+		initWebApplicationContext(event.getServletContext()); // 初始化Spring容器
 	}
 
 

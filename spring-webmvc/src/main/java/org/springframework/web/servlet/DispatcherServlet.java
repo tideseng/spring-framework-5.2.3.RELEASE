@@ -409,8 +409,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @see #configureAndRefreshWebApplicationContext
 	 * @see org.springframework.web.WebApplicationInitializer
 	 */
-	public DispatcherServlet(WebApplicationContext webApplicationContext) {
-		super(webApplicationContext);
+	public DispatcherServlet(WebApplicationContext webApplicationContext) { // 初始化DispatcherServlet，并注入SpringMVC上下文
+		super(webApplicationContext); // 调用父类方法创建FrameworkServlet，并注入SpringMVC上下文
 		setDispatchOptionsRequest(true);
 	}
 
@@ -491,23 +491,23 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * This implementation calls {@link #initStrategies}.
 	 */
 	@Override
-	protected void onRefresh(ApplicationContext context) {
-		initStrategies(context);
+	protected void onRefresh(ApplicationContext context) { // 处理SpringMVC容器的ContextRefreshedEvent事件
+		initStrategies(context); // 初始化相关信息
 	}
 
 	/**
 	 * Initialize the strategy objects that this servlet uses.
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
-	protected void initStrategies(ApplicationContext context) {
+	protected void initStrategies(ApplicationContext context) { // 初始化相关信息
 		initMultipartResolver(context);
 		initLocaleResolver(context);
 		initThemeResolver(context);
-		initHandlerMappings(context);
-		initHandlerAdapters(context);
+		initHandlerMappings(context); // 初始化HandlerMapping
+		initHandlerAdapters(context); // 初始化HandlerAdapter
 		initHandlerExceptionResolvers(context);
 		initRequestToViewNameTranslator(context);
-		initViewResolvers(context);
+		initViewResolvers(context); // 初始化视图解析器
 		initFlashMapManager(context);
 	}
 
@@ -590,17 +590,17 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>If no HandlerMapping beans are defined in the BeanFactory for this namespace,
 	 * we default to BeanNameUrlHandlerMapping.
 	 */
-	private void initHandlerMappings(ApplicationContext context) {
+	private void initHandlerMappings(ApplicationContext context) { // 初始化HandlerMapping
 		this.handlerMappings = null;
 
-		if (this.detectAllHandlerMappings) {
+		if (this.detectAllHandlerMappings) { // 默认为true
 			// Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
 			Map<String, HandlerMapping> matchingBeans =
-					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
+					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false); // 获取所有HandlerMapping实现类Map容器
 			if (!matchingBeans.isEmpty()) {
-				this.handlerMappings = new ArrayList<>(matchingBeans.values());
+				this.handlerMappings = new ArrayList<>(matchingBeans.values()); // 获取所有HandlerMapping实现类
 				// We keep HandlerMappings in sorted order.
-				AnnotationAwareOrderComparator.sort(this.handlerMappings);
+				AnnotationAwareOrderComparator.sort(this.handlerMappings); // 进行排序
 			}
 		}
 		else {
@@ -615,8 +615,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Ensure we have at least one HandlerMapping, by registering
 		// a default HandlerMapping if no other mappings are found.
-		if (this.handlerMappings == null) {
-			this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
+		if (this.handlerMappings == null) { // SpringMVC老版本初始化流程
+			this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class); // 当获取不到时，使用默认的DispatcherServlet.properties配置文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("No HandlerMappings declared for servlet '" + getServletName() +
 						"': using default strategies from DispatcherServlet.properties");
@@ -629,7 +629,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * <p>If no HandlerAdapter beans are defined in the BeanFactory for this namespace,
 	 * we default to SimpleControllerHandlerAdapter.
 	 */
-	private void initHandlerAdapters(ApplicationContext context) {
+	private void initHandlerAdapters(ApplicationContext context) { // 初始化HandlerAdapter
 		this.handlerAdapters = null;
 
 		if (this.detectAllHandlerAdapters) {
@@ -907,7 +907,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * for the actual dispatching.
 	 */
 	@Override
-	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception { // 处理请求
 		logRequest(request);
 
 		// Keep a snapshot of the request attributes in case of an include,
@@ -923,7 +923,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 			}
 		}
-
+		// 设置Request相关属性
 		// Make framework objects available to handlers and view objects.
 		request.setAttribute(WEB_APPLICATION_CONTEXT_ATTRIBUTE, getWebApplicationContext());
 		request.setAttribute(LOCALE_RESOLVER_ATTRIBUTE, this.localeResolver);
@@ -940,7 +940,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
-			doDispatch(request, response);
+			doDispatch(request, response); // 分发处理请求
 		}
 		finally {
 			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
@@ -997,19 +997,19 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @param response current HTTP response
 	 * @throws Exception in case of any kind of processing failure
 	 */
-	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception { // 分发处理请求
 		HttpServletRequest processedRequest = request;
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
 
-		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request); // 获取异步管理器
 
 		try {
 			ModelAndView mv = null;
 			Exception dispatchException = null;
 
 			try {
-				processedRequest = checkMultipart(request);
+				processedRequest = checkMultipart(request); // 文件上传
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.

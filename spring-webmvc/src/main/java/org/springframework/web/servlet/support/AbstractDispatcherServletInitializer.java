@@ -60,8 +60,8 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
-		super.onStartup(servletContext);
-		registerDispatcherServlet(servletContext);
+		super.onStartup(servletContext); // 调用父类方法创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中
+		registerDispatcherServlet(servletContext); // 创建SpringMVC上下文，注册DispatcherServlet到Servlet上下文的Servlet中
 	}
 
 	/**
@@ -75,31 +75,31 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 	 * {@link #createDispatcherServlet(WebApplicationContext)}.
 	 * @param servletContext the context to register the servlet against
 	 */
-	protected void registerDispatcherServlet(ServletContext servletContext) {
-		String servletName = getServletName();
+	protected void registerDispatcherServlet(ServletContext servletContext) { // 创建SpringMVC上下文，注册DispatcherServlet到Servlet上下文的Servlet中
+		String servletName = getServletName(); // 获取Servlet名称
 		Assert.hasLength(servletName, "getServletName() must not return null or empty");
 
-		WebApplicationContext servletAppContext = createServletApplicationContext();
+		WebApplicationContext servletAppContext = createServletApplicationContext(); // 创建SpringMVC上下文
 		Assert.notNull(servletAppContext, "createServletApplicationContext() must not return null");
 
-		FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext);
+		FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext); // 创建DispatcherServlet，并注入SpringMVC上下文（在HttpServletBean#init()回调方法中初始化SpringMVC上下文）
 		Assert.notNull(dispatcherServlet, "createDispatcherServlet(WebApplicationContext) must not return null");
 		dispatcherServlet.setContextInitializers(getServletApplicationContextInitializers());
 
-		ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
+		ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet); // 将DispatcherServlet添加到Servlet上下文中
 		if (registration == null) {
 			throw new IllegalStateException("Failed to register servlet with name '" + servletName + "'. " +
 					"Check if there is another servlet registered under the same name.");
 		}
 
 		registration.setLoadOnStartup(1);
-		registration.addMapping(getServletMappings());
+		registration.addMapping(getServletMappings()); // 添加Mapping映射，即拦截url（钩子方法，需要子类实现）
 		registration.setAsyncSupported(isAsyncSupported());
 
-		Filter[] filters = getServletFilters();
+		Filter[] filters = getServletFilters(); // 获取过滤器（钩子方法，需要子类实现）
 		if (!ObjectUtils.isEmpty(filters)) {
 			for (Filter filter : filters) {
-				registerServletFilter(servletContext, filter);
+				registerServletFilter(servletContext, filter); // 添加过滤器
 			}
 		}
 
@@ -131,8 +131,8 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 	 * <p>Note: This allows for any {@link FrameworkServlet} subclass as of 4.2.3.
 	 * Previously, it insisted on returning a {@link DispatcherServlet} or subclass thereof.
 	 */
-	protected FrameworkServlet createDispatcherServlet(WebApplicationContext servletAppContext) {
-		return new DispatcherServlet(servletAppContext);
+	protected FrameworkServlet createDispatcherServlet(WebApplicationContext servletAppContext) { // 创建DispatcherServlet，并注入SpringMVC上下文
+		return new DispatcherServlet(servletAppContext); // 创建DispatcherServlet，并注入SpringMVC上下文
 	}
 
 	/**
@@ -153,7 +153,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 	 * for example {@code "/"}, {@code "/app"}, etc.
 	 * @see #registerDispatcherServlet(ServletContext)
 	 */
-	protected abstract String[] getServletMappings();
+	protected abstract String[] getServletMappings(); // 获取DispatcherServlet映射信息
 
 	/**
 	 * Specify filters to add and map to the {@code DispatcherServlet}.

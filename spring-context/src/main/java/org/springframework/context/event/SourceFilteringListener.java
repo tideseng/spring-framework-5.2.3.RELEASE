@@ -34,9 +34,9 @@ import org.springframework.lang.Nullable;
  * @author Stephane Nicoll
  * @since 2.0.5
  */
-public class SourceFilteringListener implements GenericApplicationListener, SmartApplicationListener {
+public class SourceFilteringListener implements GenericApplicationListener, SmartApplicationListener { // SpringMVC事件监听器
 
-	private final Object source;
+	private final Object source; // SpringMVC上下文
 
 	@Nullable
 	private GenericApplicationListener delegate;
@@ -49,10 +49,10 @@ public class SourceFilteringListener implements GenericApplicationListener, Smar
 	 * @param delegate the delegate listener to invoke with event
 	 * from the specified source
 	 */
-	public SourceFilteringListener(Object source, ApplicationListener<?> delegate) {
+	public SourceFilteringListener(Object source, ApplicationListener<?> delegate) { // 初始化SourceFilteringListener，注入SpringMVC上下文、ContextRefreshedEvent事件监听器
 		this.source = source;
 		this.delegate = (delegate instanceof GenericApplicationListener ?
-				(GenericApplicationListener) delegate : new GenericApplicationListenerAdapter(delegate));
+				(GenericApplicationListener) delegate : new GenericApplicationListenerAdapter(delegate)); // 包装ContextRefreshedEvent事件监听器
 	}
 
 	/**
@@ -68,7 +68,7 @@ public class SourceFilteringListener implements GenericApplicationListener, Smar
 
 
 	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
+	public void onApplicationEvent(ApplicationEvent event) { // 监听事件
 		if (event.getSource() == this.source) {
 			onApplicationEventInternal(event);
 		}

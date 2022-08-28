@@ -146,7 +146,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 	 * properties are missing), or if subclass initialization fails.
 	 */
 	@Override
-	public final void init() throws ServletException {
+	public final void init() throws ServletException { // 实现GenericServlet接口的init方法
 
 		// Set bean properties from init parameters.
 		PropertyValues pvs = new ServletConfigPropertyValues(getServletConfig(), this.requiredProperties);
@@ -167,7 +167,7 @@ public abstract class HttpServletBean extends HttpServlet implements Environment
 		}
 
 		// Let subclasses do whatever initialization they like.
-		initServletBean();
+		initServletBean(); // 初始化Servlet对象
 	}
 
 	/**

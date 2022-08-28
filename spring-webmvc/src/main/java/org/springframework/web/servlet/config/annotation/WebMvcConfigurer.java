@@ -44,7 +44,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
  * @author David Syer
  * @since 3.1
  */
-public interface WebMvcConfigurer {
+public interface WebMvcConfigurer { // 自定义SpringMVC配置
 
 	/**
 	 * Helps with configuring HandlerMappings path matching options such as trailing slash match,

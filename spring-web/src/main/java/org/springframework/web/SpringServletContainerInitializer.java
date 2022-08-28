@@ -109,8 +109,8 @@ import org.springframework.util.ReflectionUtils;
  * @see #onStartup(Set, ServletContext)
  * @see WebApplicationInitializer
  */
-@HandlesTypes(WebApplicationInitializer.class)
-public class SpringServletContainerInitializer implements ServletContainerInitializer {
+@HandlesTypes(WebApplicationInitializer.class) // 收集WebApplicationInitializer实现类Class并注入到方法参数中
+public class SpringServletContainerInitializer implements ServletContainerInitializer { // 通过Servlet容器SPI机制调用Spring
 
 	/**
 	 * Delegate the {@code ServletContext} to any {@link WebApplicationInitializer}
@@ -139,19 +139,19 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	 * @see AnnotationAwareOrderComparator
 	 */
 	@Override
-	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) // 注入收集的WebApplicationInitializer实现类Class（该方法由Servlet容器调用）
 			throws ServletException {
 
-		List<WebApplicationInitializer> initializers = new LinkedList<>();
+		List<WebApplicationInitializer> initializers = new LinkedList<>(); // WebApplicationInitializer实现类容器
 
 		if (webAppInitializerClasses != null) {
-			for (Class<?> waiClass : webAppInitializerClasses) {
+			for (Class<?> waiClass : webAppInitializerClasses) { // 遍历WebApplicationInitializer实现类Class
 				// Be defensive: Some servlet containers provide us with invalid classes,
 				// no matter what @HandlesTypes says...
 				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
 						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
 					try {
-						initializers.add((WebApplicationInitializer)
+						initializers.add((WebApplicationInitializer) // 通过反射实例化WebApplicationInitializer实现类
 								ReflectionUtils.accessibleConstructor(waiClass).newInstance());
 					}
 					catch (Throwable ex) {
@@ -167,9 +167,9 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 		}
 
 		servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
-		AnnotationAwareOrderComparator.sort(initializers);
-		for (WebApplicationInitializer initializer : initializers) {
-			initializer.onStartup(servletContext);
+		AnnotationAwareOrderComparator.sort(initializers); // 排序
+		for (WebApplicationInitializer initializer : initializers) { // 遍历WebApplicationInitializer实现类
+			initializer.onStartup(servletContext); // 调用WebApplicationInitializer实现类的onStartup方法（如：AbstractDispatcherServletInitializer#onStartup(...)）
 		}
 	}
 
