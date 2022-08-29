@@ -59,9 +59,9 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-		super.onStartup(servletContext); // 调用父类方法创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中
-		registerDispatcherServlet(servletContext); // 创建SpringMVC上下文，注册DispatcherServlet到Servlet上下文的Servlet中
+	public void onStartup(ServletContext servletContext) throws ServletException { // 创建Spring和SpringMVC上下文，并进行初始化
+		super.onStartup(servletContext); // 调用父类方法创建Spring上下文，注册ServletContextListener到Servlet上下文的Listener中，通过ServletContextListener实现ServletContextListener接口的contextInitialized方法初始化Spring容器
+		registerDispatcherServlet(servletContext); // 创建SpringMVC上下文，注册DispatcherServlet到Servlet上下文的Servlet中，通过DispatcherServlet重写父类GenericServlet接口的init方法初始化SpringMVC上下文
 	}
 
 	/**

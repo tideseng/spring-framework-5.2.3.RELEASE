@@ -98,6 +98,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(DelegatingWebMvcConfiguration.class) // 导入DelegatingWebMvcConfiguration类
+@Import(DelegatingWebMvcConfiguration.class) // 导入DelegatingWebMvcConfiguration类（该注解在spring-webmvc包中，而子包spring-web中通过Servlet容器的SPI机制加载SpringServletContainerInitializer类创建Spring和SpringMVC上下文）
 public @interface EnableWebMvc {
 }

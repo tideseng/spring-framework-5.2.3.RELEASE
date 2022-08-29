@@ -37,7 +37,7 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  */
 class WebMvcConfigurerComposite implements WebMvcConfigurer {
 
-	private final List<WebMvcConfigurer> delegates = new ArrayList<>(); // WebMvcConfigurer实现类列表
+	private final List<WebMvcConfigurer> delegates = new ArrayList<>(); // 自定义WebMvcConfigurer实现类列表
 
 
 	public void addWebMvcConfigurers(List<WebMvcConfigurer> configurers) { // 添加WebMvcConfigurer实现类列表
@@ -46,7 +46,7 @@ class WebMvcConfigurerComposite implements WebMvcConfigurer {
 		}
 	}
 
-
+	// 注入自定义WebMvcConfigurer的相关功能
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
 		for (WebMvcConfigurer delegate : this.delegates) {

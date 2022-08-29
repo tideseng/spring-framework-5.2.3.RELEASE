@@ -174,7 +174,7 @@ import org.springframework.web.util.UrlPathHelper;
  * @see EnableWebMvc
  * @see WebMvcConfigurer
  */
-public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware {
+public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware { // 定义SpringMVC的相关Bean（HandlerMapping、HandlerAdapter、ViewResolver等），通过对应的钩子方法注入自定义WebMvcConfigurer的相关功能
 
 	private static final boolean romePresent;
 
@@ -213,7 +213,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	private ServletContext servletContext;
 
 	@Nullable
-	private List<Object> interceptors;
+	private List<Object> interceptors; // 拦截器列表
 
 	@Nullable
 	private PathMatchConfigurer pathMatchConfigurer;
@@ -275,18 +275,18 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * requests to annotated controllers.
 	 */
 	@Bean
-	public RequestMappingHandlerMapping requestMappingHandlerMapping(
+	public RequestMappingHandlerMapping requestMappingHandlerMapping( // 1.1定义HandlerMapping--RequestMappingHandlerMapping
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcResourceUrlProvider") ResourceUrlProvider resourceUrlProvider) {
 
 		RequestMappingHandlerMapping mapping = createRequestMappingHandlerMapping(); // 创建RequestMappingHandlerMapping
 		mapping.setOrder(0);
-		mapping.setInterceptors(getInterceptors(conversionService, resourceUrlProvider)); // 获取所有拦截器，并添加到RequestMappingHandlerMapping中
+		mapping.setInterceptors(getInterceptors(conversionService, resourceUrlProvider)); // 获取所有拦截器（包括自定义拦截器），并添加到RequestMappingHandlerMapping中
 		mapping.setContentNegotiationManager(contentNegotiationManager);
-		mapping.setCorsConfigurations(getCorsConfigurations());
+		mapping.setCorsConfigurations(getCorsConfigurations()); // 添加自定义addCorsMapping
 
-		PathMatchConfigurer configurer = getPathMatchConfigurer();
+		PathMatchConfigurer configurer = getPathMatchConfigurer(); // 获取PathMatchConfigurer，并添加自定义PathMatch
 
 		Boolean useSuffixPatternMatch = configurer.isUseSuffixPatternMatch();
 		if (useSuffixPatternMatch != null) {
@@ -322,8 +322,8 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * {@link RequestMappingHandlerMapping}.
 	 * @since 4.0
 	 */
-	protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() {
-		return new RequestMappingHandlerMapping();
+	protected RequestMappingHandlerMapping createRequestMappingHandlerMapping() { // 创建RequestMappingHandlerMapping
+		return new RequestMappingHandlerMapping(); // 创建RequestMappingHandlerMapping
 	}
 
 	/**
@@ -334,11 +334,11 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	protected final Object[] getInterceptors( // 获取所有拦截器
 			FormattingConversionService mvcConversionService,
 			ResourceUrlProvider mvcResourceUrlProvider) {
-		if (this.interceptors == null) {
-			InterceptorRegistry registry = new InterceptorRegistry();
-			addInterceptors(registry); // 通过钩子方法添加自定义拦截器
-			registry.addInterceptor(new ConversionServiceExposingInterceptor(mvcConversionService));
-			registry.addInterceptor(new ResourceUrlProviderExposingInterceptor(mvcResourceUrlProvider));
+		if (this.interceptors == null) { // 当拦截器列表不为空时，添加拦截器
+			InterceptorRegistry registry = new InterceptorRegistry(); // 创建拦截器注册器
+			addInterceptors(registry); // 通过钩子方法添加自定义拦截器（通过钩子方法注入自定义WebMvcConfigurer相关）
+			registry.addInterceptor(new ConversionServiceExposingInterceptor(mvcConversionService)); // 注册默认的拦截器ConversionServiceExposingInterceptor
+			registry.addInterceptor(new ResourceUrlProviderExposingInterceptor(mvcResourceUrlProvider)); // 注册默认的拦截器ResourceUrlProviderExposingInterceptor
 			this.interceptors = registry.getInterceptors();
 		}
 		return this.interceptors.toArray();
@@ -449,7 +449,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 */
 	@Bean
 	@Nullable
-	public HandlerMapping viewControllerHandlerMapping(
+	public HandlerMapping viewControllerHandlerMapping( // 1.2定义HandlerMapping--SimpleUrlHandlerMapping
 			@Qualifier("mvcPathMatcher") PathMatcher pathMatcher,
 			@Qualifier("mvcUrlPathHelper") UrlPathHelper urlPathHelper,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
@@ -480,7 +480,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * paths to controller bean names.
 	 */
 	@Bean
-	public BeanNameUrlHandlerMapping beanNameHandlerMapping(
+	public BeanNameUrlHandlerMapping beanNameHandlerMapping( // 1.3定义HandlerMapping--BeanNameUrlHandlerMapping
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcResourceUrlProvider") ResourceUrlProvider resourceUrlProvider) {
 
@@ -503,7 +503,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @since 5.2
 	 */
 	@Bean
-	public RouterFunctionMapping routerFunctionMapping(
+	public RouterFunctionMapping routerFunctionMapping( // 1.4定义HandlerMapping--RouterFunctionMapping
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcResourceUrlProvider") ResourceUrlProvider resourceUrlProvider) {
 
@@ -522,7 +522,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 */
 	@Bean
 	@Nullable
-	public HandlerMapping resourceHandlerMapping(
+	public HandlerMapping resourceHandlerMapping( // 1.5定义HandlerMapping--SimpleUrlHandlerMapping
 			@Qualifier("mvcUrlPathHelper") UrlPathHelper urlPathHelper,
 			@Qualifier("mvcPathMatcher") PathMatcher pathMatcher,
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager,
@@ -579,7 +579,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 */
 	@Bean
 	@Nullable
-	public HandlerMapping defaultServletHandlerMapping() {
+	public HandlerMapping defaultServletHandlerMapping() { // 1.6定义HandlerMapping--SimpleUrlHandlerMapping
 		Assert.state(this.servletContext != null, "No ServletContext set");
 		DefaultServletHandlerConfigurer configurer = new DefaultServletHandlerConfigurer(this.servletContext);
 		configureDefaultServletHandling(configurer);

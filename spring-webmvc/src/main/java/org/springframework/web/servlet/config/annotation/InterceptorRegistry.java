@@ -34,9 +34,9 @@ import org.springframework.web.servlet.handler.WebRequestHandlerInterceptorAdapt
  * @author Keith Donald
  * @since 3.1
  */
-public class InterceptorRegistry {
+public class InterceptorRegistry { // 拦截器注册器
 
-	private final List<InterceptorRegistration> registrations = new ArrayList<>();
+	private final List<InterceptorRegistration> registrations = new ArrayList<>(); // 拦截器列表
 
 
 	/**
@@ -45,9 +45,9 @@ public class InterceptorRegistry {
 	 * @return an {@link InterceptorRegistration} that allows you optionally configure the
 	 * registered interceptor further for example adding URL patterns it should apply to.
 	 */
-	public InterceptorRegistration addInterceptor(HandlerInterceptor interceptor) {
+	public InterceptorRegistration addInterceptor(HandlerInterceptor interceptor) { // 添加拦截器
 		InterceptorRegistration registration = new InterceptorRegistration(interceptor);
-		this.registrations.add(registration);
+		this.registrations.add(registration); // 添加拦截器
 		return registration;
 	}
 

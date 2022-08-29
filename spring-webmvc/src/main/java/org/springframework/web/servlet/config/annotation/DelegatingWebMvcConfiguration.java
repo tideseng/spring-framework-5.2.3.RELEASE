@@ -40,9 +40,9 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
  * @since 3.1
  */
 @Configuration(proxyBeanMethods = false)
-public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport { // 父类有@Bean注解方法，定义了默认的配置
+public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport { // SpringMVC的入口配置类（父类有@Bean注解方法，定义了默认的配置）
 
-	private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite();
+	private final WebMvcConfigurerComposite configurers = new WebMvcConfigurerComposite(); // 封装了自定义的WebMvcConfigurer列表，通过对应的钩子方法注入自定义WebMvcConfigurer的相关功能
 
 
 	@Autowired(required = false)
@@ -52,7 +52,7 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport { 
 		}
 	}
 
-
+	// 实现父类的钩子方法，注入自定义WebMvcConfigurer的相关功能
 	@Override
 	protected void configurePathMatch(PathMatchConfigurer configurer) {
 		this.configurers.configurePathMatch(configurer);
