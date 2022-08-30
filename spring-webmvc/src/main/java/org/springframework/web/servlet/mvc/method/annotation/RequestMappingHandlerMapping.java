@@ -64,7 +64,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
  * @author Sam Brannen
  * @since 3.1
  */
-public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping
+public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping // 通过实现InitializingBean接口来初始化HandlerMethod
 		implements MatchableHandlerMapping, EmbeddedValueResolverAware {
 
 	private boolean useSuffixPatternMatch = true;
@@ -159,8 +159,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	public void afterPropertiesSet() {
-		this.config = new RequestMappingInfo.BuilderConfiguration();
+	public void afterPropertiesSet() { // 实现InitializingBean接口的afterPropertiesSet方法（在这里初始化HandlerMethod）
+		this.config = new RequestMappingInfo.BuilderConfiguration(); // 填充RequestMappingInfo.BuilderConfiguration属性
 		this.config.setUrlPathHelper(getUrlPathHelper());
 		this.config.setPathMatcher(getPathMatcher());
 		this.config.setSuffixPatternMatch(this.useSuffixPatternMatch);
@@ -168,7 +168,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 		this.config.setRegisteredSuffixPatternMatch(this.useRegisteredSuffixPatternMatch);
 		this.config.setContentNegotiationManager(getContentNegotiationManager());
 
-		super.afterPropertiesSet();
+		super.afterPropertiesSet(); // 调用父类方法初始化HandlerMethod
 	}
 
 
@@ -208,7 +208,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 * annotation or a type-level @{@link RequestMapping} annotation.
 	 */
 	@Override
-	protected boolean isHandler(Class<?> beanType) {
+	protected boolean isHandler(Class<?> beanType) { // 判断Class类上是否有@Controller注解或@RequestMapping注解
 		return (AnnotatedElementUtils.hasAnnotation(beanType, Controller.class) ||
 				AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class));
 	}
@@ -223,12 +223,12 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 */
 	@Override
 	@Nullable
-	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) {
-		RequestMappingInfo info = createRequestMappingInfo(method);
+	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) { // 构建RequestMappingInfo
+		RequestMappingInfo info = createRequestMappingInfo(method); // 根据方法上的@RequestMapping注解构建RequestMappingInfo
 		if (info != null) {
-			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType);
+			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType); // 根据类上的@RequestMapping注解构建RequestMappingInfo
 			if (typeInfo != null) {
-				info = typeInfo.combine(info);
+				info = typeInfo.combine(info); // 将类上的RequestMappingInfo结合到方法上的RequestMappingInfo
 			}
 			String prefix = getPathPrefix(handlerType);
 			if (prefix != null) {
@@ -260,11 +260,11 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 * @see #getCustomMethodCondition(Method)
 	 */
 	@Nullable
-	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) {
+	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) { // 构建RequestMappingInfo
 		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class);
 		RequestCondition<?> condition = (element instanceof Class ?
 				getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
-		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null);
+		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null); // 构建RequestMappingInfo
 	}
 
 	/**
@@ -305,7 +305,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 * a directly declared annotation, a meta-annotation, or the synthesized
 	 * result of merging annotation attributes within an annotation hierarchy.
 	 */
-	protected RequestMappingInfo createRequestMappingInfo(
+	protected RequestMappingInfo createRequestMappingInfo( // 构建RequestMappingInfo
 			RequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
 
 		RequestMappingInfo.Builder builder = RequestMappingInfo
@@ -319,7 +319,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 		if (customCondition != null) {
 			builder.customCondition(customCondition);
 		}
-		return builder.options(this.config).build();
+		return builder.options(this.config).build(); // 构建RequestMappingInfo
 	}
 
 	/**
@@ -346,8 +346,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) {
-		super.registerHandlerMethod(handler, method, mapping);
+	protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) { // 注册HandlerMethod，建立映射关系
+		super.registerHandlerMethod(handler, method, mapping); // 注册HandlerMethod，建立映射关系
 		updateConsumesCondition(mapping, method);
 	}
 
@@ -444,9 +444,9 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
+	protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception { // 根据请求url获取对应的HandlerMethod（handlerMethod在afterPropertiesSet方法中进行了初始化）
 		try {
-			return super.getHandlerInternal(request);
+			return super.getHandlerInternal(request); // 调用父类方法根据请求url获取对应的HandlerMethod
 		}
 		finally {
 			ProducesRequestCondition.clearMediaTypesAttribute(request);

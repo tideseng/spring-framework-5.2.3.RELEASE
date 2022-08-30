@@ -100,10 +100,10 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	 * @param mavContainer the ModelAndViewContainer for this request
 	 * @param providedArgs "given" arguments matched by type (not resolved)
 	 */
-	public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer,
+	public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer, // 调用Controller方法
 			Object... providedArgs) throws Exception {
 
-		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs);
+		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs); // 调用@RequestMapping注解修饰的方法
 		setResponseStatus(webRequest);
 
 		if (returnValue == null) {

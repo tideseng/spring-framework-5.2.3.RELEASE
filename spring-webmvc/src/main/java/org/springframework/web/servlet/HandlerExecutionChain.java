@@ -133,12 +133,12 @@ public class HandlerExecutionChain {
 	 * next interceptor or the handler itself. Else, DispatcherServlet assumes
 	 * that this interceptor has already dealt with the response itself.
 	 */
-	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception { // 前置拦截
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
-			for (int i = 0; i < interceptors.length; i++) {
+			for (int i = 0; i < interceptors.length; i++) { // 遍历拦截器
 				HandlerInterceptor interceptor = interceptors[i];
-				if (!interceptor.preHandle(request, response, this.handler)) {
+				if (!interceptor.preHandle(request, response, this.handler)) { // 调用HandlerInterceptor#preHandle前置拦截方法，返回false则返回
 					triggerAfterCompletion(request, response, null);
 					return false;
 				}
@@ -151,14 +151,14 @@ public class HandlerExecutionChain {
 	/**
 	 * Apply postHandle methods of registered interceptors.
 	 */
-	void applyPostHandle(HttpServletRequest request, HttpServletResponse response, @Nullable ModelAndView mv)
+	void applyPostHandle(HttpServletRequest request, HttpServletResponse response, @Nullable ModelAndView mv) // 后置拦截
 			throws Exception {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
-			for (int i = interceptors.length - 1; i >= 0; i--) {
+			for (int i = interceptors.length - 1; i >= 0; i--) { // 遍历拦截器
 				HandlerInterceptor interceptor = interceptors[i];
-				interceptor.postHandle(request, response, this.handler, mv);
+				interceptor.postHandle(request, response, this.handler, mv); // 调用HandlerInterceptor#postHandle后置拦截方法
 			}
 		}
 	}

@@ -222,13 +222,13 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	private ContentNegotiationManager contentNegotiationManager;
 
 	@Nullable
-	private List<HandlerMethodArgumentResolver> argumentResolvers;
+	private List<HandlerMethodArgumentResolver> argumentResolvers; // 参数解析器
 
 	@Nullable
-	private List<HandlerMethodReturnValueHandler> returnValueHandlers;
+	private List<HandlerMethodReturnValueHandler> returnValueHandlers; // 返回值解析器
 
 	@Nullable
-	private List<HttpMessageConverter<?>> messageConverters;
+	private List<HttpMessageConverter<?>> messageConverters; // 消息转换器
 
 	@Nullable
 	private Map<String, CorsConfiguration> corsConfigurations;
@@ -609,12 +609,12 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcValidator") Validator validator) {
 
-		RequestMappingHandlerAdapter adapter = createRequestMappingHandlerAdapter();
+		RequestMappingHandlerAdapter adapter = createRequestMappingHandlerAdapter(); // 创建RequestMappingHandlerAdapter
 		adapter.setContentNegotiationManager(contentNegotiationManager);
-		adapter.setMessageConverters(getMessageConverters());
+		adapter.setMessageConverters(getMessageConverters()); // 获取消息转换器，并添加到RequestMappingHandlerAdapter中
 		adapter.setWebBindingInitializer(getConfigurableWebBindingInitializer(conversionService, validator));
-		adapter.setCustomArgumentResolvers(getArgumentResolvers());
-		adapter.setCustomReturnValueHandlers(getReturnValueHandlers());
+		adapter.setCustomArgumentResolvers(getArgumentResolvers()); // 获取自定义参数解析器，并设置到RequestMappingHandlerAdapter中的自定义参数解析器列表中
+		adapter.setCustomReturnValueHandlers(getReturnValueHandlers()); // 获取自定义返回值解析器，并设置到RequestMappingHandlerAdapter中的自定义返回值解析器列表中
 
 		if (jackson2Present) {
 			adapter.setRequestBodyAdvice(Collections.singletonList(new JsonViewRequestBodyAdvice()));
@@ -640,8 +640,8 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * {@link RequestMappingHandlerAdapter}.
 	 * @since 4.3
 	 */
-	protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
-		return new RequestMappingHandlerAdapter();
+	protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() { // 创建RequestMappingHandlerAdapter
+		return new RequestMappingHandlerAdapter(); // 创建RequestMappingHandlerAdapter
 	}
 
 	/**
@@ -802,12 +802,12 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * <p>This method cannot be overridden; use {@link #configureMessageConverters} instead.
 	 * Also see {@link #addDefaultHttpMessageConverters} for adding default message converters.
 	 */
-	protected final List<HttpMessageConverter<?>> getMessageConverters() {
-		if (this.messageConverters == null) {
-			this.messageConverters = new ArrayList<>();
-			configureMessageConverters(this.messageConverters);
+	protected final List<HttpMessageConverter<?>> getMessageConverters() { // 获取消息转换器
+		if (this.messageConverters == null) { // 如果消息转换器列表不为null，直接返回（只有第一次才会为null）
+			this.messageConverters = new ArrayList<>(); // 初始化消息转换器列表
+			configureMessageConverters(this.messageConverters); // 通过钩子方法获取自定义消息转换器（当存在自定义的消息转换器时，则不会添加默认的消息转换器）
 			if (this.messageConverters.isEmpty()) {
-				addDefaultHttpMessageConverters(this.messageConverters);
+				addDefaultHttpMessageConverters(this.messageConverters); // 当自定义消息转换器为空时，添加默认的消息转换器
 			}
 			extendMessageConverters(this.messageConverters);
 		}
@@ -841,7 +841,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * Subclasses can call this method from {@link #configureMessageConverters}.
 	 * @param messageConverters the list to add the default message converters to
 	 */
-	protected final void addDefaultHttpMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
+	protected final void addDefaultHttpMessageConverters(List<HttpMessageConverter<?>> messageConverters) { // 添加默认的消息转换器
 		messageConverters.add(new ByteArrayHttpMessageConverter());
 		messageConverters.add(new StringHttpMessageConverter());
 		messageConverters.add(new ResourceHttpMessageConverter());
