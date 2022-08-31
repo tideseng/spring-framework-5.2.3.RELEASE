@@ -55,7 +55,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 	/**
 	 * The default servlet name. Can be customized by overriding {@link #getServletName}.
 	 */
-	public static final String DEFAULT_SERVLET_NAME = "dispatcher";
+	public static final String DEFAULT_SERVLET_NAME = "dispatcher"; // 注册DispatcherServlet到Servelt上下文中的Servlet名称
 
 
 	@Override
@@ -94,7 +94,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 		registration.setLoadOnStartup(1);
 		registration.addMapping(getServletMappings()); // 添加Mapping映射，即拦截url（钩子方法，需要子类实现）
-		registration.setAsyncSupported(isAsyncSupported());
+		registration.setAsyncSupported(isAsyncSupported()); // 是否支持异步
 
 		Filter[] filters = getServletFilters(); // 获取过滤器（钩子方法，需要子类实现）
 		if (!ObjectUtils.isEmpty(filters)) {

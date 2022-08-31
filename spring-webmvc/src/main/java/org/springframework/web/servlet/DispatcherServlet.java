@@ -160,7 +160,7 @@ import org.springframework.web.util.WebUtils;
  * @see org.springframework.web.context.ContextLoaderListener
  */
 @SuppressWarnings("serial")
-public class DispatcherServlet extends FrameworkServlet {
+public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet是交给Servlet容器进行管理，通过SpringMVC事件监听器监听ContextRefreshedEvent事件来进行初始化HandlerMapping、HandlerAdapter、视图解析器等相关信息
 
 	/** Well-known name for the MultipartResolver object in the bean factory for this namespace. */
 	public static final String MULTIPART_RESOLVER_BEAN_NAME = "multipartResolver";
@@ -491,7 +491,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * This implementation calls {@link #initStrategies}.
 	 */
 	@Override
-	protected void onRefresh(ApplicationContext context) { // 处理SpringMVC容器的ContextRefreshedEvent事件
+	protected void onRefresh(ApplicationContext context) { // 处理SpringMVC容器的ContextRefreshedEvent事件（Bean对象已全部实例化并初始化）
 		initStrategies(context); // 初始化相关信息
 	}
 
@@ -857,17 +857,17 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @return the List of corresponding strategy objects
 	 */
 	@SuppressWarnings("unchecked")
-	protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) {
-		String key = strategyInterface.getName();
-		String value = defaultStrategies.getProperty(key);
+	protected <T> List<T> getDefaultStrategies(ApplicationContext context, Class<T> strategyInterface) { // 当从容器中获取不到时，使用默认的DispatcherServlet.properties文件进行初始化
+		String key = strategyInterface.getName(); // 获取属性key
+		String value = defaultStrategies.getProperty(key); // 获取实现类value
 		if (value != null) {
-			String[] classNames = StringUtils.commaDelimitedListToStringArray(value);
+			String[] classNames = StringUtils.commaDelimitedListToStringArray(value); // 获取默认的实现类数组
 			List<T> strategies = new ArrayList<>(classNames.length);
 			for (String className : classNames) {
 				try {
 					Class<?> clazz = ClassUtils.forName(className, DispatcherServlet.class.getClassLoader());
-					Object strategy = createDefaultStrategy(context, clazz);
-					strategies.add((T) strategy);
+					Object strategy = createDefaultStrategy(context, clazz); // 实例化Bean
+					strategies.add((T) strategy); // 添加到集合中
 				}
 				catch (ClassNotFoundException ex) {
 					throw new BeanInitializationException(
@@ -880,7 +880,7 @@ public class DispatcherServlet extends FrameworkServlet {
 							className + "] for interface [" + key + "]", err);
 				}
 			}
-			return strategies;
+			return strategies; // 返回集合
 		}
 		else {
 			return new LinkedList<>();
@@ -907,7 +907,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * for the actual dispatching.
 	 */
 	@Override
-	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception { // 处理请求
+	protected void doService(HttpServletRequest request, HttpServletResponse response) throws Exception { // 处理请求（由父类FrameworkServlet#processRequest(...)方法调用）
 		logRequest(request);
 
 		// Keep a snapshot of the request attributes in case of an include,
@@ -997,7 +997,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	 * @param response current HTTP response
 	 * @throws Exception in case of any kind of processing failure
 	 */
-	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception { // 分发处理请求
+	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception { // 分发处理请求（被当前类的doService(...)方法调用）
 		HttpServletRequest processedRequest = request;
 		HandlerExecutionChain mappedHandler = null;
 		boolean multipartRequestParsed = false;
@@ -1013,7 +1013,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
-				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain
+				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain（包含了Handler和拦截器链）
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
 					return;
@@ -1230,9 +1230,9 @@ public class DispatcherServlet extends FrameworkServlet {
 	@Nullable
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception { // 获取请求的HandlerExecutionChain
 		if (this.handlerMappings != null) {
-			for (HandlerMapping mapping : this.handlerMappings) { // 遍历HandlerMapping
-				HandlerExecutionChain handler = mapping.getHandler(request); // 获取handler和过滤器链的包装类HandlerExecutionChain
-				if (handler != null) { // 一旦获取到，就不再遍历
+			for (HandlerMapping mapping : this.handlerMappings) { // 遍历HandlerMapping实例
+				HandlerExecutionChain handler = mapping.getHandler(request); // 获取handler和拦截器链的包装类HandlerExecutionChain
+				if (handler != null) { // 一旦HandlerMapping匹配并获取到，就不再遍历
 					return handler;
 				}
 			}

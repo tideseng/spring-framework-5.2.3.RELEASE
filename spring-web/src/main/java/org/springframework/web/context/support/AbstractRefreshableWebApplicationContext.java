@@ -83,7 +83,7 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 
 	/** Servlet context that this context runs in. */
 	@Nullable
-	private ServletContext servletContext;
+	private ServletContext servletContext; // Servlet上下文ServletContext
 
 	/** Servlet config that this context runs in, if any. */
 	@Nullable
@@ -104,7 +104,7 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 
 
 	@Override
-	public void setServletContext(@Nullable ServletContext servletContext) {
+	public void setServletContext(@Nullable ServletContext servletContext) { // 设置ServletContext
 		this.servletContext = servletContext;
 	}
 
@@ -165,8 +165,8 @@ public abstract class AbstractRefreshableWebApplicationContext extends AbstractR
 	 * Register request/session scopes, a {@link ServletContextAwareProcessor}, etc.
 	 */
 	@Override
-	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-		beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig));
+	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) { // BeanFactory后置处理方法
+		beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(this.servletContext, this.servletConfig)); // 注册BeanPostProcessor--ServletContextAwareProcessor
 		beanFactory.ignoreDependencyInterface(ServletContextAware.class);
 		beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
 

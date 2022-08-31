@@ -174,7 +174,7 @@ import org.springframework.web.util.UrlPathHelper;
  * @see EnableWebMvc
  * @see WebMvcConfigurer
  */
-public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware { // 定义SpringMVC的相关Bean（HandlerMapping、HandlerAdapter、ViewResolver等），通过对应的钩子方法注入自定义WebMvcConfigurer的相关功能
+public class WebMvcConfigurationSupport implements ApplicationContextAware, ServletContextAware { // 定义SpringMVC的相关Bean（HandlerMapping、HandlerAdapter、ViewResolver等），在Bean实例化时初始化拦截器、消息转换器、参数解析器、返回值解析器，并通过对应的钩子方法注入自定义WebMvcConfigurer的相关功能
 
 	private static final boolean romePresent;
 
@@ -604,7 +604,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * </ul>
 	 */
 	@Bean
-	public RequestMappingHandlerAdapter requestMappingHandlerAdapter(
+	public RequestMappingHandlerAdapter requestMappingHandlerAdapter( // 2.1定义RequestMappingHandlerAdapter
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcValidator") Validator validator) {
@@ -640,7 +640,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * {@link RequestMappingHandlerAdapter}.
 	 * @since 4.3
 	 */
-	protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() { // 创建RequestMappingHandlerAdapter
+	protected RequestMappingHandlerAdapter createRequestMappingHandlerAdapter() {
 		return new RequestMappingHandlerAdapter(); // 创建RequestMappingHandlerAdapter
 	}
 
@@ -650,7 +650,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @since 5.2
 	 */
 	@Bean
-	public HandlerFunctionAdapter handlerFunctionAdapter() {
+	public HandlerFunctionAdapter handlerFunctionAdapter() { // 2.2定义HandlerFunctionAdapter
 		return new HandlerFunctionAdapter();
 	}
 
@@ -749,7 +749,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * <p>This method cannot be overridden; use {@link #addArgumentResolvers} instead.
 	 * @since 4.3
 	 */
-	protected final List<HandlerMethodArgumentResolver> getArgumentResolvers() {
+	protected final List<HandlerMethodArgumentResolver> getArgumentResolvers() { // 获取自定义参数解析器
 		if (this.argumentResolvers == null) {
 			this.argumentResolvers = new ArrayList<>();
 			addArgumentResolvers(this.argumentResolvers);
@@ -775,7 +775,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * <p>This method cannot be overridden; use {@link #addReturnValueHandlers} instead.
 	 * @since 4.3
 	 */
-	protected final List<HandlerMethodReturnValueHandler> getReturnValueHandlers() {
+	protected final List<HandlerMethodReturnValueHandler> getReturnValueHandlers() { // 获取自定义返回值解析器
 		if (this.returnValueHandlers == null) {
 			this.returnValueHandlers = new ArrayList<>();
 			addReturnValueHandlers(this.returnValueHandlers);
@@ -809,7 +809,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			if (this.messageConverters.isEmpty()) {
 				addDefaultHttpMessageConverters(this.messageConverters); // 当自定义消息转换器为空时，添加默认的消息转换器
 			}
-			extendMessageConverters(this.messageConverters);
+			extendMessageConverters(this.messageConverters); // 扩展添加自定义消息转换器或更改已有的消息转换器（推荐使用）
 		}
 		return this.messageConverters;
 	}
@@ -918,8 +918,8 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * with {@link HttpRequestHandler HttpRequestHandlers}.
 	 */
 	@Bean
-	public HttpRequestHandlerAdapter httpRequestHandlerAdapter() {
-		return new HttpRequestHandlerAdapter();
+	public HttpRequestHandlerAdapter httpRequestHandlerAdapter() { // 2.3定义HttpRequestHandlerAdapter
+		return new HttpRequestHandlerAdapter(); // 创建HttpRequestHandlerAdapter
 	}
 
 	/**
@@ -927,8 +927,8 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * with interface-based controllers.
 	 */
 	@Bean
-	public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() {
-		return new SimpleControllerHandlerAdapter();
+	public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() { // 2.4定义SimpleControllerHandlerAdapter
+		return new SimpleControllerHandlerAdapter(); // 创建SimpleControllerHandlerAdapter
 	}
 
 	/**

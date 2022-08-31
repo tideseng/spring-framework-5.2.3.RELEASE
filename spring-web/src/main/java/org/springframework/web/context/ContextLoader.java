@@ -278,7 +278,7 @@ public class ContextLoader {
 			if (this.context == null) {
 				this.context = createWebApplicationContext(servletContext);
 			}
-			if (this.context instanceof ConfigurableWebApplicationContext) {
+			if (this.context instanceof ConfigurableWebApplicationContext) { // 默认为true
 				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) this.context;
 				if (!cwac.isActive()) {
 					// The context has not yet been refreshed -> provide services such as
