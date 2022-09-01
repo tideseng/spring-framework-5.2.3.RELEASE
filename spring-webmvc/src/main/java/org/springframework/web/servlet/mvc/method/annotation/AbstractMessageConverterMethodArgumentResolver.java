@@ -163,13 +163,13 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 	 */
 	@SuppressWarnings("unchecked")
 	@Nullable
-	protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, MethodParameter parameter,
+	protected <T> Object readWithMessageConverters(HttpInputMessage inputMessage, MethodParameter parameter, // 解析@ResponseBody注解修饰的参数
 			Type targetType) throws IOException, HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
 
 		MediaType contentType;
 		boolean noContentType = false;
 		try {
-			contentType = inputMessage.getHeaders().getContentType();
+			contentType = inputMessage.getHeaders().getContentType(); // 获取请求头中的ContentType对应的MediaType
 		}
 		catch (InvalidMediaTypeException ex) {
 			throw new HttpMediaTypeNotSupportedException(ex.getMessage());
@@ -179,8 +179,8 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 			contentType = MediaType.APPLICATION_OCTET_STREAM;
 		}
 
-		Class<?> contextClass = parameter.getContainingClass();
-		Class<T> targetClass = (targetType instanceof Class ? (Class<T>) targetType : null);
+		Class<?> contextClass = parameter.getContainingClass(); // 参数方法所在的Class类
+		Class<T> targetClass = (targetType instanceof Class ? (Class<T>) targetType : null); // 参数类型对应的Class类
 		if (targetClass == null) {
 			ResolvableType resolvableType = ResolvableType.forMethodParameter(parameter);
 			targetClass = (Class<T>) resolvableType.resolve();
@@ -193,16 +193,16 @@ public abstract class AbstractMessageConverterMethodArgumentResolver implements 
 		try {
 			message = new EmptyBodyCheckingHttpInputMessage(inputMessage);
 
-			for (HttpMessageConverter<?> converter : this.messageConverters) {
-				Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass();
+			for (HttpMessageConverter<?> converter : this.messageConverters) { // 遍历消息转换器
+				Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass(); // 当前消息转换器Class类
 				GenericHttpMessageConverter<?> genericConverter =
 						(converter instanceof GenericHttpMessageConverter ? (GenericHttpMessageConverter<?>) converter : null);
-				if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) :
+				if (genericConverter != null ? genericConverter.canRead(targetType, contextClass, contentType) : // 判断当前消息转换器能否转换
 						(targetClass != null && converter.canRead(targetClass, contentType))) {
 					if (message.hasBody()) {
 						HttpInputMessage msgToUse =
 								getAdvice().beforeBodyRead(message, parameter, targetType, converterType);
-						body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) :
+						body = (genericConverter != null ? genericConverter.read(targetType, contextClass, msgToUse) : // 解析@ResponseBody注解修饰的参数值
 								((HttpMessageConverter<T>) converter).read(targetClass, msgToUse));
 						body = getAdvice().afterBodyRead(body, msgToUse, parameter, targetType, converterType);
 					}

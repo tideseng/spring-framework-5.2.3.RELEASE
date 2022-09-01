@@ -64,7 +64,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
  * @author Sam Brannen
  * @since 3.1
  */
-public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping // 通过实现InitializingBean接口来初始化HandlerMethod
+public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping // 通过@Bean实例化设置拦截器、Cors配置; 通过实现InitializingBean接口来初始化HandlerMethod
 		implements MatchableHandlerMapping, EmbeddedValueResolverAware {
 
 	private boolean useSuffixPatternMatch = true;
@@ -80,7 +80,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	@Nullable
 	private StringValueResolver embeddedValueResolver;
 
-	private RequestMappingInfo.BuilderConfiguration config = new RequestMappingInfo.BuilderConfiguration();
+	private RequestMappingInfo.BuilderConfiguration config = new RequestMappingInfo.BuilderConfiguration(); // RequestMappingInfo构建配置（在InitializingBean接口中初始化）
 
 
 	/**
@@ -168,7 +168,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 		this.config.setRegisteredSuffixPatternMatch(this.useRegisteredSuffixPatternMatch);
 		this.config.setContentNegotiationManager(getContentNegotiationManager());
 
-		super.afterPropertiesSet(); // 调用父类方法初始化HandlerMethod
+		super.afterPropertiesSet(); // 调用父类方法初始化HandlerMethod，并注册到MappingRegistry映射注册器中
 	}
 
 
@@ -225,7 +225,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	@Nullable
 	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) { // 构建RequestMappingInfo
 		RequestMappingInfo info = createRequestMappingInfo(method); // 根据方法上的@RequestMapping注解构建RequestMappingInfo
-		if (info != null) {
+		if (info != null) { // 如果方法上没有@RequestMapping注解，直接返回null
 			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType); // 根据类上的@RequestMapping注解构建RequestMappingInfo
 			if (typeInfo != null) {
 				info = typeInfo.combine(info); // 将类上的RequestMappingInfo结合到方法上的RequestMappingInfo

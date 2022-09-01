@@ -112,7 +112,7 @@ import org.springframework.web.util.WebUtils;
  * @see HandlerMethodArgumentResolver
  * @see HandlerMethodReturnValueHandler
  */
-public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
+public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter // 通过@Bean实例化设置消息转换器、自定义参数解析器、自定义返回值解析器; 通过实现InitializingBean接口来初始化ControllerAdvice、参数解析器、返回值解析器
 		implements BeanFactoryAware, InitializingBean {
 
 	/**
@@ -130,19 +130,19 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 
 	@Nullable
-	private List<HandlerMethodArgumentResolver> customArgumentResolvers; // 自定义参数解析器
+	private List<HandlerMethodArgumentResolver> customArgumentResolvers; // 自定义参数解析器（在@Bean实例化是设置）
 
 	@Nullable
-	private HandlerMethodArgumentResolverComposite argumentResolvers; // 参数解析器（在afterPropertiesSet方法中初始化）
+	private HandlerMethodArgumentResolverComposite argumentResolvers; // 参数解析器管理器（在afterPropertiesSet方法中初始化）
 
 	@Nullable
-	private HandlerMethodArgumentResolverComposite initBinderArgumentResolvers; // 绑定参数解析器（在afterPropertiesSet方法中初始化）
+	private HandlerMethodArgumentResolverComposite initBinderArgumentResolvers; // 绑定参数解析器管理器（在afterPropertiesSet方法中初始化）
 
 	@Nullable
-	private List<HandlerMethodReturnValueHandler> customReturnValueHandlers; // 自定义返回值解析器
+	private List<HandlerMethodReturnValueHandler> customReturnValueHandlers; // 自定义返回值解析器（在@Bean实例化是设置）
 
 	@Nullable
-	private HandlerMethodReturnValueHandlerComposite returnValueHandlers; // 返回值解析器（在afterPropertiesSet方法中初始化）
+	private HandlerMethodReturnValueHandlerComposite returnValueHandlers; // 返回值解析器管理器（在afterPropertiesSet方法中初始化）
 
 	@Nullable
 	private List<ModelAndViewResolver> modelAndViewResolvers;
@@ -868,7 +868,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
 			asyncWebRequest.setTimeout(this.asyncRequestTimeout);
 
-			WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+			WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request); // 异步处理
 			asyncManager.setTaskExecutor(this.taskExecutor);
 			asyncManager.setAsyncWebRequest(asyncWebRequest);
 			asyncManager.registerCallableInterceptors(this.callableInterceptors);

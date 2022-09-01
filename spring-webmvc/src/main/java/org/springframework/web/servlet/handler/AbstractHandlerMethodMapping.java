@@ -100,7 +100,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	@Nullable
 	private HandlerMethodMappingNamingStrategy<T> namingStrategy;
 
-	private final MappingRegistry mappingRegistry = new MappingRegistry();
+	private final MappingRegistry mappingRegistry = new MappingRegistry(); // 映射注册器
 
 
 	/**
@@ -201,7 +201,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * @see #initHandlerMethods
 	 */
 	@Override
-	public void afterPropertiesSet() { // 实现InitializingBean接口来初始化HandlerMethod
+	public void afterPropertiesSet() { // 实现InitializingBean接口来初始化HandlerMethod，并注册到MappingRegistry映射注册器中
 		initHandlerMethods(); // 初始化HandlerMethod
 	}
 
@@ -270,10 +270,10 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 		if (handlerType != null) {
 			Class<?> userType = ClassUtils.getUserClass(handlerType);
-			Map<Method, T> methods = MethodIntrospector.selectMethods(userType, // 获取Method对象与RequestMappingInfo的映射关系
+			Map<Method, T> methods = MethodIntrospector.selectMethods(userType, // 建立@RequestMapping注解修饰的Method对象与RequestMappingInfo的映射关系
 					(MethodIntrospector.MetadataLookup<T>) method -> { // 使用函数式接口注入
 						try {
-							return getMappingForMethod(method, userType); // 构建RequestMappingInfo（抽象方法，需要子类实现）
+							return getMappingForMethod(method, userType); // 对有@RequestMapping注解的方法构建RequestMappingInfo（抽象方法，需要子类实现）
 						}
 						catch (Throwable ex) {
 							throw new IllegalStateException("Invalid mapping on handler class [" +
@@ -527,7 +527,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * to perform lookups and providing concurrent access.
 	 * <p>Package-private for testing purposes.
 	 */
-	class MappingRegistry {
+	class MappingRegistry { // 映射注册器
 
 		private final Map<T, MappingRegistration<T>> registry = new HashMap<>(); // RequestMappingInfo与MappingRegistration的映射容器
 
@@ -588,14 +588,14 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 			this.readWriteLock.readLock().unlock();
 		}
 
-		public void register(T mapping, Object handler, Method method) { // 注册HandlerMethod，建立映射关系
+		public void register(T mapping, Object handler, Method method) { // 注册HandlerMethod，建立映射关系（url与RequestMappingInfo的映射关系、RequestMappingInfo与HandlerMethod的映射关系）
 			// Assert that the handler method is not a suspending one.
 			if (KotlinDetector.isKotlinType(method.getDeclaringClass()) && KotlinDelegate.isSuspend(method)) {
 				throw new IllegalStateException("Unsupported suspending handler method detected: " + method);
 			}
 			this.readWriteLock.writeLock().lock(); // 获取写锁
 			try {
-				HandlerMethod handlerMethod = createHandlerMethod(handler, method); // 构建HandlerMethod
+				HandlerMethod handlerMethod = createHandlerMethod(handler, method); // 构建HandlerMethod，注入Controller类名、Method对象
 				validateMethodMapping(handlerMethod, mapping); // 校验是否唯一
 				this.mappingLookup.put(mapping, handlerMethod); // 建立RequestMappingInfo与HandlerMethod的映射关系
 
