@@ -71,7 +71,7 @@ public final class ModelFactory {
 	 * @param binderFactory for preparation of {@link BindingResult} attributes
 	 * @param attributeHandler for access to session attributes
 	 */
-	public ModelFactory(@Nullable List<InvocableHandlerMethod> handlerMethods,
+	public ModelFactory(@Nullable List<InvocableHandlerMethod> handlerMethods, // 初始化ModelFactory
 			WebDataBinderFactory binderFactory, SessionAttributesHandler attributeHandler) {
 
 		if (handlerMethods != null) {
@@ -98,12 +98,12 @@ public final class ModelFactory {
 	 * @param handlerMethod the method for which the model is initialized
 	 * @throws Exception may arise from {@code @ModelAttribute} methods
 	 */
-	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod)
+	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod) // 调用@ModelAttribute注解修饰的方法
 			throws Exception {
 
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
 		container.mergeAttributes(sessionAttributes);
-		invokeModelAttributeMethods(request, container);
+		invokeModelAttributeMethods(request, container); // 调用@ModelAttribute注解修饰的方法
 
 		for (String name : findSessionAttributeArguments(handlerMethod)) {
 			if (!container.containsAttribute(name)) {
@@ -120,12 +120,12 @@ public final class ModelFactory {
 	 * Invoke model attribute methods to populate the model.
 	 * Attributes are added only if not already present in the model.
 	 */
-	private void invokeModelAttributeMethods(NativeWebRequest request, ModelAndViewContainer container)
+	private void invokeModelAttributeMethods(NativeWebRequest request, ModelAndViewContainer container) // 调用@ModelAttribute注解修饰的方法
 			throws Exception {
 
 		while (!this.modelMethods.isEmpty()) {
-			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod();
-			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class);
+			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod(); // 遍历InvocableHandlerMethod
+			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class); // 获取方法上的@ModelAttribute注解
 			Assert.state(ann != null, "No ModelAttribute annotation");
 			if (container.containsAttribute(ann.name())) {
 				if (!ann.binding()) {
@@ -134,14 +134,14 @@ public final class ModelFactory {
 				continue;
 			}
 
-			Object returnValue = modelMethod.invokeForRequest(request, container);
+			Object returnValue = modelMethod.invokeForRequest(request, container); // 调用@ModelAttribute注解修饰的方法
 			if (!modelMethod.isVoid()){
 				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType());
 				if (!ann.binding()) {
 					container.setBindingDisabled(returnValueName);
 				}
 				if (!container.containsAttribute(returnValueName)) {
-					container.addAttribute(returnValueName, returnValue);
+					container.addAttribute(returnValueName, returnValue); // 将方法返回值存储到ModelAndViewContainer对象的map中
 				}
 			}
 		}

@@ -64,8 +64,8 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Create an instance from a bean instance and a method.
 	 */
-	public InvocableHandlerMethod(Object bean, Method method) {
-		super(bean, method);
+	public InvocableHandlerMethod(Object bean, Method method) { // 初始化InvocableHandlerMethod
+		super(bean, method); // 调用父类注入@ModelAttribute注解方法
 	}
 
 	/**
@@ -128,14 +128,14 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 * @see #doInvoke
 	 */
 	@Nullable
-	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
+	public Object invokeForRequest(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer, // 反射调用方法
 			Object... providedArgs) throws Exception {
 
-		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs);
+		Object[] args = getMethodArgumentValues(request, mavContainer, providedArgs); // 获取方法入参（涉及到参数解析转换）
 		if (logger.isTraceEnabled()) {
 			logger.trace("Arguments: " + Arrays.toString(args));
 		}
-		return doInvoke(args);
+		return doInvoke(args); // 反射调用方法
 	}
 
 	/**
@@ -144,10 +144,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 * <p>The resulting array will be passed into {@link #doInvoke}.
 	 * @since 5.1.2
 	 */
-	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
+	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer, // 获取方法入参（涉及到参数解析转换）
 			Object... providedArgs) throws Exception {
 
-		MethodParameter[] parameters = getMethodParameters();
+		MethodParameter[] parameters = getMethodParameters(); // 获取方法入参包装类数组（包装了参数类型、参数名称、参数注解）
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
 		}
@@ -155,16 +155,16 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		Object[] args = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];
-			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
+			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer); // 设置参数名称解析器
 			args[i] = findProvidedArgument(parameter, providedArgs);
 			if (args[i] != null) {
 				continue;
 			}
-			if (!this.resolvers.supportsParameter(parameter)) {
+			if (!this.resolvers.supportsParameter(parameter)) { // 根据参数匹配参数解析器（典型的策略模式）
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {
-				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory);
+				args[i] = this.resolvers.resolveArgument(parameter, mavContainer, request, this.dataBinderFactory); // 通过参数解析器解析参数
 			}
 			catch (Exception ex) {
 				// Leave stack trace for later, exception may actually be resolved and handled...
@@ -184,10 +184,10 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 * Invoke the handler method with the given argument values.
 	 */
 	@Nullable
-	protected Object doInvoke(Object... args) throws Exception {
+	protected Object doInvoke(Object... args) throws Exception { // 反射调用方法
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
-			return getBridgedMethod().invoke(getBean(), args);
+			return getBridgedMethod().invoke(getBean(), args); // 反射调用方法
 		}
 		catch (IllegalArgumentException ex) {
 			assertTargetBean(getBridgedMethod(), getBean(), args);

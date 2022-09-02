@@ -34,11 +34,11 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
-public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodReturnValueHandler {
+public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodReturnValueHandler { // HandlerMethod返回值解析器管理器
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private final List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>();
+	private final List<HandlerMethodReturnValueHandler> returnValueHandlers = new ArrayList<>(); // 返回值解析器列表
 
 
 	/**
@@ -58,9 +58,9 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 	}
 
 	@Nullable
-	private HandlerMethodReturnValueHandler getReturnValueHandler(MethodParameter returnType) {
-		for (HandlerMethodReturnValueHandler handler : this.returnValueHandlers) {
-			if (handler.supportsReturnType(returnType)) {
+	private HandlerMethodReturnValueHandler getReturnValueHandler(MethodParameter returnType) { // 根据返回值匹配返回值解析器（典型的策略模式）
+		for (HandlerMethodReturnValueHandler handler : this.returnValueHandlers) { // 遍历返回值解析器列表
+			if (handler.supportsReturnType(returnType)) { // 根据返回值匹配返回值解析器（典型的策略模式）
 				return handler;
 			}
 		}
@@ -72,14 +72,14 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 	 * @throws IllegalStateException if no suitable {@link HandlerMethodReturnValueHandler} is found.
 	 */
 	@Override
-	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
+	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType, // 返回值处理
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
-		HandlerMethodReturnValueHandler handler = selectHandler(returnValue, returnType);
+		HandlerMethodReturnValueHandler handler = selectHandler(returnValue, returnType); //获取返回值处理器
 		if (handler == null) {
 			throw new IllegalArgumentException("Unknown return value type: " + returnType.getParameterType().getName());
 		}
-		handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
+		handler.handleReturnValue(returnValue, returnType, mavContainer, webRequest); // 根据返回值处理器处理返回值
 	}
 
 	@Nullable
@@ -117,7 +117,7 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 	/**
 	 * Add the given {@link HandlerMethodReturnValueHandler HandlerMethodReturnValueHandlers}.
 	 */
-	public HandlerMethodReturnValueHandlerComposite addHandlers(
+	public HandlerMethodReturnValueHandlerComposite addHandlers( // 设置返回值解析器
 			@Nullable List<? extends HandlerMethodReturnValueHandler> handlers) {
 
 		if (handlers != null) {

@@ -36,9 +36,9 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @author Juergen Hoeller
  * @since 3.1
  */
-public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver {
+public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver { // HandlerMethod参数解析器管理器
 
-	private final List<HandlerMethodArgumentResolver> argumentResolvers = new LinkedList<>();
+	private final List<HandlerMethodArgumentResolver> argumentResolvers = new LinkedList<>(); // 参数解析器列表
 
 	private final Map<MethodParameter, HandlerMethodArgumentResolver> argumentResolverCache =
 			new ConcurrentHashMap<>(256);
@@ -68,7 +68,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	/**
 	 * Add the given {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers}.
 	 */
-	public HandlerMethodArgumentResolverComposite addResolvers(
+	public HandlerMethodArgumentResolverComposite addResolvers( // 设置参数解析器
 			@Nullable List<? extends HandlerMethodArgumentResolver> resolvers) {
 
 		if (resolvers != null) {
@@ -98,8 +98,8 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	 * supported by any registered {@link HandlerMethodArgumentResolver}.
 	 */
 	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return getArgumentResolver(parameter) != null;
+	public boolean supportsParameter(MethodParameter parameter) { // 根据参数匹配参数解析器（典型的策略模式）
+		return getArgumentResolver(parameter) != null; // 根据参数匹配参数解析器（典型的策略模式）
 	}
 
 	/**
@@ -110,15 +110,15 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	 */
 	@Override
 	@Nullable
-	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, // 通过参数解析器解析参数
 			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
-		HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
+		HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter); // 根据参数匹配参数解析器（典型的策略模式）
 		if (resolver == null) {
 			throw new IllegalArgumentException("Unsupported parameter type [" +
 					parameter.getParameterType().getName() + "]. supportsParameter should be called first.");
 		}
-		return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+		return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory); // 调用参数解析器解析参数
 	}
 
 	/**
@@ -126,13 +126,13 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	 * the given method parameter.
 	 */
 	@Nullable
-	private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
-		HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
-		if (result == null) {
-			for (HandlerMethodArgumentResolver resolver : this.argumentResolvers) {
-				if (resolver.supportsParameter(parameter)) {
+	private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) { // 根据参数匹配参数解析器（典型的策略模式）
+		HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter); // 先从缓存中获取
+		if (result == null) { // 缓存不存在时
+			for (HandlerMethodArgumentResolver resolver : this.argumentResolvers) { // 遍历参数解析器
+				if (resolver.supportsParameter(parameter)) { // 匹配参数解析器
 					result = resolver;
-					this.argumentResolverCache.put(parameter, result);
+					this.argumentResolverCache.put(parameter, result); // 放入缓存
 					break;
 				}
 			}

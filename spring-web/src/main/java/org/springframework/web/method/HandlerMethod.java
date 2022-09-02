@@ -64,18 +64,18 @@ public class HandlerMethod {
 	/** Logger that is available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private final Object bean;
+	private final Object bean; // Controller名称或Controller实例
 
 	@Nullable
 	private final BeanFactory beanFactory;
 
 	private final Class<?> beanType;
 
-	private final Method method;
+	private final Method method; // @RequestMapping注解修饰的方法
 
-	private final Method bridgedMethod;
+	private final Method bridgedMethod; // 桥接方法
 
-	private final MethodParameter[] parameters;
+	private final MethodParameter[] parameters; // 方法入参包装类数组
 
 	@Nullable
 	private HttpStatus responseStatus;
@@ -95,7 +95,7 @@ public class HandlerMethod {
 	/**
 	 * Create an instance from a bean instance and a method.
 	 */
-	public HandlerMethod(Object bean, Method method) {
+	public HandlerMethod(Object bean, Method method) { // 创建HandlerMethod
 		Assert.notNull(bean, "Bean is required");
 		Assert.notNull(method, "Method is required");
 		this.bean = bean;
@@ -130,7 +130,7 @@ public class HandlerMethod {
 	 * The method {@link #createWithResolvedBean()} may be used later to
 	 * re-create the {@code HandlerMethod} with an initialized bean.
 	 */
-	public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) {
+	public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) { // 初始化HandlerMethod
 		Assert.hasText(beanName, "Bean name is required");
 		Assert.notNull(beanFactory, "BeanFactory is required");
 		Assert.notNull(method, "Method is required");
@@ -330,10 +330,10 @@ public class HandlerMethod {
 	 */
 	public HandlerMethod createWithResolvedBean() {
 		Object handler = this.bean;
-		if (this.bean instanceof String) {
+		if (this.bean instanceof String) { // 当bean属性为Controller名称时
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
 			String beanName = (String) this.bean;
-			handler = this.beanFactory.getBean(beanName);
+			handler = this.beanFactory.getBean(beanName); // 获取该Controller的实例
 		}
 		return new HandlerMethod(this, handler);
 	}

@@ -259,7 +259,7 @@ public class ControllerAdviceBean implements Ordered {
 	 * @see OrderComparator
 	 * @see Ordered
 	 */
-	public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) {
+	public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) { // 获取bean上有@ControllerAdvice注解的类，并封装成ControllerAdviceBean
 		List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
 		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
 			if (!ScopedProxyUtils.isScopedTarget(name)) {
