@@ -70,17 +70,17 @@ public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValu
 
 	@Override
 	public boolean supportsReturnType(MethodParameter returnType) {
-		Class<?> paramType = returnType.getParameterType();
-		return (void.class == paramType || CharSequence.class.isAssignableFrom(paramType));
+		Class<?> paramType = returnType.getParameterType(); // 获取返回值Class类
+		return (void.class == paramType || CharSequence.class.isAssignableFrom(paramType)); // 返回值类型为void或String类型
 	}
 
 	@Override
-	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType,
+	public void handleReturnValue(@Nullable Object returnValue, MethodParameter returnType, // 处理返回值类型为void或String类型的返回值
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {
 
 		if (returnValue instanceof CharSequence) {
-			String viewName = returnValue.toString();
-			mavContainer.setViewName(viewName);
+			String viewName = returnValue.toString(); // 获取view名称
+			mavContainer.setViewName(viewName); // 将view名称设置到ModelAndViewContainer中
 			if (isRedirectViewName(viewName)) {
 				mavContainer.setRedirectModelScenario(true);
 			}

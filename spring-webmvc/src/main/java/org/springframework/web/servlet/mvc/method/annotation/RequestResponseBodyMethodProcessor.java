@@ -112,7 +112,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 	}
 
 	@Override
-	public boolean supportsReturnType(MethodParameter returnType) {
+	public boolean supportsReturnType(MethodParameter returnType) { // 判断返回值上或类上是否有@RequestBody注解
 		return (AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), ResponseBody.class) ||
 				returnType.hasMethodAnnotation(ResponseBody.class));
 	}
@@ -178,7 +178,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 		ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
 
 		// Try even with null return value. ResponseBodyAdvice could get involved.
-		writeWithMessageConverters(returnValue, returnType, inputMessage, outputMessage);
+		writeWithMessageConverters(returnValue, returnType, inputMessage, outputMessage); // 处理@ResponseBody注解修饰的返回值
 	}
 
 }
