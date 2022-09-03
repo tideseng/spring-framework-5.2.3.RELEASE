@@ -41,10 +41,10 @@ import org.springframework.web.servlet.ViewResolver;
  * @author Rossen Stoyanchev
  * @since 4.1
  */
-public class ViewResolverComposite implements ViewResolver, Ordered, InitializingBean,
+public class ViewResolverComposite implements ViewResolver, Ordered, InitializingBean, // 创建视图解析组合器
 		ApplicationContextAware, ServletContextAware {
 
-	private final List<ViewResolver> viewResolvers = new ArrayList<>();
+	private final List<ViewResolver> viewResolvers = new ArrayList<>(); // 视图解析器列表
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -52,7 +52,7 @@ public class ViewResolverComposite implements ViewResolver, Ordered, Initializin
 	/**
 	 * Set the list of view viewResolvers to delegate to.
 	 */
-	public void setViewResolvers(List<ViewResolver> viewResolvers) {
+	public void setViewResolvers(List<ViewResolver> viewResolvers) { // 设置视图解析器
 		this.viewResolvers.clear();
 		if (!CollectionUtils.isEmpty(viewResolvers)) {
 			this.viewResolvers.addAll(viewResolvers);
@@ -104,9 +104,9 @@ public class ViewResolverComposite implements ViewResolver, Ordered, Initializin
 
 	@Override
 	@Nullable
-	public View resolveViewName(String viewName, Locale locale) throws Exception {
-		for (ViewResolver viewResolver : this.viewResolvers) {
-			View view = viewResolver.resolveViewName(viewName, locale);
+	public View resolveViewName(String viewName, Locale locale) throws Exception { // 视图解析
+		for (ViewResolver viewResolver : this.viewResolvers) { // 遍历视图解析器（有可能是ContentNegotiatingViewResolver，包装了视图解析器列表）
+			View view = viewResolver.resolveViewName(viewName, locale); // 视图解析
 			if (view != null) {
 				return view;
 			}

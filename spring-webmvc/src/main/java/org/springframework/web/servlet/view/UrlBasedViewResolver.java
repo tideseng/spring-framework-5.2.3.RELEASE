@@ -465,7 +465,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @see #requiredViewClass
 	 */
 	@Override
-	protected View createView(String viewName, Locale locale) throws Exception {
+	protected View createView(String viewName, Locale locale) throws Exception { // 创建视图
 		// If this resolver is not supposed to handle the given view,
 		// return null to pass on to the next resolver in the chain.
 		if (!canHandle(viewName, locale)) {
@@ -492,7 +492,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		}
 
 		// Else fall back to superclass implementation: calling loadView.
-		return super.createView(viewName, locale);
+		return super.createView(viewName, locale); // 创建视图
 	}
 
 	/**
@@ -526,10 +526,10 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet
 	 */
 	@Override
-	protected View loadView(String viewName, Locale locale) throws Exception {
-		AbstractUrlBasedView view = buildView(viewName);
+	protected View loadView(String viewName, Locale locale) throws Exception { // 加载视图
+		AbstractUrlBasedView view = buildView(viewName); // 加载视图
 		View result = applyLifecycleMethods(viewName, view);
-		return (view.checkResource(locale) ? result : null);
+		return (view.checkResource(locale) ? result : null); // 校验资源是否存在（AbstractUrlBasedView默认直接返回true，即不校验; FreeMarkerView会进行校验）
 	}
 
 	/**
@@ -546,12 +546,12 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 	 * @throws Exception if the view couldn't be resolved
 	 * @see #loadView(String, java.util.Locale)
 	 */
-	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
+	protected AbstractUrlBasedView buildView(String viewName) throws Exception { // 加载视图
 		Class<?> viewClass = getViewClass();
 		Assert.state(viewClass != null, "No view class");
 
-		AbstractUrlBasedView view = (AbstractUrlBasedView) BeanUtils.instantiateClass(viewClass);
-		view.setUrl(getPrefix() + viewName + getSuffix());
+		AbstractUrlBasedView view = (AbstractUrlBasedView) BeanUtils.instantiateClass(viewClass); // 实例化视图
+		view.setUrl(getPrefix() + viewName + getSuffix()); // 设置视图地址（并没有校验是否真实存在）
 		view.setAttributesMap(getAttributesMap());
 
 		String contentType = getContentType();

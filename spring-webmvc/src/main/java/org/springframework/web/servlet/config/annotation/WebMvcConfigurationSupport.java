@@ -1035,11 +1035,11 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @since 4.1
 	 */
 	@Bean
-	public ViewResolver mvcViewResolver(
+	public ViewResolver mvcViewResolver( // 3.定义ViewResolverComposite
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager) {
 		ViewResolverRegistry registry =
-				new ViewResolverRegistry(contentNegotiationManager, this.applicationContext);
-		configureViewResolvers(registry);
+				new ViewResolverRegistry(contentNegotiationManager, this.applicationContext); // 创建视图解析注册器
+		configureViewResolvers(registry); // 设置自定义视图解析器（钩子方法，由子类实现）
 
 		if (registry.getViewResolvers().isEmpty() && this.applicationContext != null) {
 			String[] names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
@@ -1049,9 +1049,9 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			}
 		}
 
-		ViewResolverComposite composite = new ViewResolverComposite();
+		ViewResolverComposite composite = new ViewResolverComposite(); // 创建视图解析组合器
 		composite.setOrder(registry.getOrder());
-		composite.setViewResolvers(registry.getViewResolvers());
+		composite.setViewResolvers(registry.getViewResolvers()); // 设置视图解析器（有可能是ContentNegotiatingViewResolver）
 		if (this.applicationContext != null) {
 			composite.setApplicationContext(this.applicationContext);
 		}

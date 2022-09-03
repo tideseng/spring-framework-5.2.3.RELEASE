@@ -302,7 +302,7 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 	 * @see #renderMergedOutputModel
 	 */
 	@Override
-	public void render(@Nullable Map<String, ?> model, HttpServletRequest request,
+	public void render(@Nullable Map<String, ?> model, HttpServletRequest request, // 视图响应
 			HttpServletResponse response) throws Exception {
 
 		if (logger.isDebugEnabled()) {
@@ -311,9 +311,9 @@ public abstract class AbstractView extends WebApplicationObjectSupport implement
 					(this.staticAttributes.isEmpty() ? "" : ", static attributes " + this.staticAttributes));
 		}
 
-		Map<String, Object> mergedModel = createMergedOutputModel(model, request, response);
+		Map<String, Object> mergedModel = createMergedOutputModel(model, request, response); // 获取返回参数
 		prepareResponse(request, response);
-		renderMergedOutputModel(mergedModel, getRequestToExpose(request), response);
+		renderMergedOutputModel(mergedModel, getRequestToExpose(request), response); // 视图响应
 	}
 
 	/**

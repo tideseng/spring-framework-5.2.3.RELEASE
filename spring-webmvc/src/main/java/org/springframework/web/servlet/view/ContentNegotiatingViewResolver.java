@@ -97,10 +97,10 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 	private boolean useNotAcceptableStatusCode = false;
 
 	@Nullable
-	private List<View> defaultViews;
+	private List<View> defaultViews; // 默认的视图列表
 
 	@Nullable
-	private List<ViewResolver> viewResolvers;
+	private List<ViewResolver> viewResolvers; // 视图解析器列表（引用了视图解析注册器的viewResolvers地址）
 
 	private int order = Ordered.HIGHEST_PRECEDENCE;
 
@@ -148,7 +148,7 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 	 * Set the default views to use when a more specific view can not be obtained
 	 * from the {@link ViewResolver} chain.
 	 */
-	public void setDefaultViews(List<View> defaultViews) {
+	public void setDefaultViews(List<View> defaultViews) { // 设置默认的视图列表
 		this.defaultViews = defaultViews;
 	}
 
@@ -161,7 +161,7 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 	 * Sets the view resolvers to be wrapped by this view resolver.
 	 * <p>If this property is not set, view resolvers will be detected automatically.
 	 */
-	public void setViewResolvers(List<ViewResolver> viewResolvers) {
+	public void setViewResolvers(List<ViewResolver> viewResolvers) { // 设置视图解析器列表（引用了视图解析注册器的viewResolvers地址）
 		this.viewResolvers = viewResolvers;
 	}
 
@@ -220,12 +220,12 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 
 	@Override
 	@Nullable
-	public View resolveViewName(String viewName, Locale locale) throws Exception {
+	public View resolveViewName(String viewName, Locale locale) throws Exception { // 视图解析（自动适配）
 		RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
 		Assert.state(attrs instanceof ServletRequestAttributes, "No current ServletRequestAttributes");
-		List<MediaType> requestedMediaTypes = getMediaTypes(((ServletRequestAttributes) attrs).getRequest());
+		List<MediaType> requestedMediaTypes = getMediaTypes(((ServletRequestAttributes) attrs).getRequest()); // 获取允许的MediaType
 		if (requestedMediaTypes != null) {
-			List<View> candidateViews = getCandidateViews(viewName, locale, requestedMediaTypes);
+			List<View> candidateViews = getCandidateViews(viewName, locale, requestedMediaTypes); // 获取候选的视图列表
 			View bestView = getBestView(candidateViews, requestedMediaTypes, attrs);
 			if (bestView != null) {
 				return bestView;
@@ -300,14 +300,14 @@ public class ContentNegotiatingViewResolver extends WebApplicationObjectSupport
 		return (MediaType.SPECIFICITY_COMPARATOR.compare(acceptType, produceType) < 0 ? acceptType : produceType);
 	}
 
-	private List<View> getCandidateViews(String viewName, Locale locale, List<MediaType> requestedMediaTypes)
+	private List<View> getCandidateViews(String viewName, Locale locale, List<MediaType> requestedMediaTypes) // 获取候选的视图列表
 			throws Exception {
 
 		List<View> candidateViews = new ArrayList<>();
 		if (this.viewResolvers != null) {
 			Assert.state(this.contentNegotiationManager != null, "No ContentNegotiationManager set");
-			for (ViewResolver viewResolver : this.viewResolvers) {
-				View view = viewResolver.resolveViewName(viewName, locale);
+			for (ViewResolver viewResolver : this.viewResolvers) { //  遍历真正的视图解析器
+				View view = viewResolver.resolveViewName(viewName, locale); // 获取视图
 				if (view != null) {
 					candidateViews.add(view);
 				}

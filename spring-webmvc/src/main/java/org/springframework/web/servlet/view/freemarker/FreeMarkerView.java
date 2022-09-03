@@ -220,7 +220,7 @@ public class FreeMarkerView extends AbstractTemplateView {
 	 * multiple templates to be rendered into a single view.
 	 */
 	@Override
-	public boolean checkResource(Locale locale) throws Exception {
+	public boolean checkResource(Locale locale) throws Exception { // 校验资源是否存在
 		String url = getUrl();
 		Assert.state(url != null, "'url' not set");
 

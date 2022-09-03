@@ -96,8 +96,8 @@ public class AbstractTemplateViewResolver extends UrlBasedViewResolver {
 
 
 	@Override
-	protected AbstractUrlBasedView buildView(String viewName) throws Exception {
-		AbstractTemplateView view = (AbstractTemplateView) super.buildView(viewName);
+	protected AbstractUrlBasedView buildView(String viewName) throws Exception { // 加载视图
+		AbstractTemplateView view = (AbstractTemplateView) super.buildView(viewName); // 调用父类方法加载视图
 		view.setExposeRequestAttributes(this.exposeRequestAttributes);
 		view.setAllowRequestOverride(this.allowRequestOverride);
 		view.setExposeSessionAttributes(this.exposeSessionAttributes);

@@ -77,7 +77,7 @@ import org.springframework.web.context.ServletContextAware;
  * @see org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean
  * @see FreeMarkerView
  */
-public class FreeMarkerConfigurer extends FreeMarkerConfigurationFactory
+public class FreeMarkerConfigurer extends FreeMarkerConfigurationFactory // FreeMarker视图解析器配置
 		implements FreeMarkerConfig, InitializingBean, ResourceLoaderAware, ServletContextAware {
 
 	@Nullable

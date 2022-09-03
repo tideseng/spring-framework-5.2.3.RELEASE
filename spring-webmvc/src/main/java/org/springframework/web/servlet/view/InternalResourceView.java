@@ -135,20 +135,20 @@ public class InternalResourceView extends AbstractUrlBasedView {
 	 * This includes setting the model as request attributes.
 	 */
 	@Override
-	protected void renderMergedOutputModel(
+	protected void renderMergedOutputModel( // 视图响应
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		// Expose the model object as request attributes.
-		exposeModelAsRequestAttributes(model, request);
+		exposeModelAsRequestAttributes(model, request); // 将返回数据设置到Request对象中
 
 		// Expose helpers as request attributes, if any.
 		exposeHelpers(request);
 
 		// Determine the path for the request dispatcher.
-		String dispatcherPath = prepareForRendering(request, response);
+		String dispatcherPath = prepareForRendering(request, response); // 获取要跳转的地址
 
 		// Obtain a RequestDispatcher for the target resource (typically a JSP).
-		RequestDispatcher rd = getRequestDispatcher(request, dispatcherPath);
+		RequestDispatcher rd = getRequestDispatcher(request, dispatcherPath); // 获取RequestDispatcher对象
 		if (rd == null) {
 			throw new ServletException("Could not get RequestDispatcher for [" + getUrl() +
 					"]: Check that the corresponding file exists within your web application archive!");
@@ -168,7 +168,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Forwarding to [" + getUrl() + "]");
 			}
-			rd.forward(request, response);
+			rd.forward(request, response); // 根据RequestDispatcher转发forward请求
 		}
 	}
 
@@ -206,7 +206,7 @@ public class InternalResourceView extends AbstractUrlBasedView {
 
 		if (this.preventDispatchLoop) {
 			String uri = request.getRequestURI();
-			if (path.startsWith("/") ? uri.equals(path) : uri.equals(StringUtils.applyRelativePath(uri, path))) {
+			if (path.startsWith("/") ? uri.equals(path) : uri.equals(StringUtils.applyRelativePath(uri, path))) { // 校验请求与响应是否相同
 				throw new ServletException("Circular view path [" + path + "]: would dispatch back " +
 						"to the current handler URL [" + uri + "] again. Check your ViewResolver setup! " +
 						"(Hint: This may be the result of an unspecified view, due to default view name generation.)");
@@ -225,8 +225,8 @@ public class InternalResourceView extends AbstractUrlBasedView {
 	 * @return a corresponding RequestDispatcher
 	 */
 	@Nullable
-	protected RequestDispatcher getRequestDispatcher(HttpServletRequest request, String path) {
-		return request.getRequestDispatcher(path);
+	protected RequestDispatcher getRequestDispatcher(HttpServletRequest request, String path) {// 获取RequestDispatcher对象
+		return request.getRequestDispatcher(path); // 获取RequestDispatcher对象
 	}
 
 	/**

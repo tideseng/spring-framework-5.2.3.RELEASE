@@ -89,7 +89,7 @@ public abstract class AbstractUrlBasedView extends AbstractView implements Initi
 	 * {@code false} if we know that it does not exist
 	 * @throws Exception if the resource exists but is invalid (e.g. could not be parsed)
 	 */
-	public boolean checkResource(Locale locale) throws Exception {
+	public boolean checkResource(Locale locale) throws Exception { // 校验资源是否存在
 		return true;
 	}
 

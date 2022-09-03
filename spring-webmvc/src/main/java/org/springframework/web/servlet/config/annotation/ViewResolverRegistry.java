@@ -52,7 +52,7 @@ import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
  * @author Rossen Stoyanchev
  * @since 4.1
  */
-public class ViewResolverRegistry {
+public class ViewResolverRegistry { // 视图解析注册器
 
 	@Nullable
 	private ContentNegotiationManager contentNegotiationManager;
@@ -73,7 +73,7 @@ public class ViewResolverRegistry {
 	 * Class constructor with {@link ContentNegotiationManager} and {@link ApplicationContext}.
 	 * @since 4.3.12
 	 */
-	public ViewResolverRegistry(
+	public ViewResolverRegistry( // 初始化视图解析注册器
 			ContentNegotiationManager contentNegotiationManager, @Nullable ApplicationContext context) {
 
 		this.contentNegotiationManager = contentNegotiationManager;
@@ -126,9 +126,9 @@ public class ViewResolverRegistry {
 			}
 		}
 		else {
-			this.contentNegotiatingResolver = new ContentNegotiatingViewResolver();
-			this.contentNegotiatingResolver.setDefaultViews(Arrays.asList(defaultViews));
-			this.contentNegotiatingResolver.setViewResolvers(this.viewResolvers);
+			this.contentNegotiatingResolver = new ContentNegotiatingViewResolver(); // 创建ContentNegotiatingViewResolver
+			this.contentNegotiatingResolver.setDefaultViews(Arrays.asList(defaultViews)); // 设置默认的视图列表
+			this.contentNegotiatingResolver.setViewResolvers(this.viewResolvers); // 设置视图解析器列表（引用了视图解析注册器的viewResolvers地址）
 			if (this.contentNegotiationManager != null) {
 				this.contentNegotiatingResolver.setContentNegotiationManager(this.contentNegotiationManager);
 			}
@@ -157,7 +157,7 @@ public class ViewResolverRegistry {
 	 * resolvers only makes sense in combination with the "viewNames" property
 	 * on the resolver indicating which view names are handled by which resolver.
 	 */
-	public UrlBasedViewResolverRegistration jsp(String prefix, String suffix) {
+	public UrlBasedViewResolverRegistration jsp(String prefix, String suffix) { // 添加JSP视图解析器（获取JSP视图时不会校验视图是否真实存在，所以如果存在ftl等静态模板，JSP视图解析器必须排在后面添加）
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setPrefix(prefix);
 		resolver.setSuffix(suffix);
@@ -187,8 +187,8 @@ public class ViewResolverRegistry {
 	 * <p><strong>Note</strong> that you must also configure FreeMarker by adding a
 	 * {@link org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer} bean.
 	 */
-	public UrlBasedViewResolverRegistration freeMarker() {
-		if (!checkBeanOfType(FreeMarkerConfigurer.class)) {
+	public UrlBasedViewResolverRegistration freeMarker() { // 添加FreeMarker视图解析器
+		if (!checkBeanOfType(FreeMarkerConfigurer.class)) { // 添加FreeMarker视图解析器需要在容器中存在FreeMarkerConfigurer对象（封装了模板目录templateLoaderPath、默认编码defaultEncoding、模板配置路径configLocation）
 			throw new BeanInitializationException("In addition to a FreeMarker view resolver " +
 					"there must also be a single FreeMarkerConfig bean in this web application context " +
 					"(or its parent): FreeMarkerConfigurer is the usual implementation. " +
@@ -282,7 +282,7 @@ public class ViewResolverRegistry {
 		return (this.order != null ? this.order : Ordered.LOWEST_PRECEDENCE);
 	}
 
-	protected List<ViewResolver> getViewResolvers() {
+	protected List<ViewResolver> getViewResolvers() { // 获取视图解析器（但如果contentNegotiatingResolver对象不为null时，返回的是contentNegotiatingResolver对象）
 		if (this.contentNegotiatingResolver != null) {
 			return Collections.<ViewResolver>singletonList(this.contentNegotiatingResolver);
 		}

@@ -885,12 +885,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 				invocableMethod = invocableMethod.wrapConcurrentResult(result);
 			}
 
-			invocableMethod.invokeAndHandle(webRequest, mavContainer); // 调用Controller方法
+			invocableMethod.invokeAndHandle(webRequest, mavContainer); // 调用Controller方法（将返回值数据通过流的形式响应给客户端）
 			if (asyncManager.isConcurrentHandlingStarted()) {
 				return null;
 			}
 
-			return getModelAndView(mavContainer, modelFactory, webRequest);
+			return getModelAndView(mavContainer, modelFactory, webRequest); // 获取响应视图
 		}
 		finally {
 			webRequest.requestCompleted();
@@ -991,15 +991,15 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 	}
 
 	@Nullable
-	private ModelAndView getModelAndView(ModelAndViewContainer mavContainer,
+	private ModelAndView getModelAndView(ModelAndViewContainer mavContainer, // 获取响应视图
 			ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
 
 		modelFactory.updateModel(webRequest, mavContainer);
-		if (mavContainer.isRequestHandled()) {
+		if (mavContainer.isRequestHandled()) { // 如果不需要响应视图，直接返回null
 			return null;
 		}
 		ModelMap model = mavContainer.getModel();
-		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContainer.getStatus());
+		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model, mavContainer.getStatus()); // 创建ModelAndView，注入视图名称、ModelMap等
 		if (!mavContainer.isViewReference()) {
 			mav.setView((View) mavContainer.getView());
 		}

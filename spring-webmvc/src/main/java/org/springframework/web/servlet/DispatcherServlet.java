@@ -733,10 +733,10 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no ViewResolver beans are defined in the BeanFactory for this
 	 * namespace, we default to InternalResourceViewResolver.
 	 */
-	private void initViewResolvers(ApplicationContext context) {
+	private void initViewResolvers(ApplicationContext context) { // 初始化视图解析器
 		this.viewResolvers = null;
 
-		if (this.detectAllViewResolvers) {
+		if (this.detectAllViewResolvers) { // 默认为true
 			// Find all ViewResolvers in the ApplicationContext, including ancestor contexts.
 			Map<String, ViewResolver> matchingBeans =
 					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, ViewResolver.class, true, false);
@@ -1054,7 +1054,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
-			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException); // 视图渲染
 		}
 		catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
@@ -1095,13 +1095,13 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * Handle the result of handler selection and handler invocation, which is
 	 * either a ModelAndView or an Exception to be resolved to a ModelAndView.
 	 */
-	private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,
+	private void processDispatchResult(HttpServletRequest request, HttpServletResponse response, // 视图渲染
 			@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,
 			@Nullable Exception exception) throws Exception {
 
 		boolean errorView = false;
 
-		if (exception != null) {
+		if (exception != null) { // 如果异常不为null
 			if (exception instanceof ModelAndViewDefiningException) {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
@@ -1114,8 +1114,8 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		}
 
 		// Did the handler return a view to render?
-		if (mv != null && !mv.wasCleared()) {
-			render(mv, request, response);
+		if (mv != null && !mv.wasCleared()) { // 响应视图不为空时
+			render(mv, request, response); // 视图渲染
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}
@@ -1337,17 +1337,17 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * @throws ServletException if view is missing or cannot be resolved
 	 * @throws Exception if there's a problem rendering the view
 	 */
-	protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	protected void render(ModelAndView mv, HttpServletRequest request, HttpServletResponse response) throws Exception { // 视图渲染
 		// Determine locale for request and apply it to the response.
 		Locale locale =
 				(this.localeResolver != null ? this.localeResolver.resolveLocale(request) : request.getLocale());
 		response.setLocale(locale);
 
 		View view;
-		String viewName = mv.getViewName();
+		String viewName = mv.getViewName(); // 获取视图名称
 		if (viewName != null) {
 			// We need to resolve the view name.
-			view = resolveViewName(viewName, mv.getModelInternal(), locale, request);
+			view = resolveViewName(viewName, mv.getModelInternal(), locale, request); // 视图解析
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
 						"' in servlet with name '" + getServletName() + "'");
@@ -1370,7 +1370,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 			if (mv.getStatus() != null) {
 				response.setStatus(mv.getStatus().value());
 			}
-			view.render(mv.getModelInternal(), request, response);
+			view.render(mv.getModelInternal(), request, response); // 视图响应
 		}
 		catch (Exception ex) {
 			if (logger.isDebugEnabled()) {
@@ -1406,12 +1406,12 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * @see ViewResolver#resolveViewName
 	 */
 	@Nullable
-	protected View resolveViewName(String viewName, @Nullable Map<String, Object> model,
+	protected View resolveViewName(String viewName, @Nullable Map<String, Object> model, // 视图解析
 			Locale locale, HttpServletRequest request) throws Exception {
 
 		if (this.viewResolvers != null) {
-			for (ViewResolver viewResolver : this.viewResolvers) {
-				View view = viewResolver.resolveViewName(viewName, locale);
+			for (ViewResolver viewResolver : this.viewResolvers) { // 遍历视图解析器（默认只有一个，为ViewResolverComposite）
+				View view = viewResolver.resolveViewName(viewName, locale); // 视图解析
 				if (view != null) {
 					return view;
 				}
