@@ -78,7 +78,7 @@ public class DefaultServletHandlerConfigurer {
 	 * @see DefaultServletHttpRequestHandler
 	 */
 	public void enable(@Nullable String defaultServletName) {
-		this.handler = new DefaultServletHttpRequestHandler();
+		this.handler = new DefaultServletHttpRequestHandler(); // 创建DefaultServletHttpRequestHandler
 		if (defaultServletName != null) {
 			this.handler.setDefaultServletName(defaultServletName);
 		}

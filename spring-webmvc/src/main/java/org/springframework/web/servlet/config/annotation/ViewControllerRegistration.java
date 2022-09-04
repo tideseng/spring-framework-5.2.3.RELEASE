@@ -32,12 +32,12 @@ import org.springframework.web.servlet.mvc.ParameterizableViewController;
  */
 public class ViewControllerRegistration {
 
-	private final String urlPath;
+	private final String urlPath; // url请求路径
 
 	private final ParameterizableViewController controller = new ParameterizableViewController();
 
 
-	public ViewControllerRegistration(String urlPath) {
+	public ViewControllerRegistration(String urlPath) { // 初始化ViewControllerRegistration
 		Assert.notNull(urlPath, "'urlPath' is required.");
 		this.urlPath = urlPath;
 	}
@@ -60,8 +60,8 @@ public class ViewControllerRegistration {
 	 * for example translates "/foo/bar" to "foo/bar".
 	 * @see org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator
 	 */
-	public void setViewName(String viewName) {
-		this.controller.setViewName(viewName);
+	public void setViewName(String viewName) { // 设置视图名称
+		this.controller.setViewName(viewName); // 设置视图名称
 	}
 
 	protected void setApplicationContext(@Nullable ApplicationContext applicationContext) {

@@ -1037,7 +1037,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 				}
 
 				// Actually invoke the handler.
-				mv = ha.handle(processedRequest, response, mappedHandler.getHandler()); // 调用HandlerMethod，即调用Controller方法
+				mv = ha.handle(processedRequest, response, mappedHandler.getHandler()); // 调用handler，即调用Controller方法
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;

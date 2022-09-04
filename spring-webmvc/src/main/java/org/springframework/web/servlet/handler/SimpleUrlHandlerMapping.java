@@ -58,13 +58,13 @@ import org.springframework.util.CollectionUtils;
  */
 public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 
-	private final Map<String, Object> urlMap = new LinkedHashMap<>();
+	private final Map<String, Object> urlMap = new LinkedHashMap<>(); // url与Controller beanName的映射（该url不以"/"开头）
 
 
 	/**
 	 * Create a {@code SimpleUrlHandlerMapping} with default settings.
 	 */
-	public SimpleUrlHandlerMapping() {
+	public SimpleUrlHandlerMapping() { // 初始化SimpleUrlHandlerMapping
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @since 5.2
 	 * @see #setUrlMap(Map)
 	 */
-	public SimpleUrlHandlerMapping(Map<String, ?> urlMap) {
+	public SimpleUrlHandlerMapping(Map<String, ?> urlMap) { // 初始化SimpleUrlHandlerMapping
 		setUrlMap(urlMap);
 	}
 
@@ -101,7 +101,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @param mappings properties with URLs as keys and bean names as values
 	 * @see #setUrlMap
 	 */
-	public void setMappings(Properties mappings) {
+	public void setMappings(Properties mappings) { // 添加Mapping映射关系
 		CollectionUtils.mergePropertiesIntoMap(mappings, this.urlMap);
 	}
 
@@ -134,9 +134,9 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * superclass's initialization.
 	 */
 	@Override
-	public void initApplicationContext() throws BeansException {
-		super.initApplicationContext();
-		registerHandlers(this.urlMap);
+	public void initApplicationContext() throws BeansException { // 重写AbstractHandlerMapping实现父类ApplicationObjectSupport#setApplicationContext埋下的钩子方法
+		super.initApplicationContext(); // 调用父类方法
+		registerHandlers(this.urlMap); // 注册Handler
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @throws BeansException if a handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException {
+	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException { // 注册Handler
 		if (urlMap.isEmpty()) {
 			logger.trace("No patterns in " + formatMappingName());
 		}
@@ -153,13 +153,13 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 			urlMap.forEach((url, handler) -> {
 				// Prepend with slash if not already present.
 				if (!url.startsWith("/")) {
-					url = "/" + url;
+					url = "/" + url; // 当url不以"/"开头时，设置"/"前缀拼接
 				}
 				// Remove whitespace from handler bean name.
 				if (handler instanceof String) {
 					handler = ((String) handler).trim();
 				}
-				registerHandler(url, handler);
+				registerHandler(url, handler); // 注册Handler
 			});
 			if (logger.isDebugEnabled()) {
 				List<String> patterns = new ArrayList<>();

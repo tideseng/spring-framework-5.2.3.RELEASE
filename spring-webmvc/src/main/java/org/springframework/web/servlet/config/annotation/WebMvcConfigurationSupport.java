@@ -454,10 +454,10 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			@Qualifier("mvcUrlPathHelper") UrlPathHelper urlPathHelper,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcResourceUrlProvider") ResourceUrlProvider resourceUrlProvider) {
-		ViewControllerRegistry registry = new ViewControllerRegistry(this.applicationContext);
+		ViewControllerRegistry registry = new ViewControllerRegistry(this.applicationContext); // 创建ViewControllerRegistry
 		addViewControllers(registry);
 
-		AbstractHandlerMapping handlerMapping = registry.buildHandlerMapping();
+		AbstractHandlerMapping handlerMapping = registry.buildHandlerMapping(); // 构建SimpleUrlHandlerMapping
 		if (handlerMapping == null) {
 			return null;
 		}
@@ -579,10 +579,10 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 */
 	@Bean
 	@Nullable
-	public HandlerMapping defaultServletHandlerMapping() { // 1.6定义HandlerMapping--SimpleUrlHandlerMapping
+	public HandlerMapping defaultServletHandlerMapping() { // 1.6定义HandlerMapping--SimpleUrlHandlerMapping（将请求交给DefaultServlet）
 		Assert.state(this.servletContext != null, "No ServletContext set");
 		DefaultServletHandlerConfigurer configurer = new DefaultServletHandlerConfigurer(this.servletContext);
-		configureDefaultServletHandling(configurer);
+		configureDefaultServletHandling(configurer); // 钩子方法（可以通过手动调用DefaultServletHandlerConfigurer#enable()方法开启转发到DefaultServlet）
 		return configurer.buildHandlerMapping();
 	}
 

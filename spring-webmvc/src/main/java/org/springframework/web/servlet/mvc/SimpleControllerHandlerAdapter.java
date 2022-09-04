@@ -46,10 +46,10 @@ public class SimpleControllerHandlerAdapter implements HandlerAdapter {
 
 	@Override
 	@Nullable
-	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) // 调用handler，即调用Controller实现类的handleRequestInternal方法
 			throws Exception {
 
-		return ((Controller) handler).handleRequest(request, response);
+		return ((Controller) handler).handleRequest(request, response); // 处理Controller请求
 	}
 
 	@Override

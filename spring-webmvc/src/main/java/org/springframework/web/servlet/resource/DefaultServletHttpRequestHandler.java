@@ -51,7 +51,7 @@ import org.springframework.web.context.ServletContextAware;
  * @author Juergen Hoeller
  * @since 3.0.4
  */
-public class DefaultServletHttpRequestHandler implements HttpRequestHandler, ServletContextAware {
+public class DefaultServletHttpRequestHandler implements HttpRequestHandler, ServletContextAware { // 实现了HttpRequestHandler接口
 
 	/** Default Servlet name used by Tomcat, Jetty, JBoss, and GlassFish. */
 	private static final String COMMON_DEFAULT_SERVLET_NAME = "default";
@@ -70,7 +70,7 @@ public class DefaultServletHttpRequestHandler implements HttpRequestHandler, Ser
 
 
 	@Nullable
-	private String defaultServletName;
+	private String defaultServletName; // DefaultServlet的servletName
 
 	@Nullable
 	private ServletContext servletContext;
@@ -125,7 +125,7 @@ public class DefaultServletHttpRequestHandler implements HttpRequestHandler, Ser
 			throw new IllegalStateException("A RequestDispatcher could not be located for the default servlet '" +
 					this.defaultServletName + "'");
 		}
-		rd.forward(request, response);
+		rd.forward(request, response); // 将请求转发给默认的DefaultServlet
 	}
 
 }

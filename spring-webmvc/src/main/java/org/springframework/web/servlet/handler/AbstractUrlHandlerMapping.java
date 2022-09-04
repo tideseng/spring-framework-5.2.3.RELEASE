@@ -61,7 +61,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 
 	private boolean lazyInitHandlers = false;
 
-	private final Map<String, Object> handlerMap = new LinkedHashMap<>();
+	private final Map<String, Object> handlerMap = new LinkedHashMap<>(); // url与handler实例的映射关系
 
 
 	/**
@@ -119,10 +119,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 */
 	@Override
 	@Nullable
-	protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
-		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
+	protected Object getHandlerInternal(HttpServletRequest request) throws Exception { // 根据请求url获取对应的Handler，并包装成HandlerExecutionChain返回
+		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request); // 获取请求路径
 		request.setAttribute(LOOKUP_PATH, lookupPath);
-		Object handler = lookupHandler(lookupPath, request);
+		Object handler = lookupHandler(lookupPath, request); // 获取handler
 		if (handler == null) {
 			// We need to care for the default handler directly, since we need to
 			// expose the PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE for it as well.
@@ -160,17 +160,17 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @see org.springframework.util.AntPathMatcher
 	 */
 	@Nullable
-	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception {
+	protected Object lookupHandler(String urlPath, HttpServletRequest request) throws Exception { // 获取handler
 		// Direct match?
-		Object handler = this.handlerMap.get(urlPath);
-		if (handler != null) {
+		Object handler = this.handlerMap.get(urlPath); // 从缓存中获取handler
+		if (handler != null) { // handler存在时
 			// Bean name or resolved handler?
 			if (handler instanceof String) {
 				String handlerName = (String) handler;
 				handler = obtainApplicationContext().getBean(handlerName);
 			}
 			validateHandler(handler, request);
-			return buildPathExposingHandler(handler, urlPath, urlPath, null);
+			return buildPathExposingHandler(handler, urlPath, urlPath, null); // 构建HandlerExecutionChain，将拦截器链、handler包装到HandlerExecutionChain中
 		}
 
 		// Pattern match?
@@ -256,7 +256,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @param uriTemplateVariables the URI template variables, can be {@code null} if no variables found
 	 * @return the final handler object
 	 */
-	protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern,
+	protected Object buildPathExposingHandler(Object rawHandler, String bestMatchingPattern, // 构建HandlerExecutionChain，将拦截器链、handler包装到HandlerExecutionChain中
 			String pathWithinMapping, @Nullable Map<String, String> uriTemplateVariables) {
 
 		HandlerExecutionChain chain = new HandlerExecutionChain(rawHandler);
@@ -312,10 +312,10 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException {
+	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException { // 注册Handler
 		Assert.notNull(urlPaths, "URL path array must not be null");
 		for (String urlPath : urlPaths) {
-			registerHandler(urlPath, beanName);
+			registerHandler(urlPath, beanName); // 注册Handler
 		}
 	}
 
@@ -327,29 +327,29 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException {
+	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException { // 注册Handler
 		Assert.notNull(urlPath, "URL path must not be null");
 		Assert.notNull(handler, "Handler object must not be null");
-		Object resolvedHandler = handler;
+		Object resolvedHandler = handler; // handler实例
 
 		// Eagerly resolve handler if referencing singleton via name.
 		if (!this.lazyInitHandlers && handler instanceof String) {
 			String handlerName = (String) handler;
 			ApplicationContext applicationContext = obtainApplicationContext();
 			if (applicationContext.isSingleton(handlerName)) {
-				resolvedHandler = applicationContext.getBean(handlerName);
+				resolvedHandler = applicationContext.getBean(handlerName); // 获取beanName对应的handler实例
 			}
 		}
 
-		Object mappedHandler = this.handlerMap.get(urlPath);
-		if (mappedHandler != null) {
+		Object mappedHandler = this.handlerMap.get(urlPath); // 获取缓存
+		if (mappedHandler != null) { // 缓存存在时
 			if (mappedHandler != resolvedHandler) {
 				throw new IllegalStateException(
 						"Cannot map " + getHandlerDescription(handler) + " to URL path [" + urlPath +
 						"]: There is already " + getHandlerDescription(mappedHandler) + " mapped.");
 			}
 		}
-		else {
+		else { // 缓存不存在时
 			if (urlPath.equals("/")) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Root mapping to " + getHandlerDescription(handler));
@@ -363,7 +363,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 				setDefaultHandler(resolvedHandler);
 			}
 			else {
-				this.handlerMap.put(urlPath, resolvedHandler);
+				this.handlerMap.put(urlPath, resolvedHandler); // 注册url与handler实例的映射关系
 				if (logger.isTraceEnabled()) {
 					logger.trace("Mapped [" + urlPath + "] onto " + getHandlerDescription(handler));
 				}

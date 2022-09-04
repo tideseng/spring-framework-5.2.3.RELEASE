@@ -151,7 +151,7 @@ public abstract class AbstractController extends WebContentGenerator implements 
 
 	@Override
 	@Nullable
-	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) // 处理Controller请求
 			throws Exception {
 
 		if (HttpMethod.OPTIONS.matches(request.getMethod())) {
@@ -174,7 +174,7 @@ public abstract class AbstractController extends WebContentGenerator implements 
 			}
 		}
 
-		return handleRequestInternal(request, response);
+		return handleRequestInternal(request, response); // 处理Controller请求（钩子方法，由子类实现）
 	}
 
 	/**

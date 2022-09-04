@@ -36,10 +36,10 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author Keith Donald
  * @author Rossen Stoyanchev
  */
-public class ParameterizableViewController extends AbstractController {
+public class ParameterizableViewController extends AbstractController { // 继承自AbstractController
 
 	@Nullable
-	private Object view;
+	private Object view; // 视图名称
 
 	@Nullable
 	private HttpStatus statusCode;
@@ -57,7 +57,7 @@ public class ParameterizableViewController extends AbstractController {
 	 * DispatcherServlet via a ViewResolver. Will override any pre-existing
 	 * view name or View.
 	 */
-	public void setViewName(@Nullable String viewName) {
+	public void setViewName(@Nullable String viewName) { // 设置视图名称
 		this.view = viewName;
 	}
 

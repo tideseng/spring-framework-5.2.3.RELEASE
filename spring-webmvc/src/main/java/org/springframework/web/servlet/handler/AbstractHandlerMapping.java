@@ -282,7 +282,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @see #initInterceptors()
 	 */
 	@Override
-	protected void initApplicationContext() throws BeansException { // 实现父类的抽象方法（父类实现了ApplicationContextAware接口，但在setApplicationContext方法中进行类埋点，在初始化Bean时通过BeanPostProcessor进行调用）
+	protected void initApplicationContext() throws BeansException { // 实现父类ApplicationObjectSupport实现setApplicationContext埋下的钩子方法（父类实现了ApplicationContextAware接口，但在setApplicationContext方法中进行类埋点，在初始化Bean时通过BeanPostProcessor进行调用）
 		extendInterceptors(this.interceptors); // 定义埋点方法，供子类进行扩展添加拦截器
 		detectMappedInterceptors(this.adaptedInterceptors); // 添加容器中MappedInterceptor类型的拦截器
 		initInterceptors(); // 将interceptors中的拦截器添加到adaptedInterceptors中

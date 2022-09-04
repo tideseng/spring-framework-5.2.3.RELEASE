@@ -39,7 +39,7 @@ public class ViewControllerRegistry {
 	@Nullable
 	private ApplicationContext applicationContext;
 
-	private final List<ViewControllerRegistration> registrations = new ArrayList<>(4);
+	private final List<ViewControllerRegistration> registrations = new ArrayList<>(4); // 视图控制器列表
 
 	private final List<RedirectViewControllerRegistration> redirectRegistrations = new ArrayList<>(10);
 
@@ -50,7 +50,7 @@ public class ViewControllerRegistry {
 	 * Class constructor with {@link ApplicationContext}.
 	 * @since 4.3.12
 	 */
-	public ViewControllerRegistry(@Nullable ApplicationContext applicationContext) {
+	public ViewControllerRegistry(@Nullable ApplicationContext applicationContext) { // 初始化ViewControllerRegistry
 		this.applicationContext = applicationContext;
 	}
 
@@ -66,8 +66,8 @@ public class ViewControllerRegistry {
 	 * same URL. For this reason it is recommended to avoid splitting URL
 	 * handling across an annotated controller and a view controller.
 	 */
-	public ViewControllerRegistration addViewController(String urlPath) {
-		ViewControllerRegistration registration = new ViewControllerRegistration(urlPath);
+	public ViewControllerRegistration addViewController(String urlPath) { // 添加视图控制器
+		ViewControllerRegistration registration = new ViewControllerRegistration(urlPath); // 创建ViewControllerRegistration
 		registration.setApplicationContext(this.applicationContext);
 		this.registrations.add(registration);
 		return registration;
@@ -116,14 +116,14 @@ public class ViewControllerRegistry {
 	 * @since 4.3.12
 	 */
 	@Nullable
-	protected SimpleUrlHandlerMapping buildHandlerMapping() {
+	protected SimpleUrlHandlerMapping buildHandlerMapping() { // 构建SimpleUrlHandlerMapping
 		if (this.registrations.isEmpty() && this.redirectRegistrations.isEmpty()) {
 			return null;
 		}
 
 		Map<String, Object> urlMap = new LinkedHashMap<>();
 		for (ViewControllerRegistration registration : this.registrations) {
-			urlMap.put(registration.getUrlPath(), registration.getViewController());
+			urlMap.put(registration.getUrlPath(), registration.getViewController()); // 设置url与Controller实现类的映射关系
 		}
 		for (RedirectViewControllerRegistration registration : this.redirectRegistrations) {
 			urlMap.put(registration.getUrlPath(), registration.getViewController());

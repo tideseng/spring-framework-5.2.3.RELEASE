@@ -47,10 +47,10 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
 	@Override
 	@Nullable
-	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
+	public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) // 调用handler，即调用HttpRequestHandler实现类的handleRequest方法
 			throws Exception {
 
-		((HttpRequestHandler) handler).handleRequest(request, response);
+		((HttpRequestHandler) handler).handleRequest(request, response); // 调用HttpRequestHandler实现类的handleRequest方法
 		return null;
 	}
 
