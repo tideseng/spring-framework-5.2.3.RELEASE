@@ -123,13 +123,13 @@ public class ViewControllerRegistry {
 
 		Map<String, Object> urlMap = new LinkedHashMap<>();
 		for (ViewControllerRegistration registration : this.registrations) {
-			urlMap.put(registration.getUrlPath(), registration.getViewController()); // 设置url与Controller实现类的映射关系
+			urlMap.put(registration.getUrlPath(), registration.getViewController()); // 设置url与ParameterizableViewController实现类的映射关系
 		}
 		for (RedirectViewControllerRegistration registration : this.redirectRegistrations) {
 			urlMap.put(registration.getUrlPath(), registration.getViewController());
 		}
 
-		return new SimpleUrlHandlerMapping(urlMap, this.order);
+		return new SimpleUrlHandlerMapping(urlMap, this.order); // 创建SimpleUrlHandlerMapping
 	}
 
 }

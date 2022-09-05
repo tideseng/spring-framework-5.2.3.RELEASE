@@ -34,7 +34,7 @@ public class ViewControllerRegistration {
 
 	private final String urlPath; // url请求路径
 
-	private final ParameterizableViewController controller = new ParameterizableViewController();
+	private final ParameterizableViewController controller = new ParameterizableViewController(); // AbstractController的子类
 
 
 	public ViewControllerRegistration(String urlPath) { // 初始化ViewControllerRegistration

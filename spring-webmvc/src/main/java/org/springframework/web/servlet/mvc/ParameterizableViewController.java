@@ -36,7 +36,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author Keith Donald
  * @author Rossen Stoyanchev
  */
-public class ParameterizableViewController extends AbstractController { // 继承自AbstractController
+public class ParameterizableViewController extends AbstractController { // 继承自AbstractController，实现了Controller接口
 
 	@Nullable
 	private Object view; // 视图名称

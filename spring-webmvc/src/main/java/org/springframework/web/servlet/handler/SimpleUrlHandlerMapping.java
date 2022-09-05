@@ -56,9 +56,9 @@ import org.springframework.util.CollectionUtils;
  * @see #setUrlMap
  * @see BeanNameUrlHandlerMapping
  */
-public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
+public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping { // 重写父类initApplicationContext钩子方法，通过设置的urlMap映射，注册成url与Handler Bean的映射关系（此Handler Bean可以是Controller实现类、或HttpRequestHandler实现类）
 
-	private final Map<String, Object> urlMap = new LinkedHashMap<>(); // url与Controller beanName的映射（该url不以"/"开头）
+	private final Map<String, Object> urlMap = new LinkedHashMap<>(); // url与Controller beanName / Controller、HttpRequestHandler实现类的映射（该url允许不以"/"开头）
 
 
 	/**
@@ -87,7 +87,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @see #setUrlMap(Map)
 	 * @see #setOrder(int)
 	 */
-	public SimpleUrlHandlerMapping(Map<String, ?> urlMap, int order) {
+	public SimpleUrlHandlerMapping(Map<String, ?> urlMap, int order) { // 初始化SimpleUrlHandlerMapping
 		setUrlMap(urlMap);
 		setOrder(order);
 	}
@@ -136,7 +136,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	@Override
 	public void initApplicationContext() throws BeansException { // 重写AbstractHandlerMapping实现父类ApplicationObjectSupport#setApplicationContext埋下的钩子方法
 		super.initApplicationContext(); // 调用父类方法
-		registerHandlers(this.urlMap); // 注册Handler
+		registerHandlers(this.urlMap); // 注册Handler映射
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 	 * @throws BeansException if a handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException { // 注册Handler
+	protected void registerHandlers(Map<String, Object> urlMap) throws BeansException { // 注册Handler映射
 		if (urlMap.isEmpty()) {
 			logger.trace("No patterns in " + formatMappingName());
 		}
@@ -159,7 +159,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping {
 				if (handler instanceof String) {
 					handler = ((String) handler).trim();
 				}
-				registerHandler(url, handler); // 注册Handler
+				registerHandler(url, handler); // 注册Handler映射
 			});
 			if (logger.isDebugEnabled()) {
 				List<String> patterns = new ArrayList<>();

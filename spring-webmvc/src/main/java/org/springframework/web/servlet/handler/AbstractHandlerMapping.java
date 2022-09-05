@@ -70,7 +70,7 @@ import org.springframework.web.util.UrlPathHelper;
  * @see #setInterceptors
  * @see org.springframework.web.servlet.HandlerInterceptor
  */
-public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
+public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport // HandlerMapping的抽象类，实现父类ApplicationObjectSupport实现setApplicationContext埋下的钩子方法，将interceptors中的拦截器添加到adaptedInterceptors中
 		implements HandlerMapping, Ordered, BeanNameAware {
 
 	@Nullable
@@ -320,7 +320,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @see #setInterceptors
 	 * @see #adaptInterceptor
 	 */
-	protected void initInterceptors() {
+	protected void initInterceptors() { // 将interceptors中的拦截器添加到adaptedInterceptors中
 		if (!this.interceptors.isEmpty()) {
 			for (int i = 0; i < this.interceptors.size(); i++) {
 				Object interceptor = this.interceptors.get(i);

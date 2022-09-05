@@ -34,16 +34,16 @@ import org.springframework.web.servlet.handler.MappedInterceptor;
  * @author Keith Donald
  * @since 3.1
  */
-public class InterceptorRegistration {
+public class InterceptorRegistration { // 拦截器包装类
 
-	private final HandlerInterceptor interceptor;
+	private final HandlerInterceptor interceptor; // 真实的拦截器对象
 
-	private final List<String> includePatterns = new ArrayList<>();
+	private final List<String> includePatterns = new ArrayList<>(); // 拦截器URL匹配规则
 
-	private final List<String> excludePatterns = new ArrayList<>();
+	private final List<String> excludePatterns = new ArrayList<>(); // 拦截器URL放行规则
 
 	@Nullable
-	private PathMatcher pathMatcher;
+	private PathMatcher pathMatcher; // 路径匹配器
 
 	private int order = 0;
 
@@ -51,7 +51,7 @@ public class InterceptorRegistration {
 	/**
 	 * Create an {@link InterceptorRegistration} instance.
 	 */
-	public InterceptorRegistration(HandlerInterceptor interceptor) {
+	public InterceptorRegistration(HandlerInterceptor interceptor) { // 初始化InterceptorRegistration
 		Assert.notNull(interceptor, "Interceptor is required");
 		this.interceptor = interceptor;
 	}
@@ -60,15 +60,15 @@ public class InterceptorRegistration {
 	/**
 	 * Add URL patterns to which the registered interceptor should apply to.
 	 */
-	public InterceptorRegistration addPathPatterns(String... patterns) {
-		return addPathPatterns(Arrays.asList(patterns));
+	public InterceptorRegistration addPathPatterns(String... patterns) { // 添加拦截器URL匹配规则
+		return addPathPatterns(Arrays.asList(patterns)); // 添加拦截器URL匹配规则
 	}
 
 	/**
 	 * List-based variant of {@link #addPathPatterns(String...)}.
 	 * @since 5.0.3
 	 */
-	public InterceptorRegistration addPathPatterns(List<String> patterns) {
+	public InterceptorRegistration addPathPatterns(List<String> patterns) { // 添加拦截器URL匹配规则
 		this.includePatterns.addAll(patterns);
 		return this;
 	}
@@ -76,7 +76,7 @@ public class InterceptorRegistration {
 	/**
 	 * Add URL patterns to which the registered interceptor should not apply to.
 	 */
-	public InterceptorRegistration excludePathPatterns(String... patterns) {
+	public InterceptorRegistration excludePathPatterns(String... patterns) { // 添加拦截器URL放行规则
 		return excludePathPatterns(Arrays.asList(patterns));
 	}
 
@@ -84,7 +84,7 @@ public class InterceptorRegistration {
 	 * List-based variant of {@link #excludePathPatterns(String...)}.
 	 * @since 5.0.3
 	 */
-	public InterceptorRegistration excludePathPatterns(List<String> patterns) {
+	public InterceptorRegistration excludePathPatterns(List<String> patterns) { // 添加拦截器URL放行规则
 		this.excludePatterns.addAll(patterns);
 		return this;
 	}
@@ -104,7 +104,7 @@ public class InterceptorRegistration {
 	 * Specify an order position to be used. Default is 0.
 	 * @since 4.3.23
 	 */
-	public InterceptorRegistration order(int order){
+	public InterceptorRegistration order(int order){ // 指定排序
 		this.order = order;
 		return this;
 	}
@@ -120,14 +120,14 @@ public class InterceptorRegistration {
 	 * Build the underlying interceptor. If URL patterns are provided, the returned
 	 * type is {@link MappedInterceptor}; otherwise {@link HandlerInterceptor}.
 	 */
-	protected Object getInterceptor() {
-		if (this.includePatterns.isEmpty() && this.excludePatterns.isEmpty()) {
+	protected Object getInterceptor() { // 获取当前拦截器（返回的可能是真实的拦截器，也可能是包装类MappedInterceptor）
+		if (this.includePatterns.isEmpty() && this.excludePatterns.isEmpty()) { // 当URL匹配规则和URL匹配规则都为空时，直接返回真实的拦截器
 			return this.interceptor;
 		}
 
 		String[] include = StringUtils.toStringArray(this.includePatterns);
 		String[] exclude = StringUtils.toStringArray(this.excludePatterns);
-		MappedInterceptor mappedInterceptor = new MappedInterceptor(include, exclude, this.interceptor);
+		MappedInterceptor mappedInterceptor = new MappedInterceptor(include, exclude, this.interceptor); // 将拦截器真实对象、URL匹配规则、URL放行规则封装到MappedInterceptor中（MappedInterceptor实现了HandlerInterceptor接口）
 		if (this.pathMatcher != null) {
 			mappedInterceptor.setPathMatcher(this.pathMatcher);
 		}

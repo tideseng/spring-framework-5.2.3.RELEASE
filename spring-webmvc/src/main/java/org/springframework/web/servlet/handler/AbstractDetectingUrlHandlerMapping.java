@@ -31,7 +31,7 @@ import org.springframework.util.ObjectUtils;
  * @since 2.5
  * @see #determineUrlsForHandler
  */
-public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping {
+public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHandlerMapping { // 通过重写父类AbstractHandlerMapping的initApplicationContext方法，来注册url与Handler Bean的映射
 
 	private boolean detectHandlersInAncestorContexts = false;
 
@@ -56,7 +56,7 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	@Override
 	public void initApplicationContext() throws ApplicationContextException { // 重写AbstractHandlerMapping实现父类ApplicationObjectSupport#setApplicationContext埋下的钩子方法
 		super.initApplicationContext(); // 调用父类方法
-		detectHandlers();
+		detectHandlers(); // 收集handler映射
 	}
 
 	/**
@@ -67,7 +67,7 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 	 * @throws org.springframework.beans.BeansException if the handler couldn't be registered
 	 * @see #determineUrlsForHandler(String)
 	 */
-	protected void detectHandlers() throws BeansException {
+	protected void detectHandlers() throws BeansException { // 收集handler映射
 		ApplicationContext applicationContext = obtainApplicationContext();
 		String[] beanNames = (this.detectHandlersInAncestorContexts ? // 从容器中获取Object类型的beanName
 				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(applicationContext, Object.class) :
@@ -76,9 +76,9 @@ public abstract class AbstractDetectingUrlHandlerMapping extends AbstractUrlHand
 		// Take any bean name that we can determine URLs for.
 		for (String beanName : beanNames) { // 遍历容器beanName
 			String[] urls = determineUrlsForHandler(beanName); // 根据beanName获取对应的url（钩子方法，需要子类实现）
-			if (!ObjectUtils.isEmpty(urls)) {
+			if (!ObjectUtils.isEmpty(urls)) { // 当url不为空时，注册Handler映射
 				// URL paths found: Let's consider it a handler.
-				registerHandler(urls, beanName); // 注册Handler
+				registerHandler(urls, beanName); // 注册Handler映射
 			}
 		}
 

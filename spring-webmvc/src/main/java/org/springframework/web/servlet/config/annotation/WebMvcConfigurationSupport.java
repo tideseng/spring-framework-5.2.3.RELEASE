@@ -339,7 +339,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			addInterceptors(registry); // 通过钩子方法添加自定义拦截器（通过钩子方法注入自定义WebMvcConfigurer相关）
 			registry.addInterceptor(new ConversionServiceExposingInterceptor(mvcConversionService)); // 注册默认的拦截器ConversionServiceExposingInterceptor
 			registry.addInterceptor(new ResourceUrlProviderExposingInterceptor(mvcResourceUrlProvider)); // 注册默认的拦截器ResourceUrlProviderExposingInterceptor
-			this.interceptors = registry.getInterceptors();
+			this.interceptors = registry.getInterceptors(); // 获取拦截器列表（返回的可能是真实的拦截器，也可能是包装类MappedInterceptor）
 		}
 		return this.interceptors.toArray();
 	}
@@ -455,7 +455,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcResourceUrlProvider") ResourceUrlProvider resourceUrlProvider) {
 		ViewControllerRegistry registry = new ViewControllerRegistry(this.applicationContext); // 创建ViewControllerRegistry
-		addViewControllers(registry);
+		addViewControllers(registry); // 通过钩子方法添加自定义视图控制器（通过钩子方法注入自定义WebMvcConfigurer相关）
 
 		AbstractHandlerMapping handlerMapping = registry.buildHandlerMapping(); // 构建SimpleUrlHandlerMapping
 		if (handlerMapping == null) {
@@ -536,7 +536,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 				this.servletContext, contentNegotiationManager, urlPathHelper);
 		addResourceHandlers(registry);
 
-		AbstractHandlerMapping handlerMapping = registry.getHandlerMapping();
+		AbstractHandlerMapping handlerMapping = registry.getHandlerMapping(); // 构建SimpleUrlHandlerMapping
 		if (handlerMapping == null) {
 			return null;
 		}

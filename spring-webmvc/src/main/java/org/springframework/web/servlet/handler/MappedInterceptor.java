@@ -45,15 +45,15 @@ import org.springframework.web.servlet.ModelAndView;
 public final class MappedInterceptor implements HandlerInterceptor {
 
 	@Nullable
-	private final String[] includePatterns;
+	private final String[] includePatterns; // URL匹配规则
 
 	@Nullable
-	private final String[] excludePatterns;
+	private final String[] excludePatterns; // URL放行规则
 
-	private final HandlerInterceptor interceptor;
+	private final HandlerInterceptor interceptor; // 拦截器真实对象
 
 	@Nullable
-	private PathMatcher pathMatcher;
+	private PathMatcher pathMatcher; // 路径匹配器
 
 
 	/**
@@ -71,7 +71,7 @@ public final class MappedInterceptor implements HandlerInterceptor {
 	 * @param excludePatterns the path patterns to exclude (empty for no specific excludes)
 	 * @param interceptor the HandlerInterceptor instance to map to the given patterns
 	 */
-	public MappedInterceptor(@Nullable String[] includePatterns, @Nullable String[] excludePatterns,
+	public MappedInterceptor(@Nullable String[] includePatterns, @Nullable String[] excludePatterns, // 初始化HandlerInterceptor
 			HandlerInterceptor interceptor) {
 
 		this.includePatterns = includePatterns;

@@ -46,7 +46,7 @@ public class InterceptorRegistry { // 拦截器注册器
 	 * registered interceptor further for example adding URL patterns it should apply to.
 	 */
 	public InterceptorRegistration addInterceptor(HandlerInterceptor interceptor) { // 添加拦截器
-		InterceptorRegistration registration = new InterceptorRegistration(interceptor);
+		InterceptorRegistration registration = new InterceptorRegistration(interceptor); // 创建InterceptorRegistration
 		this.registrations.add(registration); // 添加拦截器
 		return registration;
 	}
@@ -67,10 +67,10 @@ public class InterceptorRegistry { // 拦截器注册器
 	/**
 	 * Return all registered interceptors.
 	 */
-	protected List<Object> getInterceptors() {
+	protected List<Object> getInterceptors() { // 获取拦截器列表（返回的可能是真实的拦截器，也可能是包装类MappedInterceptor）
 		return this.registrations.stream()
-				.sorted(INTERCEPTOR_ORDER_COMPARATOR)
-				.map(InterceptorRegistration::getInterceptor)
+				.sorted(INTERCEPTOR_ORDER_COMPARATOR) // 排序
+				.map(InterceptorRegistration::getInterceptor) // 获取当前拦截器（返回的可能是真实的拦截器，也可能是包装类MappedInterceptor）
 				.collect(Collectors.toList());
 	}
 
