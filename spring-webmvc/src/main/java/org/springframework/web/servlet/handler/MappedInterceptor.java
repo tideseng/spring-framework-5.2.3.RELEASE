@@ -143,7 +143,7 @@ public final class MappedInterceptor implements HandlerInterceptor {
 	 * @param pathMatcher a path matcher for path pattern matching
 	 * @return {@code true} if the interceptor applies to the given request path
 	 */
-	public boolean matches(String lookupPath, PathMatcher pathMatcher) {
+	public boolean matches(String lookupPath, PathMatcher pathMatcher) { // 判断路径是否匹配
 		PathMatcher pathMatcherToUse = (this.pathMatcher != null ? this.pathMatcher : pathMatcher);
 		if (!ObjectUtils.isEmpty(this.excludePatterns)) {
 			for (String pattern : this.excludePatterns) {
