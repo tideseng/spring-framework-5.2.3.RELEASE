@@ -331,7 +331,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * {@link HandlerMapping} instances with.
 	 * <p>This method cannot be overridden; use {@link #addInterceptors} instead.
 	 */
-	protected final Object[] getInterceptors( // 获取所有拦截器
+	protected final Object[] getInterceptors( // 获取所有拦截器（包括自定义拦截器）
 			FormattingConversionService mvcConversionService,
 			ResourceUrlProvider mvcResourceUrlProvider) {
 		if (this.interceptors == null) { // 当拦截器列表不为空时，添加拦截器
@@ -940,17 +940,17 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * which allows for providing a list of resolvers.
 	 */
 	@Bean
-	public HandlerExceptionResolver handlerExceptionResolver(
+	public HandlerExceptionResolver handlerExceptionResolver( // 定义HandlerExceptionResolverComposite
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager) {
 		List<HandlerExceptionResolver> exceptionResolvers = new ArrayList<>();
-		configureHandlerExceptionResolvers(exceptionResolvers);
-		if (exceptionResolvers.isEmpty()) {
-			addDefaultHandlerExceptionResolvers(exceptionResolvers, contentNegotiationManager);
+		configureHandlerExceptionResolvers(exceptionResolvers); // 定义钩子方法，添加自定义异常解析器
+		if (exceptionResolvers.isEmpty()) { // 当自定义异常解析器为空时，添加默认的异常解析器
+			addDefaultHandlerExceptionResolvers(exceptionResolvers, contentNegotiationManager); // 添加默认的异常解析器
 		}
-		extendHandlerExceptionResolvers(exceptionResolvers);
-		HandlerExceptionResolverComposite composite = new HandlerExceptionResolverComposite();
+		extendHandlerExceptionResolvers(exceptionResolvers); // 定义钩子方法，扩展添加自定义异常解析器
+		HandlerExceptionResolverComposite composite = new HandlerExceptionResolverComposite(); // 创建HandlerExceptionResolverComposite
 		composite.setOrder(0);
-		composite.setExceptionResolvers(exceptionResolvers);
+		composite.setExceptionResolvers(exceptionResolvers); // 设置异常解析器列表
 		return composite;
 	}
 
@@ -988,10 +988,10 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * <li>{@link DefaultHandlerExceptionResolver} for resolving known Spring exception types
 	 * </ul>
 	 */
-	protected final void addDefaultHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers,
+	protected final void addDefaultHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers, // 添加默认的HandlerExceptionResolver类型异常解析器
 			ContentNegotiationManager mvcContentNegotiationManager) {
 
-		ExceptionHandlerExceptionResolver exceptionHandlerResolver = createExceptionHandlerExceptionResolver();
+		ExceptionHandlerExceptionResolver exceptionHandlerResolver = createExceptionHandlerExceptionResolver(); // 创建ExceptionHandlerExceptionResolver
 		exceptionHandlerResolver.setContentNegotiationManager(mvcContentNegotiationManager);
 		exceptionHandlerResolver.setMessageConverters(getMessageConverters());
 		exceptionHandlerResolver.setCustomArgumentResolvers(getArgumentResolvers());
@@ -1003,14 +1003,14 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 		if (this.applicationContext != null) {
 			exceptionHandlerResolver.setApplicationContext(this.applicationContext);
 		}
-		exceptionHandlerResolver.afterPropertiesSet();
-		exceptionResolvers.add(exceptionHandlerResolver);
+		exceptionHandlerResolver.afterPropertiesSet(); // 手动调用afterPropertiesSet，初始化解析@ControllerAdvice修饰类中的@ExceptionHandler方法（是解析@ControllerAdvice的入口）
+		exceptionResolvers.add(exceptionHandlerResolver); // 添加异常解析器ExceptionHandlerExceptionResolver
 
 		ResponseStatusExceptionResolver responseStatusResolver = new ResponseStatusExceptionResolver();
 		responseStatusResolver.setMessageSource(this.applicationContext);
-		exceptionResolvers.add(responseStatusResolver);
+		exceptionResolvers.add(responseStatusResolver); // 添加异常解析器ResponseStatusExceptionResolver
 
-		exceptionResolvers.add(new DefaultHandlerExceptionResolver());
+		exceptionResolvers.add(new DefaultHandlerExceptionResolver()); // 添加异常解析器DefaultHandlerExceptionResolver
 	}
 
 	/**

@@ -41,23 +41,23 @@ public class HandlerExecutionChain {
 
 	private static final Log logger = LogFactory.getLog(HandlerExecutionChain.class);
 
-	private final Object handler;
+	private final Object handler; // handler对象
 
 	@Nullable
-	private HandlerInterceptor[] interceptors;
+	private HandlerInterceptor[] interceptors; // 构造方法传入的拦截器数组
 
 	@Nullable
-	private List<HandlerInterceptor> interceptorList;
+	private List<HandlerInterceptor> interceptorList; // 最终的拦截器列表
 
-	private int interceptorIndex = -1;
+	private int interceptorIndex = -1; // 当前拦截器链中的索引（前置拦截递增、后置拦截器递减）
 
 
 	/**
 	 * Create a new HandlerExecutionChain.
 	 * @param handler the handler object to execute
 	 */
-	public HandlerExecutionChain(Object handler) {
-		this(handler, (HandlerInterceptor[]) null);
+	public HandlerExecutionChain(Object handler) { // 初始化HandlerExecutionChain
+		this(handler, (HandlerInterceptor[]) null); // 调用构造方法
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class HandlerExecutionChain {
 		return this.handler;
 	}
 
-	public void addInterceptor(HandlerInterceptor interceptor) {
+	public void addInterceptor(HandlerInterceptor interceptor) { // 添加拦截器
 		initInterceptorList().add(interceptor);
 	}
 
@@ -119,7 +119,7 @@ public class HandlerExecutionChain {
 	 * @return the array of HandlerInterceptors instances (may be {@code null})
 	 */
 	@Nullable
-	public HandlerInterceptor[] getInterceptors() {
+	public HandlerInterceptor[] getInterceptors() { // 获取连接器链
 		if (this.interceptors == null && this.interceptorList != null) {
 			this.interceptors = this.interceptorList.toArray(new HandlerInterceptor[0]);
 		}
@@ -133,16 +133,16 @@ public class HandlerExecutionChain {
 	 * next interceptor or the handler itself. Else, DispatcherServlet assumes
 	 * that this interceptor has already dealt with the response itself.
 	 */
-	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception { // 前置拦截
+	boolean applyPreHandle(HttpServletRequest request, HttpServletResponse response) throws Exception { // 前置拦截（权限校验等）
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
-			for (int i = 0; i < interceptors.length; i++) { // 遍历拦截器
+			for (int i = 0; i < interceptors.length; i++) { // 正序遍历拦截器
 				HandlerInterceptor interceptor = interceptors[i];
-				if (!interceptor.preHandle(request, response, this.handler)) { // 调用HandlerInterceptor#preHandle前置拦截方法，返回false则返回
-					triggerAfterCompletion(request, response, null);
+				if (!interceptor.preHandle(request, response, this.handler)) { // 调用HandlerInterceptor#preHandle前置拦截方法
+					triggerAfterCompletion(request, response, null); // 当返回false时，调用后置拦截方法、并返回false
 					return false;
 				}
-				this.interceptorIndex = i;
+				this.interceptorIndex = i; // 记录当前拦截器链中的索引
 			}
 		}
 		return true;
@@ -151,14 +151,14 @@ public class HandlerExecutionChain {
 	/**
 	 * Apply postHandle methods of registered interceptors.
 	 */
-	void applyPostHandle(HttpServletRequest request, HttpServletResponse response, @Nullable ModelAndView mv) // 后置拦截
+	void applyPostHandle(HttpServletRequest request, HttpServletResponse response, @Nullable ModelAndView mv) // 中置拦截（修改视图等）
 			throws Exception {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
-			for (int i = interceptors.length - 1; i >= 0; i--) { // 遍历拦截器
+			for (int i = interceptors.length - 1; i >= 0; i--) { // 倒序遍历拦截器
 				HandlerInterceptor interceptor = interceptors[i];
-				interceptor.postHandle(request, response, this.handler, mv); // 调用HandlerInterceptor#postHandle后置拦截方法
+				interceptor.postHandle(request, response, this.handler, mv); // 调用HandlerInterceptor#postHandle中置拦截方法
 			}
 		}
 	}
@@ -168,15 +168,15 @@ public class HandlerExecutionChain {
 	 * Will just invoke afterCompletion for all interceptors whose preHandle invocation
 	 * has successfully completed and returned true.
 	 */
-	void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, @Nullable Exception ex)
+	void triggerAfterCompletion(HttpServletRequest request, HttpServletResponse response, @Nullable Exception ex) // 后置拦截（释放资源等）
 			throws Exception {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
-			for (int i = this.interceptorIndex; i >= 0; i--) {
+			for (int i = this.interceptorIndex; i >= 0; i--) { // 从当前拦截器链中的索引倒序遍历
 				HandlerInterceptor interceptor = interceptors[i];
 				try {
-					interceptor.afterCompletion(request, response, this.handler, ex);
+					interceptor.afterCompletion(request, response, this.handler, ex); // 调用HandlerInterceptor#afterCompletion后置拦截方法
 				}
 				catch (Throwable ex2) {
 					logger.error("HandlerInterceptor.afterCompletion threw exception", ex2);
