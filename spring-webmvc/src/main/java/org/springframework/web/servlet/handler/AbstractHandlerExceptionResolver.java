@@ -42,7 +42,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Sam Brannen
  * @since 3.0
  */
-public abstract class AbstractHandlerExceptionResolver implements HandlerExceptionResolver, Ordered {
+public abstract class AbstractHandlerExceptionResolver implements HandlerExceptionResolver, Ordered { // HandlerExceptionResolver接口的抽象类
 
 	private static final String HEADER_CACHE_CONTROL = "Cache-Control";
 
@@ -133,12 +133,12 @@ public abstract class AbstractHandlerExceptionResolver implements HandlerExcepti
 	 */
 	@Override
 	@Nullable
-	public ModelAndView resolveException(
+	public ModelAndView resolveException( // 解析异常
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
 		if (shouldApplyTo(request, handler)) {
 			prepareResponse(ex, response);
-			ModelAndView result = doResolveException(request, response, handler, ex);
+			ModelAndView result = doResolveException(request, response, handler, ex); // 解析异常（调用子类实现方法，返回null时会遍历下一个异常解析器）
 			if (result != null) {
 				// Print debug message when warn logger is not enabled.
 				if (logger.isDebugEnabled() && (this.warnLogger == null || !this.warnLogger.isWarnEnabled())) {

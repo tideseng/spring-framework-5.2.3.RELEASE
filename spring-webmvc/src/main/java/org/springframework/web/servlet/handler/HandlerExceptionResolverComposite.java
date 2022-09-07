@@ -37,7 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class HandlerExceptionResolverComposite implements HandlerExceptionResolver, Ordered {
 
 	@Nullable
-	private List<HandlerExceptionResolver> resolvers;
+	private List<HandlerExceptionResolver> resolvers; // 异常解析器列表
 
 	private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -45,7 +45,7 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
 	/**
 	 * Set the list of exception resolvers to delegate to.
 	 */
-	public void setExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+	public void setExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) { // 设置异常解析器列表
 		this.resolvers = exceptionResolvers;
 	}
 
@@ -72,12 +72,12 @@ public class HandlerExceptionResolverComposite implements HandlerExceptionResolv
 	 */
 	@Override
 	@Nullable
-	public ModelAndView resolveException(
+	public ModelAndView resolveException( // 解析异常
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
 		if (this.resolvers != null) {
-			for (HandlerExceptionResolver handlerExceptionResolver : this.resolvers) {
-				ModelAndView mav = handlerExceptionResolver.resolveException(request, response, handler, ex);
+			for (HandlerExceptionResolver handlerExceptionResolver : this.resolvers) { // 遍历异常解析器（默认情况下会有三个：ExceptionHandlerExceptionResolver、ResponseStatusExceptionResolver、DefaultHandlerExceptionResolver）
+				ModelAndView mav = handlerExceptionResolver.resolveException(request, response, handler, ex); // 解析异常
 				if (mav != null) {
 					return mav;
 				}

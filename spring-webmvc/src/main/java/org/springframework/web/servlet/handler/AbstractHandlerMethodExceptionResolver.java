@@ -55,10 +55,10 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 
 	@Override
 	@Nullable
-	protected final ModelAndView doResolveException(
+	protected final ModelAndView doResolveException( // 解析异常
 			HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex) {
 
-		return doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex);
+		return doResolveHandlerMethodException(request, response, (HandlerMethod) handler, ex); // 解析异常
 	}
 
 	/**

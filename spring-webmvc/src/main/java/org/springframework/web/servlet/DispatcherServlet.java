@@ -333,7 +333,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 
 	/** List of HandlerExceptionResolvers used by this servlet. */
 	@Nullable
-	private List<HandlerExceptionResolver> handlerExceptionResolvers;
+	private List<HandlerExceptionResolver> handlerExceptionResolvers; // HandlerExceptionResolver实现类列表（默认情况下只有一个HandlerExceptionResolverComposite元素）
 
 	/** RequestToViewNameTranslator used by this servlet. */
 	@Nullable
@@ -505,7 +505,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		initThemeResolver(context);
 		initHandlerMappings(context); // 初始化HandlerMapping
 		initHandlerAdapters(context); // 初始化HandlerAdapter
-		initHandlerExceptionResolvers(context);
+		initHandlerExceptionResolvers(context); // 初始化HandlerExceptionResolver
 		initRequestToViewNameTranslator(context);
 		initViewResolvers(context); // 初始化视图解析器
 		initFlashMapManager(context);
@@ -668,17 +668,17 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * we default to no exception resolver.
 	 */
-	private void initHandlerExceptionResolvers(ApplicationContext context) {
+	private void initHandlerExceptionResolvers(ApplicationContext context) { // 初始化HandlerExceptionResolver
 		this.handlerExceptionResolvers = null;
 
-		if (this.detectAllHandlerExceptionResolvers) {
+		if (this.detectAllHandlerExceptionResolvers) { // 默认为true
 			// Find all HandlerExceptionResolvers in the ApplicationContext, including ancestor contexts.
 			Map<String, HandlerExceptionResolver> matchingBeans = BeanFactoryUtils
-					.beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false);
+					.beansOfTypeIncludingAncestors(context, HandlerExceptionResolver.class, true, false); // 从容器中获取HandlerExceptionResolver类型的实例
 			if (!matchingBeans.isEmpty()) {
-				this.handlerExceptionResolvers = new ArrayList<>(matchingBeans.values());
+				this.handlerExceptionResolvers = new ArrayList<>(matchingBeans.values()); // 初始化HandlerExceptionResolver
 				// We keep HandlerExceptionResolvers in sorted order.
-				AnnotationAwareOrderComparator.sort(this.handlerExceptionResolvers);
+				AnnotationAwareOrderComparator.sort(this.handlerExceptionResolvers); // 排序
 			}
 		}
 		else {
@@ -1006,15 +1006,15 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 
 		try {
 			ModelAndView mv = null;
-			Exception dispatchException = null;
+			Exception dispatchException = null; // 异常
 
 			try {
 				processedRequest = checkMultipart(request); // 文件上传请求
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
-				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain（包含了Handler和拦截器链）
-				if (mappedHandler == null) {
+				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain（包含了Handler和Interceptor拦截器链）
+				if (mappedHandler == null) { // HandlerMapping匹配不到时，设置404错误
 					noHandlerFound(processedRequest, response);
 					return;
 				}
@@ -1032,7 +1032,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 					}
 				}
 
-				if (!mappedHandler.applyPreHandle(processedRequest, response)) { // 前置拦截，如果为false则直接返回
+				if (!mappedHandler.applyPreHandle(processedRequest, response)) { // 前置拦截，如果为false则直接返回（权限校验等）
 					return;
 				}
 
@@ -1044,17 +1044,17 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 				}
 
 				applyDefaultViewName(processedRequest, mv);
-				mappedHandler.applyPostHandle(processedRequest, response, mv); // 后置拦截
+				mappedHandler.applyPostHandle(processedRequest, response, mv); // 中置拦截（修改视图等）
 			}
-			catch (Exception ex) {
+			catch (Exception ex) { // 捕获Exception异常
 				dispatchException = ex;
 			}
-			catch (Throwable err) {
+			catch (Throwable err) { // 捕获Throwable异常
 				// As of 4.3, we're processing Errors thrown from handler methods as well,
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
-			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException); // 视图渲染
+			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException); // 处理结果--异常处理、视图渲染、后置拦截（释放资源等）
 		}
 		catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
@@ -1095,20 +1095,20 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * Handle the result of handler selection and handler invocation, which is
 	 * either a ModelAndView or an Exception to be resolved to a ModelAndView.
 	 */
-	private void processDispatchResult(HttpServletRequest request, HttpServletResponse response, // 视图渲染
+	private void processDispatchResult(HttpServletRequest request, HttpServletResponse response, // 处理结果--异常处理、视图渲染、后置拦截（释放资源等）
 			@Nullable HandlerExecutionChain mappedHandler, @Nullable ModelAndView mv,
 			@Nullable Exception exception) throws Exception {
 
 		boolean errorView = false;
 
-		if (exception != null) { // 如果异常不为null
+		if (exception != null) { // 判断是否产生异常
 			if (exception instanceof ModelAndViewDefiningException) {
 				logger.debug("ModelAndViewDefiningException encountered", exception);
 				mv = ((ModelAndViewDefiningException) exception).getModelAndView();
 			}
 			else {
-				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null);
-				mv = processHandlerException(request, response, handler, exception);
+				Object handler = (mappedHandler != null ? mappedHandler.getHandler() : null); // 获取handler
+				mv = processHandlerException(request, response, handler, exception); // 处理异常
 				errorView = (mv != null);
 			}
 		}
@@ -1133,7 +1133,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 
 		if (mappedHandler != null) {
 			// Exception (if any) is already handled..
-			mappedHandler.triggerAfterCompletion(request, response, null);
+			mappedHandler.triggerAfterCompletion(request, response, null); // 后置拦截
 		}
 	}
 
@@ -1287,7 +1287,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * @throws Exception if no error ModelAndView found
 	 */
 	@Nullable
-	protected ModelAndView processHandlerException(HttpServletRequest request, HttpServletResponse response,
+	protected ModelAndView processHandlerException(HttpServletRequest request, HttpServletResponse response, // 处理异常
 			@Nullable Object handler, Exception ex) throws Exception {
 
 		// Success and error responses may use different content types
@@ -1296,8 +1296,8 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		// Check registered HandlerExceptionResolvers...
 		ModelAndView exMv = null;
 		if (this.handlerExceptionResolvers != null) {
-			for (HandlerExceptionResolver resolver : this.handlerExceptionResolvers) {
-				exMv = resolver.resolveException(request, response, handler, ex);
+			for (HandlerExceptionResolver resolver : this.handlerExceptionResolvers) { // 遍历异常解析器（默认情况下只有一个HandlerExceptionResolverComposite元素）
+				exMv = resolver.resolveException(request, response, handler, ex); // 解析异常
 				if (exMv != null) {
 					break;
 				}
