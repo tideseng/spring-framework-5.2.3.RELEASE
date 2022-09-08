@@ -1013,14 +1013,14 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
-				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain（包含了Handler和Interceptor拦截器链）
+				mappedHandler = getHandler(processedRequest); // 获取请求的HandlerExecutionChain（包含了handler和Interceptor拦截器链，其中handler可能为HandlerMethod、Controller实例、PreFlightHandler、HandlerFunction）
 				if (mappedHandler == null) { // HandlerMapping匹配不到时，设置404错误
 					noHandlerFound(processedRequest, response);
 					return;
 				}
 
 				// Determine handler adapter for the current request.
-				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler()); // 获取与Handler匹配的HandlerAdapter实例对象
+				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler()); // 获取与handler匹配的HandlerAdapter实例对象（RequestMappingHandlerAdapter匹配HandlerMethod、SimpleControllerHandlerAdapter匹配Controller、HttpRequestHandlerAdapter匹配HttpRequestHandler、HandlerFunctionAdapter匹配HandlerFunction）
 
 				// Process last-modified header, if supported by the handler.
 				String method = request.getMethod();
@@ -1037,7 +1037,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 				}
 
 				// Actually invoke the handler.
-				mv = ha.handle(processedRequest, response, mappedHandler.getHandler()); // 调用handler，即调用Controller方法
+				mv = ha.handle(processedRequest, response, mappedHandler.getHandler()); // 调用handler处理方法
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;

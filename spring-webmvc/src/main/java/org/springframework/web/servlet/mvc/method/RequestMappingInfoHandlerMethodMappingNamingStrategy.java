@@ -40,7 +40,7 @@ public class RequestMappingInfoHandlerMethodMappingNamingStrategy
 
 
 	@Override
-	public String getName(HandlerMethod handlerMethod, RequestMappingInfo mapping) {
+	public String getName(HandlerMethod handlerMethod, RequestMappingInfo mapping) { // 获取名称（当RequestMappingInfo有名称时直接返回，没有时根据HandlerMethod所在类名和方法名进行转换获取）
 		if (mapping.getName() != null) {
 			return mapping.getName();
 		}

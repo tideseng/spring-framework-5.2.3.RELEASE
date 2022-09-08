@@ -71,17 +71,17 @@ public class HandlerMethod {
 
 	private final Class<?> beanType;
 
-	private final Method method; // @RequestMapping注解修饰的方法
+	private final Method method; // 当前@RequestMapping注解修饰的方法
 
 	private final Method bridgedMethod; // 桥接方法
 
 	private final MethodParameter[] parameters; // 方法入参包装类数组
 
 	@Nullable
-	private HttpStatus responseStatus;
+	private HttpStatus responseStatus; // @ResponseStatus注解的状态码
 
 	@Nullable
-	private String responseStatusReason;
+	private String responseStatusReason; // @ResponseStatus注解的描述信息
 
 	@Nullable
 	private HandlerMethod resolvedFromHandlerMethod;
@@ -104,7 +104,7 @@ public class HandlerMethod {
 		this.method = method;
 		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 		this.parameters = initMethodParameters();
-		evaluateResponseStatus();
+		evaluateResponseStatus(); // 解析当前@RequestMapping方法上的@ResponseStatus注解
 		this.description = initDescription(this.beanType, this.method);
 	}
 
@@ -121,7 +121,7 @@ public class HandlerMethod {
 		this.method = bean.getClass().getMethod(methodName, parameterTypes);
 		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(this.method);
 		this.parameters = initMethodParameters();
-		evaluateResponseStatus();
+		evaluateResponseStatus(); // 解析当前@RequestMapping方法上的@ResponseStatus注解
 		this.description = initDescription(this.beanType, this.method);
 	}
 
@@ -144,7 +144,7 @@ public class HandlerMethod {
 		this.method = method;
 		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 		this.parameters = initMethodParameters();
-		evaluateResponseStatus();
+		evaluateResponseStatus(); // 解析当前@RequestMapping方法上的@ResponseStatus注解
 		this.description = initDescription(this.beanType, this.method);
 	}
 
@@ -192,10 +192,10 @@ public class HandlerMethod {
 		return result;
 	}
 
-	private void evaluateResponseStatus() {
-		ResponseStatus annotation = getMethodAnnotation(ResponseStatus.class);
+	private void evaluateResponseStatus() { // 解析当前@RequestMapping方法上的@ResponseStatus注解
+		ResponseStatus annotation = getMethodAnnotation(ResponseStatus.class); // 获取当前@RequestMapping方法上的@ResponseStatus注解
 		if (annotation == null) {
-			annotation = AnnotatedElementUtils.findMergedAnnotation(getBeanType(), ResponseStatus.class);
+			annotation = AnnotatedElementUtils.findMergedAnnotation(getBeanType(), ResponseStatus.class); // 获取当前@RequestMapping方法所在类上的@ResponseStatus注解
 		}
 		if (annotation != null) {
 			this.responseStatus = annotation.code();
@@ -384,7 +384,7 @@ public class HandlerMethod {
 
 
 	@Override
-	public boolean equals(@Nullable Object other) {
+	public boolean equals(@Nullable Object other) { // 重写了equals方法，当bean属性和method属性都为同一对象时则为true
 		if (this == other) {
 			return true;
 		}

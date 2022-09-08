@@ -91,7 +91,7 @@ public final class PatternsRequestCondition extends AbstractRequestCondition<Pat
 	 * @param useTrailingSlashMatch whether to match irrespective of a trailing slash
 	 * @param fileExtensions a list of file extensions to consider for path matching
 	 */
-	public PatternsRequestCondition(String[] patterns, @Nullable UrlPathHelper urlPathHelper,
+	public PatternsRequestCondition(String[] patterns, @Nullable UrlPathHelper urlPathHelper, // 初始化PatternsRequestCondition
 			@Nullable PathMatcher pathMatcher, boolean useSuffixPatternMatch,
 			boolean useTrailingSlashMatch, @Nullable List<String> fileExtensions) {
 

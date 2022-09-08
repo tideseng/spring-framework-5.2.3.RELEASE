@@ -73,7 +73,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	private final RequestConditionHolder customConditionHolder;
 
 
-	public RequestMappingInfo(@Nullable String name, @Nullable PatternsRequestCondition patterns,
+	public RequestMappingInfo(@Nullable String name, @Nullable PatternsRequestCondition patterns, // 初始化RequestMappingInfo
 			@Nullable RequestMethodsRequestCondition methods, @Nullable ParamsRequestCondition params,
 			@Nullable HeadersRequestCondition headers, @Nullable ConsumesRequestCondition consumes,
 			@Nullable ProducesRequestCondition produces, @Nullable RequestCondition<?> custom) {
@@ -505,15 +505,15 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 		}
 
 		@Override
-		public RequestMappingInfo build() {
+		public RequestMappingInfo build() { // 构建RequestMappingInfo
 			ContentNegotiationManager manager = this.options.getContentNegotiationManager();
 
-			PatternsRequestCondition patternsCondition = new PatternsRequestCondition(
+			PatternsRequestCondition patternsCondition = new PatternsRequestCondition( // 创建PatternsRequestCondition
 					this.paths, this.options.getUrlPathHelper(), this.options.getPathMatcher(),
 					this.options.useSuffixPatternMatch(), this.options.useTrailingSlashMatch(),
 					this.options.getFileExtensions());
 
-			return new RequestMappingInfo(this.mappingName, patternsCondition,
+			return new RequestMappingInfo(this.mappingName, patternsCondition, // 创建RequestMappingInfo
 					new RequestMethodsRequestCondition(this.methods),
 					new ParamsRequestCondition(this.params),
 					new HeadersRequestCondition(this.headers),

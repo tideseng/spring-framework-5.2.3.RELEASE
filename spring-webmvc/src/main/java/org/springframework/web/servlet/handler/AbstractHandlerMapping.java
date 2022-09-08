@@ -85,7 +85,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	private final List<HandlerInterceptor> adaptedInterceptors = new ArrayList<>(); // 最终的拦截器列表（初始化Bean时通过ApplicationContextAware接口注入进行设置）
 
 	@Nullable
-	private CorsConfigurationSource corsConfigurationSource;
+	private CorsConfigurationSource corsConfigurationSource; // 当存在自定义跨域配置时为UrlBasedCorsConfigurationSource，否则为null
 
 	private CorsProcessor corsProcessor = new DefaultCorsProcessor();
 
@@ -208,11 +208,11 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @since 4.2
 	 * @see #setCorsConfigurationSource(CorsConfigurationSource)
 	 */
-	public void setCorsConfigurations(Map<String, CorsConfiguration> corsConfigurations) {
+	public void setCorsConfigurations(Map<String, CorsConfiguration> corsConfigurations) { // 设置跨域配置
 		Assert.notNull(corsConfigurations, "corsConfigurations must not be null");
 		if (!corsConfigurations.isEmpty()) {
-			UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-			source.setCorsConfigurations(corsConfigurations);
+			UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(); // 创建UrlBasedCorsConfigurationSource
+			source.setCorsConfigurations(corsConfigurations); // 设置跨域配置
 			source.setPathMatcher(this.pathMatcher);
 			source.setUrlPathHelper(this.urlPathHelper);
 			source.setLookupPathAttributeName(LOOKUP_PATH);
@@ -392,11 +392,11 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	@Override
 	@Nullable
 	public final HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception { // 获取handler和过滤器链的包装类HandlerExecutionChain
-		Object handler = getHandlerInternal(request); // 根据请求url获取对应的Handler（钩子方法，由子类实现）
+		Object handler = getHandlerInternal(request); // 1.根据请求url获取对应的Handler（钩子方法，由子类实现，RequestMappingHandlerMapping返回HandlerMethod、AbstractUrlHandlerMapping返回HandlerExecutionChain）
 		if (handler == null) {
 			handler = getDefaultHandler();
 		}
-		if (handler == null) {
+		if (handler == null) { // 当Handler为空时，返回null，遍历下一个HandlerMapping
 			return null;
 		}
 		// Bean name or resolved handler?
@@ -404,8 +404,8 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			String handlerName = (String) handler;
 			handler = obtainApplicationContext().getBean(handlerName);
 		}
-
-		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request); // 获取Handler和拦截器链的包装类
+		// 2.封装拦截器链
+		HandlerExecutionChain executionChain = getHandlerExecutionChain(handler, request); // 获取拦截器链，并和Handler一起封装到HandlerExecutionChain中
 
 		if (logger.isTraceEnabled()) {
 			logger.trace("Mapped to " + handler);
@@ -413,12 +413,12 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 		else if (logger.isDebugEnabled() && !request.getDispatcherType().equals(DispatcherType.ASYNC)) {
 			logger.debug("Mapped to " + executionChain.getHandler());
 		}
-
-		if (hasCorsConfigurationSource(handler) || CorsUtils.isPreFlightRequest(request)) { // 判断是否为跨域请求，即判断Request请求头中是否有Origin属性
-			CorsConfiguration config = (this.corsConfigurationSource != null ? this.corsConfigurationSource.getCorsConfiguration(request) : null); // 获取自定义跨域配置
-			CorsConfiguration handlerConfig = getCorsConfiguration(handler, request); // 注解获取跨域配置
-			config = (config != null ? config.combine(handlerConfig) : handlerConfig);
-			executionChain = getCorsHandlerExecutionChain(request, executionChain, config); // 设置跨域拦截器CorsInterceptor
+		// 3.封装跨域配置（当为跨域请求时封装为Handler-PreFlightHandler、否则封装为拦截器-CorsInterceptor）
+		if (hasCorsConfigurationSource(handler) || CorsUtils.isPreFlightRequest(request)) { // 判断是否存在自定义跨域配置 或 是否为跨域请求（Request请求头中是否有Origin、Access-Control-Request-Method属性）
+			CorsConfiguration config = (this.corsConfigurationSource != null ? this.corsConfigurationSource.getCorsConfiguration(request) : null); // 获取自定义跨域配置（自定义跨域配置在@Bean时通过钩子方法设置）
+			CorsConfiguration handlerConfig = getCorsConfiguration(handler, request); // 获取跨域配置（子类AbstractHandlerMethodMapping进行了重写，获取@CrossOrigin跨域配置）
+			config = (config != null ? config.combine(handlerConfig) : handlerConfig); // 自定义跨域配置为null时，设置为@CrossOrigin跨域配置（@CrossOrigin跨域配置在afterPropertiesSet方法中与HandlerMethod一起初始化）
+			executionChain = getCorsHandlerExecutionChain(request, executionChain, config); // 将跨域配置添加到HandlerExecutionChain中（当为跨域请求时将handler替换为PreFlightHandler、否则添加拦截器CorsInterceptor）
 		}
 
 		return executionChain;
@@ -463,16 +463,16 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @return the HandlerExecutionChain (never {@code null})
 	 * @see #getAdaptedInterceptors()
 	 */
-	protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) { // 获取Handler和拦截器链的包装类
+	protected HandlerExecutionChain getHandlerExecutionChain(Object handler, HttpServletRequest request) { // 获取拦截器链，并和Handler一起封装到HandlerExecutionChain中
 		HandlerExecutionChain chain = (handler instanceof HandlerExecutionChain ? // 如果传入的类型不是HandlerExecutionChain类型，则进行包装Handler
-				(HandlerExecutionChain) handler : new HandlerExecutionChain(handler));
+				(HandlerExecutionChain) handler : new HandlerExecutionChain(handler)); // 创建HandlerExecutionChain
 
 		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request, LOOKUP_PATH); // 获取请求地址
 		for (HandlerInterceptor interceptor : this.adaptedInterceptors) { // 遍历拦截器
 			if (interceptor instanceof MappedInterceptor) {
 				MappedInterceptor mappedInterceptor = (MappedInterceptor) interceptor;
-				if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) {
-					chain.addInterceptor(mappedInterceptor.getInterceptor());
+				if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) { // 当拦截器为MappedInterceptor类类型时，判断是否拦截
+					chain.addInterceptor(mappedInterceptor.getInterceptor()); // 添加拦截器
 				}
 			}
 			else {
@@ -486,7 +486,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * Return {@code true} if there is a {@link CorsConfigurationSource} for this handler.
 	 * @since 5.2
 	 */
-	protected boolean hasCorsConfigurationSource(Object handler) {
+	protected boolean hasCorsConfigurationSource(Object handler) { // 判断是否存在自定义跨域配置
 		if (handler instanceof HandlerExecutionChain) {
 			handler = ((HandlerExecutionChain) handler).getHandler();
 		}
@@ -524,21 +524,21 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * @param config the applicable CORS configuration (possibly {@code null})
 	 * @since 4.2
 	 */
-	protected HandlerExecutionChain getCorsHandlerExecutionChain(HttpServletRequest request,
+	protected HandlerExecutionChain getCorsHandlerExecutionChain(HttpServletRequest request, // 添加跨域拦截器CorsInterceptor
 			HandlerExecutionChain chain, @Nullable CorsConfiguration config) {
 
-		if (CorsUtils.isPreFlightRequest(request)) {
+		if (CorsUtils.isPreFlightRequest(request)) { // 判断是否为跨域请求（Request请求头中是否有Origin、Access-Control-Request-Method属性）
 			HandlerInterceptor[] interceptors = chain.getInterceptors();
-			chain = new HandlerExecutionChain(new PreFlightHandler(config), interceptors);
+			chain = new HandlerExecutionChain(new PreFlightHandler(config), interceptors); // 将跨域配置封装到Handler-PreFlightHandler中
 		}
 		else {
-			chain.addInterceptor(0, new CorsInterceptor(config));
+			chain.addInterceptor(0, new CorsInterceptor(config)); // 添加跨域拦截器CorsInterceptor，并排在首位
 		}
 		return chain;
 	}
 
 
-	private class PreFlightHandler implements HttpRequestHandler, CorsConfigurationSource {
+	private class PreFlightHandler implements HttpRequestHandler, CorsConfigurationSource { // 实现了HttpRequestHandler接口
 
 		@Nullable
 		private final CorsConfiguration config;
@@ -549,7 +549,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 
 		@Override
 		public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-			corsProcessor.processRequest(this.config, request, response);
+			corsProcessor.processRequest(this.config, request, response); // 处理跨域请求
 		}
 
 		@Override
@@ -579,7 +579,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 				return true;
 			}
 
-			return corsProcessor.processRequest(this.config, request, response);
+			return corsProcessor.processRequest(this.config, request, response); // 处理跨域请求
 		}
 
 		@Override

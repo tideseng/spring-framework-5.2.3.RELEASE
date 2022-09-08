@@ -49,7 +49,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	@Nullable
 	private WebDataBinderFactory dataBinderFactory;
 
-	private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite();
+	private HandlerMethodArgumentResolverComposite resolvers = new HandlerMethodArgumentResolverComposite(); // 参数解析器（返回值解析器在子类中设置）
 
 	private ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
@@ -65,7 +65,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	 * Create an instance from a bean instance and a method.
 	 */
 	public InvocableHandlerMethod(Object bean, Method method) { // 初始化InvocableHandlerMethod
-		super(bean, method); // 调用父类注入@ModelAttribute注解方法
+		super(bean, method); // 调用父类构造函数
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Set {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers} to use to use for resolving method argument values.
 	 */
-	public void setHandlerMethodArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) {
+	public void setHandlerMethodArgumentResolvers(HandlerMethodArgumentResolverComposite argumentResolvers) { // 设置参数解析器
 		this.resolvers = argumentResolvers;
 	}
 

@@ -87,7 +87,7 @@ public class SimpleUrlHandlerMapping extends AbstractUrlHandlerMapping { // 重�
 	 * @see #setUrlMap(Map)
 	 * @see #setOrder(int)
 	 */
-	public SimpleUrlHandlerMapping(Map<String, ?> urlMap, int order) { // 初始化SimpleUrlHandlerMapping
+	public SimpleUrlHandlerMapping(Map<String, ?> urlMap, int order) { // 初始化SimpleUrlHandlerMapping，注入Map
 		setUrlMap(urlMap);
 		setOrder(order);
 	}

@@ -65,7 +65,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
  * @since 3.1
  */
 public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMapping // 通过@Bean实例化设置拦截器、Cors配置; 通过实现InitializingBean接口来初始化HandlerMethod
-		implements MatchableHandlerMapping, EmbeddedValueResolverAware {
+		implements MatchableHandlerMapping, EmbeddedValueResolverAware { // 实现了EmbeddedValueResolverAware接口，在初始化前置方法中会遍历BeanPostProcessor，由ApplicationContextAwareProcessor注入EmbeddedValueResolver
 
 	private boolean useSuffixPatternMatch = true;
 
@@ -78,7 +78,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	private ContentNegotiationManager contentNegotiationManager = new ContentNegotiationManager();
 
 	@Nullable
-	private StringValueResolver embeddedValueResolver;
+	private StringValueResolver embeddedValueResolver; // 占位符解析器
 
 	private RequestMappingInfo.BuilderConfiguration config = new RequestMappingInfo.BuilderConfiguration(); // RequestMappingInfo构建配置（在InitializingBean接口中初始化）
 
@@ -154,7 +154,7 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	public void setEmbeddedValueResolver(StringValueResolver resolver) {
+	public void setEmbeddedValueResolver(StringValueResolver resolver) { // 由ApplicationContextAwareProcessor注入
 		this.embeddedValueResolver = resolver;
 	}
 
@@ -305,11 +305,11 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 * a directly declared annotation, a meta-annotation, or the synthesized
 	 * result of merging annotation attributes within an annotation hierarchy.
 	 */
-	protected RequestMappingInfo createRequestMappingInfo( // 构建RequestMappingInfo
+	protected RequestMappingInfo createRequestMappingInfo( // 构建RequestMappingInfo（是解析请求路径占位符的入口）
 			RequestMapping requestMapping, @Nullable RequestCondition<?> customCondition) {
 
-		RequestMappingInfo.Builder builder = RequestMappingInfo
-				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path()))
+		RequestMappingInfo.Builder builder = RequestMappingInfo // 构建RequestMappingInfo.Builder，将@RequestMapping中的相关注解信息拷贝到Builder中
+				.paths(resolveEmbeddedValuesInPatterns(requestMapping.path())) // 先解析请求路径占位符，再设置到属性中
 				.methods(requestMapping.method())
 				.params(requestMapping.params())
 				.headers(requestMapping.headers())
@@ -346,8 +346,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) { // 注册HandlerMethod，建立映射关系
-		super.registerHandlerMethod(handler, method, mapping); // 注册HandlerMethod，建立映射关系
+	protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) { // 注册HandlerMethod到MappingRegistry，建立映射关系
+		super.registerHandlerMethod(handler, method, mapping); // 注册HandlerMethod到MappingRegistry，建立映射关系
 		updateConsumesCondition(mapping, method);
 	}
 
@@ -377,26 +377,26 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	}
 
 	@Override
-	protected CorsConfiguration initCorsConfiguration(Object handler, Method method, RequestMappingInfo mappingInfo) {
-		HandlerMethod handlerMethod = createHandlerMethod(handler, method);
-		Class<?> beanType = handlerMethod.getBeanType();
-		CrossOrigin typeAnnotation = AnnotatedElementUtils.findMergedAnnotation(beanType, CrossOrigin.class);
-		CrossOrigin methodAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, CrossOrigin.class);
+	protected CorsConfiguration initCorsConfiguration(Object handler, Method method, RequestMappingInfo mappingInfo) { // 初始化CorsConfiguration（判断方法上是否有@CrossOrigin注解，将其封装成CorsConfiguration）
+		HandlerMethod handlerMethod = createHandlerMethod(handler, method); // 构建HandlerMethod
+		Class<?> beanType = handlerMethod.getBeanType(); // 获取BeanClass
+		CrossOrigin typeAnnotation = AnnotatedElementUtils.findMergedAnnotation(beanType, CrossOrigin.class); // 获取类上的@CrossOrigin注解
+		CrossOrigin methodAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, CrossOrigin.class); // 获取方法上的@CrossOrigin注解
 
-		if (typeAnnotation == null && methodAnnotation == null) {
+		if (typeAnnotation == null && methodAnnotation == null) { // 当类上和方法上都没有@CrossOrigin注解时，返回null
 			return null;
 		}
 
 		CorsConfiguration config = new CorsConfiguration();
-		updateCorsConfig(config, typeAnnotation);
-		updateCorsConfig(config, methodAnnotation);
+		updateCorsConfig(config, typeAnnotation); // 将类上的注解属性填充到CorsConfiguration中
+		updateCorsConfig(config, methodAnnotation); // 将方法上的注解属性填充到CorsConfiguration中
 
 		if (CollectionUtils.isEmpty(config.getAllowedMethods())) {
 			for (RequestMethod allowedMethod : mappingInfo.getMethodsCondition().getMethods()) {
 				config.addAllowedMethod(allowedMethod.name());
 			}
 		}
-		return config.applyPermitDefaultValues();
+		return config.applyPermitDefaultValues(); // 设置默认值（当注解没有指定属性时）
 	}
 
 	private void updateCorsConfig(CorsConfiguration config, @Nullable CrossOrigin annotation) {

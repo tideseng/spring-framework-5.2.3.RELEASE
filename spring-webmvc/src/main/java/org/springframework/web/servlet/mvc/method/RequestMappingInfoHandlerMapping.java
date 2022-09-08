@@ -55,7 +55,7 @@ import org.springframework.web.util.WebUtils;
  * @author Rossen Stoyanchev
  * @since 3.1
  */
-public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMethodMapping<RequestMappingInfo> {
+public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMethodMapping<RequestMappingInfo> { // RequestMappingHandlerMapping等相关类的抽象父类
 
 	private static final Method HTTP_OPTIONS_HANDLE_METHOD;
 
@@ -71,7 +71,7 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 
 
 	protected RequestMappingInfoHandlerMapping() {
-		setHandlerMethodMappingNamingStrategy(new RequestMappingInfoHandlerMethodMappingNamingStrategy());
+		setHandlerMethodMappingNamingStrategy(new RequestMappingInfoHandlerMethodMappingNamingStrategy()); // 设置HandlerMethodMappingNamingStrategy
 	}
 
 

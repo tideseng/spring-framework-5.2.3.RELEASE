@@ -140,7 +140,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 					rawHandler = obtainApplicationContext().getBean(handlerName);
 				}
 				validateHandler(rawHandler, request);
-				handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null);
+				handler = buildPathExposingHandler(rawHandler, lookupPath, lookupPath, null); // 构建HandlerExecutionChain，将拦截器链、handler包装到HandlerExecutionChain中
 			}
 		}
 		return handler;
@@ -312,7 +312,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException { // 注册Handler映射
+	protected void registerHandler(String[] urlPaths, String beanName) throws BeansException, IllegalStateException { // 注册Handler映射（BeanNameUrlHandlerMapping的映射关系注册入口）
 		Assert.notNull(urlPaths, "URL path array must not be null");
 		for (String urlPath : urlPaths) {
 			registerHandler(urlPath, beanName); // 注册Handler映射
@@ -327,7 +327,7 @@ public abstract class AbstractUrlHandlerMapping extends AbstractHandlerMapping i
 	 * @throws BeansException if the handler couldn't be registered
 	 * @throws IllegalStateException if there is a conflicting handler registered
 	 */
-	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException { // 注册Handler映射
+	protected void registerHandler(String urlPath, Object handler) throws BeansException, IllegalStateException { // 注册Handler映射（SimpleUrlHandlerMapping的映射关系注册入口）
 		Assert.notNull(urlPath, "URL path must not be null");
 		Assert.notNull(handler, "Handler object must not be null");
 		Object resolvedHandler = handler; // handler实例

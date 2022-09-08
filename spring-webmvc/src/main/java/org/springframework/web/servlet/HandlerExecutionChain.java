@@ -66,7 +66,7 @@ public class HandlerExecutionChain {
 	 * @param interceptors the array of interceptors to apply
 	 * (in the given order) before the handler itself executes
 	 */
-	public HandlerExecutionChain(Object handler, @Nullable HandlerInterceptor... interceptors) {
+	public HandlerExecutionChain(Object handler, @Nullable HandlerInterceptor... interceptors) { // 初始化HandlerExecutionChain
 		if (handler instanceof HandlerExecutionChain) {
 			HandlerExecutionChain originalChain = (HandlerExecutionChain) handler;
 			this.handler = originalChain.getHandler();
