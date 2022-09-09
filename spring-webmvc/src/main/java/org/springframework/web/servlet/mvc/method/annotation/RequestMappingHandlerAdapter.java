@@ -933,7 +933,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 	}
 
 	private InvocableHandlerMethod createModelAttributeMethod(WebDataBinderFactory factory, Object bean, Method method) { // 创建InvocableHandlerMethod
-		InvocableHandlerMethod attrMethod = new InvocableHandlerMethod(bean, method); // 创建InvocableHandlerMethod
+		InvocableHandlerMethod attrMethod = new InvocableHandlerMethod(bean, method); // 创建InvocableHandlerMethod，注入@ModelAttribute注解方法
 		if (this.argumentResolvers != null) {
 			attrMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		}

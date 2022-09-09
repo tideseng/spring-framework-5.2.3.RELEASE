@@ -604,7 +604,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * </ul>
 	 */
 	@Bean
-	public RequestMappingHandlerAdapter requestMappingHandlerAdapter( // 2.1定义RequestMappingHandlerAdapter
+	public RequestMappingHandlerAdapter requestMappingHandlerAdapter( // 2.1定义RequestMappingHandlerAdapter（处理HandlerMethod类型的Handler）
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcValidator") Validator validator) {
@@ -650,7 +650,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * @since 5.2
 	 */
 	@Bean
-	public HandlerFunctionAdapter handlerFunctionAdapter() { // 2.2定义HandlerFunctionAdapter
+	public HandlerFunctionAdapter handlerFunctionAdapter() { // 2.2定义HandlerFunctionAdapter（处理HandlerFunction类型的Handler）
 		return new HandlerFunctionAdapter();
 	}
 
@@ -918,7 +918,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * with {@link HttpRequestHandler HttpRequestHandlers}.
 	 */
 	@Bean
-	public HttpRequestHandlerAdapter httpRequestHandlerAdapter() { // 2.3定义HttpRequestHandlerAdapter
+	public HttpRequestHandlerAdapter httpRequestHandlerAdapter() { // 2.3定义HttpRequestHandlerAdapter（处理HttpRequestHandler类型的Handler）
 		return new HttpRequestHandlerAdapter(); // 创建HttpRequestHandlerAdapter
 	}
 
@@ -927,7 +927,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * with interface-based controllers.
 	 */
 	@Bean
-	public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() { // 2.4定义SimpleControllerHandlerAdapter
+	public SimpleControllerHandlerAdapter simpleControllerHandlerAdapter() { // 2.4定义SimpleControllerHandlerAdapter（处理Controller类型的Handler）
 		return new SimpleControllerHandlerAdapter(); // 创建SimpleControllerHandlerAdapter
 	}
 

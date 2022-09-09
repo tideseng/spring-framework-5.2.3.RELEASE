@@ -66,14 +66,14 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	private static final Method CALLABLE_METHOD = ClassUtils.getMethod(Callable.class, "call");
 
 	@Nullable
-	private HandlerMethodReturnValueHandlerComposite returnValueHandlers;
+	private HandlerMethodReturnValueHandlerComposite returnValueHandlers; // 返回值解析器（参数解析器在父类中设置）
 
 
 	/**
 	 * Creates an instance from the given handler and method.
 	 */
-	public ServletInvocableHandlerMethod(Object handler, Method method) {
-		super(handler, method);
+	public ServletInvocableHandlerMethod(Object handler, Method method) { // 初始化ServletInvocableHandlerMethod
+		super(handler, method); // 调用父类构造函数，注入@ExceptionHandler注解方法
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	 * Register {@link HandlerMethodReturnValueHandler} instances to use to
 	 * handle return values.
 	 */
-	public void setHandlerMethodReturnValueHandlers(HandlerMethodReturnValueHandlerComposite returnValueHandlers) {
+	public void setHandlerMethodReturnValueHandlers(HandlerMethodReturnValueHandlerComposite returnValueHandlers) { // 设置返回值解析器
 		this.returnValueHandlers = returnValueHandlers;
 	}
 
@@ -100,10 +100,10 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	 * @param mavContainer the ModelAndViewContainer for this request
 	 * @param providedArgs "given" arguments matched by type (not resolved)
 	 */
-	public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer, // 调用Controller方法
+	public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer, // 调用Controller方法或异常处理方法
 			Object... providedArgs) throws Exception {
 
-		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs); // 调用@RequestMapping注解修饰的方法
+		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs); // 调用@RequestMapping或@ExceptionHandler注解修饰的方法
 		setResponseStatus(webRequest);
 
 		if (returnValue == null) {
@@ -118,10 +118,10 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 			return;
 		}
 
-		mavContainer.setRequestHandled(false);
+		mavContainer.setRequestHandled(false); // 默认将requestHandled设置为false
 		Assert.state(this.returnValueHandlers != null, "No return value handlers");
 		try {
-			this.returnValueHandlers.handleReturnValue( // 返回值处理
+			this.returnValueHandlers.handleReturnValue( // 返回值处理（返回值解析器会根据情况修改requestHandled值）
 					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		}
 		catch (Exception ex) {
