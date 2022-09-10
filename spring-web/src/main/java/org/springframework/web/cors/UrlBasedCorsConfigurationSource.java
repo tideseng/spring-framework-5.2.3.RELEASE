@@ -40,7 +40,7 @@ import org.springframework.web.util.UrlPathHelper;
  */
 public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource {
 
-	private final Map<String, CorsConfiguration> corsConfigurations = new LinkedHashMap<>();
+	private final Map<String, CorsConfiguration> corsConfigurations = new LinkedHashMap<>(); // 跨域配置映射
 
 	private PathMatcher pathMatcher = new AntPathMatcher();
 
@@ -107,7 +107,7 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 	/**
 	 * Set CORS configuration based on URL patterns.
 	 */
-	public void setCorsConfigurations(@Nullable Map<String, CorsConfiguration> corsConfigurations) {
+	public void setCorsConfigurations(@Nullable Map<String, CorsConfiguration> corsConfigurations) { // 设置跨域配置
 		this.corsConfigurations.clear();
 		if (corsConfigurations != null) {
 			this.corsConfigurations.putAll(corsConfigurations);
@@ -131,11 +131,11 @@ public class UrlBasedCorsConfigurationSource implements CorsConfigurationSource 
 
 	@Override
 	@Nullable
-	public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request, this.lookupPathAttributeName);
-		for (Map.Entry<String, CorsConfiguration> entry : this.corsConfigurations.entrySet()) {
-			if (this.pathMatcher.match(entry.getKey(), lookupPath)) {
-				return entry.getValue();
+	public CorsConfiguration getCorsConfiguration(HttpServletRequest request) { // 获取自定义跨域配置
+		String lookupPath = this.urlPathHelper.getLookupPathForRequest(request, this.lookupPathAttributeName); // 获取请求url
+		for (Map.Entry<String, CorsConfiguration> entry : this.corsConfigurations.entrySet()) { // 遍历跨域配置映射
+			if (this.pathMatcher.match(entry.getKey(), lookupPath)) { // 判断路径是否匹配
+				return entry.getValue(); // 获取跨域配置
 			}
 		}
 		return null;

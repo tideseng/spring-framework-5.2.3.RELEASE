@@ -69,7 +69,7 @@ public abstract class CorsUtils {
 	 * Returns {@code true} if the request is a valid CORS pre-flight one by checking {code OPTIONS} method with
 	 * {@code Origin} and {@code Access-Control-Request-Method} headers presence.
 	 */
-	public static boolean isPreFlightRequest(HttpServletRequest request) {
+	public static boolean isPreFlightRequest(HttpServletRequest request) { // 判断是否为跨域请求（Request请求头中是否有Origin、Access-Control-Request-Method属性）
 		return (HttpMethod.OPTIONS.matches(request.getMethod()) &&
 				request.getHeader(HttpHeaders.ORIGIN) != null &&
 				request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD) != null);

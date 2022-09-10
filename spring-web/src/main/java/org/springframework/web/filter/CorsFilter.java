@@ -85,7 +85,7 @@ public class CorsFilter extends OncePerRequestFilter {
 			FilterChain filterChain) throws ServletException, IOException {
 
 		CorsConfiguration corsConfiguration = this.configSource.getCorsConfiguration(request);
-		boolean isValid = this.processor.processRequest(corsConfiguration, request, response);
+		boolean isValid = this.processor.processRequest(corsConfiguration, request, response); // 处理跨域请求
 		if (!isValid || CorsUtils.isPreFlightRequest(request)) {
 			return;
 		}

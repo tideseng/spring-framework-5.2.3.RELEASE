@@ -57,7 +57,7 @@ public class DefaultCorsProcessor implements CorsProcessor {
 
 	@Override
 	@SuppressWarnings("resource")
-	public boolean processRequest(@Nullable CorsConfiguration config, HttpServletRequest request,
+	public boolean processRequest(@Nullable CorsConfiguration config, HttpServletRequest request, // 处理跨域请求
 			HttpServletResponse response) throws IOException {
 
 		response.addHeader(HttpHeaders.VARY, HttpHeaders.ORIGIN);
@@ -84,7 +84,7 @@ public class DefaultCorsProcessor implements CorsProcessor {
 			}
 		}
 
-		return handleInternal(new ServletServerHttpRequest(request), new ServletServerHttpResponse(response), config, preFlightRequest);
+		return handleInternal(new ServletServerHttpRequest(request), new ServletServerHttpResponse(response), config, preFlightRequest); // 处理跨域请求
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class DefaultCorsProcessor implements CorsProcessor {
 	/**
 	 * Handle the given request.
 	 */
-	protected boolean handleInternal(ServerHttpRequest request, ServerHttpResponse response,
+	protected boolean handleInternal(ServerHttpRequest request, ServerHttpResponse response, // 处理跨域请求
 			CorsConfiguration config, boolean preFlightRequest) throws IOException {
 
 		String requestOrigin = request.getHeaders().getOrigin();
@@ -130,7 +130,7 @@ public class DefaultCorsProcessor implements CorsProcessor {
 			return false;
 		}
 
-		responseHeaders.setAccessControlAllowOrigin(allowOrigin);
+		responseHeaders.setAccessControlAllowOrigin(allowOrigin); // 设置头信息Access-Control-Allow-Origin（放入到Map容器）
 
 		if (preFlightRequest) {
 			responseHeaders.setAccessControlAllowMethods(allowMethods);
@@ -152,7 +152,7 @@ public class DefaultCorsProcessor implements CorsProcessor {
 			responseHeaders.setAccessControlMaxAge(config.getMaxAge());
 		}
 
-		response.flush();
+		response.flush(); // 设置到Response中
 		return true;
 	}
 

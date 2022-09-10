@@ -90,7 +90,7 @@ public class CorsConfiguration {
 	 * requests allowed for any origin by default.
 	 * @see #applyPermitDefaultValues()
 	 */
-	public CorsConfiguration() {
+	public CorsConfiguration() { // 初始化CorsConfiguration
 	}
 
 	/**
