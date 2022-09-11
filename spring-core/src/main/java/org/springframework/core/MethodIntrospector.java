@@ -55,27 +55,27 @@ public final class MethodIntrospector {
 	 * @return the selected methods associated with their metadata (in the order of retrieval),
 	 * or an empty map in case of no match
 	 */
-	public static <T> Map<Method, T> selectMethods(Class<?> targetType, final MetadataLookup<T> metadataLookup) {
-		final Map<Method, T> methodMap = new LinkedHashMap<>();
-		Set<Class<?>> handlerTypes = new LinkedHashSet<>();
+	public static <T> Map<Method, T> selectMethods(Class<?> targetType, final MetadataLookup<T> metadataLookup) { // 建立@RequestMapping注解修饰的Method对象与RequestMappingInfo的映射关系
+		final Map<Method, T> methodMap = new LinkedHashMap<>(); // 映射容器
+		Set<Class<?>> handlerTypes = new LinkedHashSet<>(); // 要遍历的Class类列表
 		Class<?> specificHandlerType = null;
 
 		if (!Proxy.isProxyClass(targetType)) {
 			specificHandlerType = ClassUtils.getUserClass(targetType);
-			handlerTypes.add(specificHandlerType);
+			handlerTypes.add(specificHandlerType); // 如果不是代理类，则添加当前类
 		}
-		handlerTypes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetType));
+		handlerTypes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetType)); // 添加接口类
 
-		for (Class<?> currentHandlerType : handlerTypes) {
+		for (Class<?> currentHandlerType : handlerTypes) { // 遍历Class类
 			final Class<?> targetClass = (specificHandlerType != null ? specificHandlerType : currentHandlerType);
 
-			ReflectionUtils.doWithMethods(currentHandlerType, method -> {
+			ReflectionUtils.doWithMethods(currentHandlerType, method -> { // 遍历当前Class类的所有方法
 				Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
-				T result = metadataLookup.inspect(specificMethod);
-				if (result != null) {
+				T result = metadataLookup.inspect(specificMethod); // 调用函数式接口，返回RequestMappingInfo
+				if (result != null) { // 返回值不为空，说明当前方法有@RequestMapping注解
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 					if (bridgedMethod == specificMethod || metadataLookup.inspect(bridgedMethod) == null) {
-						methodMap.put(specificMethod, result);
+						methodMap.put(specificMethod, result); // 将方法对象与RequestMappingInfo的映射关系放入容器
 					}
 				}
 			}, ReflectionUtils.USER_DECLARED_METHODS);

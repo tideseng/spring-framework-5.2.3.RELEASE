@@ -70,7 +70,7 @@ import org.springframework.lang.Nullable;
  * @author Sam Brannen
  * @since 16.07.2003
  */
-public class AntPathMatcher implements PathMatcher {
+public class AntPathMatcher implements PathMatcher { // 路径匹配器实现类
 
 	/** Default path separator: "/". */
 	public static final String DEFAULT_PATH_SEPARATOR = "/";
