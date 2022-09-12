@@ -74,12 +74,12 @@ public @interface ResponseStatus {
 	 * @see javax.servlet.http.HttpServletResponse#sendError(int)
 	 */
 	@AliasFor("value")
-	HttpStatus code() default HttpStatus.INTERNAL_SERVER_ERROR;
+	HttpStatus code() default HttpStatus.INTERNAL_SERVER_ERROR; // 响应码
 
 	/**
 	 * The <em>reason</em> to be used for the response.
 	 * @see javax.servlet.http.HttpServletResponse#sendError(int, String)
 	 */
-	String reason() default "";
+	String reason() default ""; // 描述信息
 
 }

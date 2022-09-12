@@ -85,8 +85,8 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 	}
 
 	@Override
-	public void flush() throws IOException {
-		writeHeaders();
+	public void flush() throws IOException { // 设置到Response中
+		writeHeaders(); // 设置到Response中
 		if (this.bodyUsed) {
 			this.servletResponse.flushBuffer();
 		}
@@ -97,7 +97,7 @@ public class ServletServerHttpResponse implements ServerHttpResponse {
 		writeHeaders();
 	}
 
-	private void writeHeaders() {
+	private void writeHeaders() { // 设置到Response中
 		if (!this.headersWritten) {
 			getHeaders().forEach((headerName, headerValues) -> {
 				for (String headerValue : headerValues) {
