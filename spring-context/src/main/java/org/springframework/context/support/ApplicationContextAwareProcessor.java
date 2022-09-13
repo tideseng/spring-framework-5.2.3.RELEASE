@@ -105,22 +105,22 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 	private void invokeAwareInterfaces(Object bean) { // 调用Aware相关接口
 		if (bean instanceof EnvironmentAware) {
-			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment()); // 注入Environment
 		}
 		if (bean instanceof EmbeddedValueResolverAware) {
-			((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver);
+			((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver); // 注入EmbeddedValueResolver
 		}
 		if (bean instanceof ResourceLoaderAware) {
-			((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+			((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext); // 注入ResourceLoader
 		}
 		if (bean instanceof ApplicationEventPublisherAware) {
-			((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+			((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext); // 注入ApplicationEventPublisher
 		}
 		if (bean instanceof MessageSourceAware) {
-			((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+			((MessageSourceAware) bean).setMessageSource(this.applicationContext); // 注入MessageSource
 		}
 		if (bean instanceof ApplicationContextAware) {
-			((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+			((ApplicationContextAware) bean).setApplicationContext(this.applicationContext); // 注入ApplicationContext
 		}
 	}
 
