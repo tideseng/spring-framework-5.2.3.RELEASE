@@ -46,7 +46,7 @@ import org.springframework.util.Assert;
  * @author Juergen Hoeller
  * @see org.springframework.web.context.support.WebApplicationObjectSupport
  */
-public abstract class ApplicationObjectSupport implements ApplicationContextAware {
+public abstract class ApplicationObjectSupport implements ApplicationContextAware { // 实现了ApplicationContextAware接口，定义了initApplicationContext钩子方法
 
 	/** Logger that is available to subclasses. */
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -61,7 +61,7 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 
 
 	@Override
-	public final void setApplicationContext(@Nullable ApplicationContext context) throws BeansException {
+	public final void setApplicationContext(@Nullable ApplicationContext context) throws BeansException { // ApplicationContextAware接口的方法实现
 		if (context == null && !isContextRequired()) {
 			// Reset internal context state.
 			this.applicationContext = null;
@@ -75,7 +75,7 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 			}
 			this.applicationContext = context;
 			this.messageSourceAccessor = new MessageSourceAccessor(context);
-			initApplicationContext(context);
+			initApplicationContext(context); // 注入ApplicationContext
 		}
 		else {
 			// Ignore reinitialization if same context passed in.
@@ -120,8 +120,8 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 	 * @throws BeansException if thrown by ApplicationContext methods
 	 * @see #setApplicationContext
 	 */
-	protected void initApplicationContext(ApplicationContext context) throws BeansException {
-		initApplicationContext();
+	protected void initApplicationContext(ApplicationContext context) throws BeansException { // 注入ApplicationContext
+		initApplicationContext(); // 钩子方法，由子类实现
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class ApplicationObjectSupport implements ApplicationContextAwar
 	 * @throws BeansException if thrown by ApplicationContext methods
 	 * @see #setApplicationContext
 	 */
-	protected void initApplicationContext() throws BeansException {
+	protected void initApplicationContext() throws BeansException { // 钩子方法，由子类实现
 	}
 
 

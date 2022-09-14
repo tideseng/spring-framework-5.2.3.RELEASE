@@ -556,7 +556,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (instanceWrapper == null) {
 			instanceWrapper = createBeanInstance(beanName, mbd, args); // 创建Bean实例（创建Bean会触发构造函数参数的getBean，由于bean还未提前暴露，所以默认构造函数循环依赖不能解决）
 		}
-		final Object bean = instanceWrapper.getWrappedInstance();
+		final Object bean = instanceWrapper.getWrappedInstance(); // 当存在lookup-method、replaced-method信息时生成的是CGLIB代理对象实例
 		Class<?> beanType = instanceWrapper.getWrappedClass();
 		if (beanType != NullBean.class) {
 			mbd.resolvedTargetType = beanType;
@@ -1211,7 +1211,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// No special handling: simply use no-arg constructor.
-		return instantiateBean(beanName, mbd); // 调用无参构造函数实例化
+		return instantiateBean(beanName, mbd); // 调用无参构造函数实例化（存在lookup-method、replaced-method信息时生成的是CGLIB代理对象）
 	}
 
 	/**

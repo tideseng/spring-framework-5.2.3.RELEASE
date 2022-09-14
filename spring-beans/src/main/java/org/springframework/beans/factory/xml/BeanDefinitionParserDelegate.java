@@ -730,7 +730,7 @@ public class BeanDefinitionParserDelegate {
 	/**
 	 * Parse lookup-override sub-elements of the given bean element.
 	 */
-	public void parseLookupOverrideSubElements(Element beanEle, MethodOverrides overrides) {
+	public void parseLookupOverrideSubElements(Element beanEle, MethodOverrides overrides) { // 解析<bean/>标签的<lookup-method/>标签，并封装到MethodOverrides中
 		NodeList nl = beanEle.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
@@ -748,14 +748,14 @@ public class BeanDefinitionParserDelegate {
 	/**
 	 * Parse replaced-method sub-elements of the given bean element.
 	 */
-	public void parseReplacedMethodSubElements(Element beanEle, MethodOverrides overrides) {
+	public void parseReplacedMethodSubElements(Element beanEle, MethodOverrides overrides) { // 解析<bean/>标签的<replaced-method/>标签，并封装到MethodOverrides中
 		NodeList nl = beanEle.getChildNodes();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (isCandidateElement(node) && nodeNameEquals(node, REPLACED_METHOD_ELEMENT)) {
 				Element replacedMethodEle = (Element) node;
-				String name = replacedMethodEle.getAttribute(NAME_ATTRIBUTE);
-				String callback = replacedMethodEle.getAttribute(REPLACER_ATTRIBUTE);
+				String name = replacedMethodEle.getAttribute(NAME_ATTRIBUTE); // 获取要替换的原方法名
+				String callback = replacedMethodEle.getAttribute(REPLACER_ATTRIBUTE); // 获取替换对象的beanName
 				ReplaceOverride replaceOverride = new ReplaceOverride(name, callback);
 				// Look for arg-type match elements.
 				List<Element> argTypeEles = DomUtils.getChildElementsByTagName(replacedMethodEle, ARG_TYPE_ELEMENT);
