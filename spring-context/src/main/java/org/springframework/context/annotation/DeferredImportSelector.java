@@ -35,7 +35,7 @@ import org.springframework.lang.Nullable;
  * @author Stephane Nicoll
  * @since 4.0
  */
-public interface DeferredImportSelector extends ImportSelector {
+public interface DeferredImportSelector extends ImportSelector { // 继承ImportSelector接口，该接口的实现类需要实现selectImports方法
 
 	/**
 	 * Return a specific import group.
@@ -44,7 +44,7 @@ public interface DeferredImportSelector extends ImportSelector {
 	 * @since 5.0
 	 */
 	@Nullable
-	default Class<? extends Group> getImportGroup() {
+	default Class<? extends Group> getImportGroup() { // 获取Group类（用于处理类的导入）
 		return null;
 	}
 
@@ -52,32 +52,32 @@ public interface DeferredImportSelector extends ImportSelector {
 	/**
 	 * Interface used to group results from different import selectors.
 	 */
-	interface Group {
+	interface Group { // 内部接口，对来自不同的ImportSelector结果进行分组
 
 		/**
 		 * Process the {@link AnnotationMetadata} of the importing @{@link Configuration}
 		 * class using the specified {@link DeferredImportSelector}.
 		 */
-		void process(AnnotationMetadata metadata, DeferredImportSelector selector);
+		void process(AnnotationMetadata metadata, DeferredImportSelector selector); // 处理需要导入的类，即调用ImportSelector.selectImports(...)方法获取需要导入的类，并封装到Entry中（写操作）
 
 		/**
 		 * Return the {@link Entry entries} of which class(es) should be imported
 		 * for this group.
 		 */
-		Iterable<Entry> selectImports();
+		Iterable<Entry> selectImports(); // 获取需要导入的类（读操作）
 
 
 		/**
 		 * An entry that holds the {@link AnnotationMetadata} of the importing
 		 * {@link Configuration} class and the class name to import.
 		 */
-		class Entry {
+		class Entry { // 存放导入类等相关信息的数据结构
 
-			private final AnnotationMetadata metadata;
+			private final AnnotationMetadata metadata; // Import配置类的元注解信息
 
-			private final String importClassName;
+			private final String importClassName; // 需要导入的全限定类名
 
-			public Entry(AnnotationMetadata metadata, String importClassName) {
+			public Entry(AnnotationMetadata metadata, String importClassName) { // 初始化Entry
 				this.metadata = metadata;
 				this.importClassName = importClassName;
 			}
