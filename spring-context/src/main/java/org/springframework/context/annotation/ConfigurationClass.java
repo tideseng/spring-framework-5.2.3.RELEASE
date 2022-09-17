@@ -46,23 +46,23 @@ import org.springframework.util.ClassUtils;
  * @see BeanMethod
  * @see ConfigurationClassParser
  */
-final class ConfigurationClass { // 配置类，解析该类的相关注解并进行收集
+final class ConfigurationClass { // 配置类的包装类，解析配置类的注解并进行收集
 
-	private final AnnotationMetadata metadata; // 注解元信息
+	private final AnnotationMetadata metadata; // 配置类的注解元信息
 
 	private final Resource resource; // 配置类的Resource
 
 	@Nullable
-	private String beanName;
+	private String beanName; // 配置类的beanName
 
 	private final Set<ConfigurationClass> importedBy = new LinkedHashSet<>(1); // 外部类/被导入类容器
 
-	private final Set<BeanMethod> beanMethods = new LinkedHashSet<>(); // @Bean方法容器
+	private final Set<BeanMethod> beanMethods = new LinkedHashSet<>(); // 收集配置类@Bean方法的容器
 
-	private final Map<String, Class<? extends BeanDefinitionReader>> importedResources = // @ImportSource注解容器
+	private final Map<String, Class<? extends BeanDefinitionReader>> importedResources = // 收集配置类@ImportSource注解的容器
 			new LinkedHashMap<>();
 
-	private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars = // ImportBeanDefinitionRegistrar实现类容器
+	private final Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> importBeanDefinitionRegistrars = // 收集配置类中导入的ImportBeanDefinitionRegistrar实现类与AnnotationMetadata的映射关系容器
 			new LinkedHashMap<>();
 
 	final Set<String> skippedBeanMethods = new HashSet<>();
@@ -89,7 +89,7 @@ final class ConfigurationClass { // 配置类，解析该类的相关注解并�
 	 * @param importedBy the configuration class importing this one or {@code null}
 	 * @since 3.1.1
 	 */
-	public ConfigurationClass(MetadataReader metadataReader, @Nullable ConfigurationClass importedBy) {
+	public ConfigurationClass(MetadataReader metadataReader, @Nullable ConfigurationClass importedBy) { // 初始化ConfigurationClass
 		this.metadata = metadataReader.getAnnotationMetadata();
 		this.resource = metadataReader.getResource();
 		this.importedBy.add(importedBy);
@@ -101,7 +101,7 @@ final class ConfigurationClass { // 配置类，解析该类的相关注解并�
 	 * @param beanName name of the {@code @Configuration} class bean
 	 * @see ConfigurationClass#ConfigurationClass(Class, ConfigurationClass)
 	 */
-	public ConfigurationClass(Class<?> clazz, String beanName) {
+	public ConfigurationClass(Class<?> clazz, String beanName) { // 初始化ConfigurationClass
 		Assert.notNull(beanName, "Bean name must not be null");
 		this.metadata = AnnotationMetadata.introspect(clazz);
 		this.resource = new DescriptiveResource(clazz.getName());
@@ -116,7 +116,7 @@ final class ConfigurationClass { // 配置类，解析该类的相关注解并�
 	 * @param importedBy the configuration class importing this one (or {@code null})
 	 * @since 3.1.1
 	 */
-	public ConfigurationClass(Class<?> clazz, @Nullable ConfigurationClass importedBy) {
+	public ConfigurationClass(Class<?> clazz, @Nullable ConfigurationClass importedBy) { // 初始化ConfigurationClass
 		this.metadata = AnnotationMetadata.introspect(clazz);
 		this.resource = new DescriptiveResource(clazz.getName());
 		this.importedBy.add(importedBy);
@@ -128,7 +128,7 @@ final class ConfigurationClass { // 配置类，解析该类的相关注解并�
 	 * @param beanName name of the {@code @Configuration} class bean
 	 * @see ConfigurationClass#ConfigurationClass(Class, ConfigurationClass)
 	 */
-	public ConfigurationClass(AnnotationMetadata metadata, String beanName) {
+	public ConfigurationClass(AnnotationMetadata metadata, String beanName) { // 初始化ConfigurationClass
 		Assert.notNull(beanName, "Bean name must not be null");
 		this.metadata = metadata;
 		this.resource = new DescriptiveResource(metadata.getClassName());
@@ -197,8 +197,8 @@ final class ConfigurationClass { // 配置类，解析该类的相关注解并�
 		this.importedResources.put(importedResource, readerClass);
 	}
 
-	public void addImportBeanDefinitionRegistrar(ImportBeanDefinitionRegistrar registrar, AnnotationMetadata importingClassMetadata) {
-		this.importBeanDefinitionRegistrars.put(registrar, importingClassMetadata);
+	public void addImportBeanDefinitionRegistrar(ImportBeanDefinitionRegistrar registrar, AnnotationMetadata importingClassMetadata) { // 添加ImportBeanDefinitionRegistrar与AnnotationMetadata的映射关系
+		this.importBeanDefinitionRegistrars.put(registrar, importingClassMetadata); // 添加ImportBeanDefinitionRegistrar与AnnotationMetadata的映射关系
 	}
 
 	public Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> getImportBeanDefinitionRegistrars() {

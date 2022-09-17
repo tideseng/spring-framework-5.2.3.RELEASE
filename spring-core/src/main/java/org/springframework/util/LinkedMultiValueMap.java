@@ -43,13 +43,13 @@ public class LinkedMultiValueMap<K, V> implements MultiValueMap<K, V>, Serializa
 
 	private static final long serialVersionUID = 3801124242820219131L;
 
-	private final Map<K, List<V>> targetMap;
+	private final Map<K, List<V>> targetMap; // LinkedHashMap容器
 
 
 	/**
 	 * Create a new LinkedMultiValueMap that wraps a {@link LinkedHashMap}.
 	 */
-	public LinkedMultiValueMap() {
+	public LinkedMultiValueMap() { // 初始化LinkedMultiValueMap
 		this.targetMap = new LinkedHashMap<>();
 	}
 

@@ -84,7 +84,7 @@ abstract class ConfigurationClassUtils {
 	public static boolean checkConfigurationClassCandidate( // 判断BeanDefinition是否为候选配置类
 			BeanDefinition beanDef, MetadataReaderFactory metadataReaderFactory) {
 
-		String className = beanDef.getBeanClassName();
+		String className = beanDef.getBeanClassName(); // 获取BeanDefinition中的beanClass名称
 		if (className == null || beanDef.getFactoryMethodName() != null) {
 			return false;
 		}
@@ -120,7 +120,7 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-		// 二、根据注解元信息中的相关注解进行判断
+		// 二、根据注解元信息中的相关注解进行判断是否为候选配置类
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName()); // 获取注解元信息获取@Configuration注解的相关信息
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) { // 当该类被@Configuration注解修饰，且proxyBeanMethods属性为默认值true时
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL); // 设置configurationClass属性标记完全匹配
