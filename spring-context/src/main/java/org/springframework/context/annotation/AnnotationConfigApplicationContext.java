@@ -83,7 +83,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * @param componentClasses one or more component classes &mdash; for example,
 	 * {@link Configuration @Configuration} classes
 	 */
-	public AnnotationConfigApplicationContext(Class<?>... componentClasses) { // 初始化AnnotationConfigApplicationContext
+	public AnnotationConfigApplicationContext(Class<?>... componentClasses) { // 初始化AnnotationConfigApplicationContext（该构造器会调用refresh方法）
 		this(); // 调用无参构造方法
 		register(componentClasses); // 通过注解读取器将类封装成BeanDefinition并注册到BeanFactory中（通过注解读取器生成的是AnnotatedGenericBeanDefinition）
 		refresh(); // 调用refresh()方法初始化Spring容器
@@ -95,7 +95,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * and automatically refreshing the context.
 	 * @param basePackages the packages to scan for component classes
 	 */
-	public AnnotationConfigApplicationContext(String... basePackages) { // 初始化AnnotationConfigApplicationContext
+	public AnnotationConfigApplicationContext(String... basePackages) { // 初始化AnnotationConfigApplicationContext（该构造器会调用refresh方法）
 		this(); // 调用无参构造方法
 		scan(basePackages); // 通过注解扫描器将包路径下符合条件的类封装成BeanDefinition并注册到BeanFactory中（通过注解扫描器生成的是ScannedGenericBeanDefinition）
 		refresh(); // 调用refresh()方法初始化Spring容器
