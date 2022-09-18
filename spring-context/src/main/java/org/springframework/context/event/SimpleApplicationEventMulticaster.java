@@ -46,10 +46,10 @@ import org.springframework.util.ErrorHandler;
  * @author Stephane Nicoll
  * @see #setTaskExecutor
  */
-public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster {
+public class SimpleApplicationEventMulticaster extends AbstractApplicationEventMulticaster { // 事件广播器，支持同步和异步广播模式
 
 	@Nullable
-	private Executor taskExecutor;
+	private Executor taskExecutor; // 线程池，存在时为异步广播模式
 
 	@Nullable
 	private ErrorHandler errorHandler;
@@ -58,7 +58,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	/**
 	 * Create a new SimpleApplicationEventMulticaster.
 	 */
-	public SimpleApplicationEventMulticaster() {
+	public SimpleApplicationEventMulticaster() { // 初始化SimpleApplicationEventMulticaster
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	 * @see org.springframework.core.task.SyncTaskExecutor
 	 * @see org.springframework.core.task.SimpleAsyncTaskExecutor
 	 */
-	public void setTaskExecutor(@Nullable Executor taskExecutor) {
+	public void setTaskExecutor(@Nullable Executor taskExecutor) { // 设置线程池
 		this.taskExecutor = taskExecutor;
 	}
 
@@ -89,7 +89,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	 * Return the current task executor for this multicaster.
 	 */
 	@Nullable
-	protected Executor getTaskExecutor() {
+	protected Executor getTaskExecutor() { // 获取线程池
 		return this.taskExecutor;
 	}
 
@@ -130,13 +130,13 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	@Override
 	public void multicastEvent(final ApplicationEvent event, @Nullable ResolvableType eventType) { // 广播事件
 		ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
-		Executor executor = getTaskExecutor();
+		Executor executor = getTaskExecutor(); // 获取线程池
 		for (ApplicationListener<?> listener : getApplicationListeners(event, type)) { // 获取事件监听器，并进行遍历
 			if (executor != null) {
-				executor.execute(() -> invokeListener(listener, event));
+				executor.execute(() -> invokeListener(listener, event)); // 线程池不为nul时，为异步广播模式，异步通知事件监听器/事件观察者
 			}
 			else {
-				invokeListener(listener, event); // 通知事件监听器/事件观察者
+				invokeListener(listener, event); // 同步通知事件监听器/事件观察者
 			}
 		}
 	}

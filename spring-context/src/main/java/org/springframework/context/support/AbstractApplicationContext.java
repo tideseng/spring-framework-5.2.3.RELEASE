@@ -369,7 +369,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * or a payload object to be turned into a {@link PayloadApplicationEvent})
 	 */
 	@Override
-	public void publishEvent(Object event) {
+	public void publishEvent(Object event) { // 发布事件
 		publishEvent(event, null);
 	}
 
@@ -388,7 +388,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		if (event instanceof ApplicationEvent) {
 			applicationEvent = (ApplicationEvent) event;
 		}
-		else {
+		else { // 当发布对象不属于ApplicationEvent时，将对象包装到PayloadApplicationEvent对象中
 			applicationEvent = new PayloadApplicationEvent<>(this, event);
 			if (eventType == null) {
 				eventType = ((PayloadApplicationEvent<?>) applicationEvent).getResolvableType();
@@ -526,7 +526,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory); // 钩子方法，子类中进行实现
+				postProcessBeanFactory(beanFactory); // BeanFactory的后置处理（钩子方法，由子类实现）
 
 				// Invoke factory processors registered as beans in the context.
 				invokeBeanFactoryPostProcessors(beanFactory); // 执行自定义和内置的BeanFactoryPostProcessor（包括BeanDefinitionRegistryPostProcessor），即在Bean实例化之前完成BeanDefinition的增删改查
@@ -760,7 +760,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Uses SimpleApplicationEventMulticaster if none defined in the context.
 	 * @see org.springframework.context.event.SimpleApplicationEventMulticaster
 	 */
-	protected void initApplicationEventMulticaster() { // 初始化事件管理器
+	protected void initApplicationEventMulticaster() { // 初始化事件管理器，默认情况下为SimpleApplicationEventMulticaster
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) { // 判断BeanFactory容器中是否存在事件管理器Bean或BeanDefinition（默认为false）
 			this.applicationEventMulticaster = // 获取或创建事件管理器实例并设置到ApplicationContext中
