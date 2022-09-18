@@ -581,8 +581,8 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	/**
 	 * Set the (new) value of the {@code Access-Control-Allow-Origin} response header.
 	 */
-	public void setAccessControlAllowOrigin(@Nullable String allowedOrigin) {
-		setOrRemove(ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin);
+	public void setAccessControlAllowOrigin(@Nullable String allowedOrigin) { // 设置头信息Access-Control-Allow-Origin
+		setOrRemove(ACCESS_CONTROL_ALLOW_ORIGIN, allowedOrigin); // 设置头信息Access-Control-Allow-Origin
 	}
 
 	/**
@@ -1602,12 +1602,12 @@ public class HttpHeaders implements MultiValueMap<String, String>, Serializable 
 	 * @param headerName the header name
 	 * @param headerValue the header value, or {@code null} for none
 	 */
-	private void setOrRemove(String headerName, @Nullable String headerValue) {
+	private void setOrRemove(String headerName, @Nullable String headerValue) { // 设置或删除头信息
 		if (headerValue != null) {
-			set(headerName, headerValue);
+			set(headerName, headerValue); // 设置头信息
 		}
 		else {
-			remove(headerName);
+			remove(headerName); // 删除头信息
 		}
 	}
 

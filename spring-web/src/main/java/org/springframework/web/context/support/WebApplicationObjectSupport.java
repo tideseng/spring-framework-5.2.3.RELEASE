@@ -41,7 +41,7 @@ import org.springframework.web.util.WebUtils;
  * @since 28.08.2003
  * @see SpringBeanAutowiringSupport
  */
-public abstract class WebApplicationObjectSupport extends ApplicationObjectSupport implements ServletContextAware {
+public abstract class WebApplicationObjectSupport extends ApplicationObjectSupport implements ServletContextAware { // 父类ApplicationObjectSupport实现了ApplicationContextAware接口，定义了initApplicationContext钩子方法
 
 	@Nullable
 	private ServletContext servletContext;
@@ -74,12 +74,12 @@ public abstract class WebApplicationObjectSupport extends ApplicationObjectSuppo
 	 * given ApplicationContext is a {@link WebApplicationContext}.
 	 */
 	@Override
-	protected void initApplicationContext(ApplicationContext context) {
-		super.initApplicationContext(context);
+	protected void initApplicationContext(ApplicationContext context) { // 重写父类的initApplicationContext(ApplicationContext context)方法
+		super.initApplicationContext(context); // 调用父类方法
 		if (this.servletContext == null && context instanceof WebApplicationContext) {
 			this.servletContext = ((WebApplicationContext) context).getServletContext();
 			if (this.servletContext != null) {
-				initServletContext(this.servletContext);
+				initServletContext(this.servletContext); // 定义钩子方法
 			}
 		}
 	}

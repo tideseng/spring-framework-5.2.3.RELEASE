@@ -261,9 +261,9 @@ public class ControllerAdviceBean implements Ordered {
 	 */
 	public static List<ControllerAdviceBean> findAnnotatedBeans(ApplicationContext context) { // 获取bean上有@ControllerAdvice注解的类，并封装成ControllerAdviceBean
 		List<ControllerAdviceBean> adviceBeans = new ArrayList<>();
-		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) {
+		for (String name : BeanFactoryUtils.beanNamesForTypeIncludingAncestors(context, Object.class)) { // 遍历Object类性的beanName
 			if (!ScopedProxyUtils.isScopedTarget(name)) {
-				ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class);
+				ControllerAdvice controllerAdvice = context.findAnnotationOnBean(name, ControllerAdvice.class); // 获取bean上的@ControllerAdvice注解
 				if (controllerAdvice != null) {
 					// Use the @ControllerAdvice annotation found by findAnnotationOnBean()
 					// in order to avoid a subsequent lookup of the same annotation.
@@ -271,7 +271,7 @@ public class ControllerAdviceBean implements Ordered {
 				}
 			}
 		}
-		OrderComparator.sort(adviceBeans);
+		OrderComparator.sort(adviceBeans); // 对@ControllerAdvice注解修饰的类进行排序
 		return adviceBeans;
 	}
 
