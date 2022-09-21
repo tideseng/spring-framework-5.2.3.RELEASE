@@ -52,7 +52,7 @@ import org.springframework.util.StringUtils;
  * @see ConfigurableEnvironment
  * @see StandardEnvironment
  */
-public abstract class AbstractEnvironment implements ConfigurableEnvironment {
+public abstract class AbstractEnvironment implements ConfigurableEnvironment { // 抽象的Environment，委派属性解析器通过配置的属性源解析属性
 
 	/**
 	 * System property that instructs Spring to ignore system environment variables,
@@ -103,14 +103,14 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private final Set<String> activeProfiles = new LinkedHashSet<>(); // 指定的Profile列表
+	private final Set<String> activeProfiles = new LinkedHashSet<>(); // 激活的profile列表
 
-	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles()); // 默认的profile为default
+	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles()); // 默认的profile列表（默认有一个default元素）
 
-	private final MutablePropertySources propertySources = new MutablePropertySources();
+	private final MutablePropertySources propertySources = new MutablePropertySources(); // 属性源（维护所有的属性来源）
 
 	private final ConfigurablePropertyResolver propertyResolver =
-			new PropertySourcesPropertyResolver(this.propertySources); // 属性解析器
+			new PropertySourcesPropertyResolver(this.propertySources); // 属性解析器，通过注入的属性源解析属性
 
 
 	/**
@@ -121,7 +121,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see #customizePropertySources(MutablePropertySources)
 	 */
 	public AbstractEnvironment() { // 初始化AbstractEnvironment（调用customizePropertySources钩子方法）
-		customizePropertySources(this.propertySources);
+		customizePropertySources(this.propertySources); // 调用customizePropertySources钩子方法让子类在初始化时注入相应的属性源
 	}
 
 
@@ -220,8 +220,8 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	//---------------------------------------------------------------------
 
 	@Override
-	public String[] getActiveProfiles() { // 获取指定的Profile信息
-		return StringUtils.toStringArray(doGetActiveProfiles());
+	public String[] getActiveProfiles() { // 获取手动激活/环境激活的Profile列表
+		return StringUtils.toStringArray(doGetActiveProfiles()); // 获取手动激活/环境激活的profile列表
 	}
 
 	/**
@@ -232,12 +232,12 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see #getActiveProfiles()
 	 * @see #ACTIVE_PROFILES_PROPERTY_NAME
 	 */
-	protected Set<String> doGetActiveProfiles() { // 获取指定的Profile列表
+	protected Set<String> doGetActiveProfiles() { // 获取手动激活/环境激活的profile列表
 		synchronized (this.activeProfiles) {
-			if (this.activeProfiles.isEmpty()) {
+			if (this.activeProfiles.isEmpty()) { // 当激活的profile列表为空时，从属性源中获取spring.profiles.active属性
 				String profiles = getProperty(ACTIVE_PROFILES_PROPERTY_NAME); // 从Environment中获取spring.profiles.active属性
 				if (StringUtils.hasText(profiles)) {
-					setActiveProfiles(StringUtils.commaDelimitedListToStringArray(
+					setActiveProfiles(StringUtils.commaDelimitedListToStringArray( // 设置Environment中激活的profile（会清除原有的列表）
 							StringUtils.trimAllWhitespace(profiles)));
 				}
 			}
@@ -246,7 +246,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	}
 
 	@Override
-	public void setActiveProfiles(String... profiles) {
+	public void setActiveProfiles(String... profiles) { // 设置激活的profile列表（会清除原有的列表）
 		Assert.notNull(profiles, "Profile array must not be null");
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating profiles " + Arrays.asList(profiles));
@@ -261,21 +261,21 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	}
 
 	@Override
-	public void addActiveProfile(String profile) { // 设置指定的Profile
+	public void addActiveProfile(String profile) { // 添加激活profile
 		if (logger.isDebugEnabled()) {
 			logger.debug("Activating profile '" + profile + "'");
 		}
 		validateProfile(profile);
-		doGetActiveProfiles();
+		doGetActiveProfiles(); // 获取手动激活/环境激活的profile列表
 		synchronized (this.activeProfiles) {
-			this.activeProfiles.add(profile);
+			this.activeProfiles.add(profile); // 添加激活的profile
 		}
 	}
 
 
 	@Override
-	public String[] getDefaultProfiles() {
-		return StringUtils.toStringArray(doGetDefaultProfiles());
+	public String[] getDefaultProfiles() { // 获取手动默认/环境默认的Profile列表
+		return StringUtils.toStringArray(doGetDefaultProfiles()); // 获取手动默认/环境默认的Profile列表
 	}
 
 	/**
@@ -290,12 +290,12 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see #DEFAULT_PROFILES_PROPERTY_NAME
 	 * @see #getReservedDefaultProfiles()
 	 */
-	protected Set<String> doGetDefaultProfiles() {
+	protected Set<String> doGetDefaultProfiles() { // 获取手动默认/环境默认的Profile列表
 		synchronized (this.defaultProfiles) {
-			if (this.defaultProfiles.equals(getReservedDefaultProfiles())) {
-				String profiles = getProperty(DEFAULT_PROFILES_PROPERTY_NAME);
+			if (this.defaultProfiles.equals(getReservedDefaultProfiles())) { // 当默认的profile列表为默认值时，从属性源中获取spring.profiles.default属性
+				String profiles = getProperty(DEFAULT_PROFILES_PROPERTY_NAME); // 从Environment中获取spring.profiles.default属性
 				if (StringUtils.hasText(profiles)) {
-					setDefaultProfiles(StringUtils.commaDelimitedListToStringArray(
+					setDefaultProfiles(StringUtils.commaDelimitedListToStringArray( // 设置默认的profile列表（会清除原有的列表）
 							StringUtils.trimAllWhitespace(profiles)));
 				}
 			}
@@ -312,7 +312,7 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see #getReservedDefaultProfiles()
 	 */
 	@Override
-	public void setDefaultProfiles(String... profiles) {
+	public void setDefaultProfiles(String... profiles) { // 设置默认的profile列表（会清除原有的列表）
 		Assert.notNull(profiles, "Profile array must not be null");
 		synchronized (this.defaultProfiles) {
 			this.defaultProfiles.clear();
@@ -351,11 +351,11 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * whether the profile should be active by default.
 	 * @throws IllegalArgumentException per {@link #validateProfile(String)}
 	 */
-	protected boolean isProfileActive(String profile) {
+	protected boolean isProfileActive(String profile) { // 判断给定的profile是否激活
 		validateProfile(profile);
-		Set<String> currentActiveProfiles = doGetActiveProfiles();
-		return (currentActiveProfiles.contains(profile) ||
-				(currentActiveProfiles.isEmpty() && doGetDefaultProfiles().contains(profile)));
+		Set<String> currentActiveProfiles = doGetActiveProfiles(); // 获取手动激活/环境激活的profile列表
+		return (currentActiveProfiles.contains(profile) || // 当激活的profile不为空且激活的profile包含给定的profile时
+				(currentActiveProfiles.isEmpty() && doGetDefaultProfiles().contains(profile))); // 当激活的profile为空且默认的profile包含给定的profile时
 	}
 
 	/**
@@ -562,8 +562,8 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	}
 
 	@Override
-	public String resolvePlaceholders(String text) {
-		return this.propertyResolver.resolvePlaceholders(text); // 调用AbstractPropertyResolver对象中的resolvePlaceholders方法
+	public String resolvePlaceholders(String text) { // 解析占位符属性值
+		return this.propertyResolver.resolvePlaceholders(text); // 解析占位符属性值
 	}
 
 	@Override

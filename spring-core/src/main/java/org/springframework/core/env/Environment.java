@@ -68,7 +68,7 @@ package org.springframework.core.env;
  * @see org.springframework.context.ConfigurableApplicationContext#setEnvironment
  * @see org.springframework.context.support.AbstractApplicationContext#createEnvironment
  */
-public interface Environment extends PropertyResolver {
+public interface Environment extends PropertyResolver { // Environment环境，继承属性解析器，具有解析属性功能，并定义了查询Profile相关接口
 
 	/**
 	 * Return the set of profiles explicitly made active for this environment. Profiles

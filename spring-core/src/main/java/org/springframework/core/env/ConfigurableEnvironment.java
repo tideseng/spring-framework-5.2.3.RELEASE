@@ -69,7 +69,7 @@ import java.util.Map;
  * @see StandardEnvironment
  * @see org.springframework.context.ConfigurableApplicationContext#getEnvironment
  */
-public interface ConfigurableEnvironment extends Environment, ConfigurablePropertyResolver {
+public interface ConfigurableEnvironment extends Environment, ConfigurablePropertyResolver { // 继承Environment接口，并定义了设置Profile、获取属性源相关接口
 
 	/**
 	 * Specify the set of profiles active for this {@code Environment}. Profiles are
