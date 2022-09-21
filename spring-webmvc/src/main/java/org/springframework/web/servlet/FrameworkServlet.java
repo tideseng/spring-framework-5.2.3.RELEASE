@@ -1003,15 +1003,15 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		initContextHolders(request, localeContext, requestAttributes);
 
 		try {
-			doService(request, response); // 处理请求（钩子方法，需要子类实现）
+			doService(request, response); // 处理请求（钩子方法，需要子类实现，实际上是下发给DispatcherServlet处理）
 		}
 		catch (ServletException | IOException ex) {
 			failureCause = ex;
 			throw ex;
 		}
-		catch (Throwable ex) {
+		catch (Throwable ex) { // 捕获所有异常
 			failureCause = ex;
-			throw new NestedServletException("Request processing failed", ex);
+			throw new NestedServletException("Request processing failed", ex); // 将异常封装成NestedServletException，抛到StandardWrapperValve中进行处理
 		}
 
 		finally {
@@ -1019,7 +1019,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			if (requestAttributes != null) {
 				requestAttributes.requestCompleted();
 			}
-			logResult(request, response, failureCause, asyncManager);
+			logResult(request, response, failureCause, asyncManager); // 打印结果（正常或异常）
 			publishRequestHandledEvent(request, response, startTime, failureCause);
 		}
 	}
@@ -1077,7 +1077,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		RequestContextHolder.setRequestAttributes(previousAttributes, this.threadContextInheritable);
 	}
 
-	private void logResult(HttpServletRequest request, HttpServletResponse response,
+	private void logResult(HttpServletRequest request, HttpServletResponse response, // 打印结果（正常或异常）
 			@Nullable Throwable failureCause, WebAsyncManager asyncManager) {
 
 		if (!logger.isDebugEnabled()) {
@@ -1087,7 +1087,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		String dispatchType = request.getDispatcherType().name();
 		boolean initialDispatch = request.getDispatcherType().equals(DispatcherType.REQUEST);
 
-		if (failureCause != null) {
+		if (failureCause != null) { // 异常时打印异常信息
 			if (!initialDispatch) {
 				// FORWARD/ERROR/ASYNC: minimal message (there should be enough context already)
 				if (logger.isDebugEnabled()) {
@@ -1107,7 +1107,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			logger.debug("Exiting but response remains open for further handling");
 			return;
 		}
-
+		// 正常时打印结果
 		int status = response.getStatus();
 		String headers = ""; // nothing below trace
 
