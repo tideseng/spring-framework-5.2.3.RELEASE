@@ -93,7 +93,7 @@ public class MutablePropertySources implements PropertySources { // PropertySour
 	/**
 	 * Add the given property source object with highest precedence.
 	 */
-	public void addFirst(PropertySource<?> propertySource) {
+	public void addFirst(PropertySource<?> propertySource) { // 添加属性源到对头
 		removeIfPresent(propertySource);
 		this.propertySourceList.add(0, propertySource);
 	}
@@ -101,7 +101,7 @@ public class MutablePropertySources implements PropertySources { // PropertySour
 	/**
 	 * Add the given property source object with lowest precedence.
 	 */
-	public void addLast(PropertySource<?> propertySource) {
+	public void addLast(PropertySource<?> propertySource) { // 添加属性源到对尾
 		removeIfPresent(propertySource);
 		this.propertySourceList.add(propertySource);
 	}

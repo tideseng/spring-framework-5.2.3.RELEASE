@@ -27,7 +27,7 @@ import org.springframework.lang.Nullable;
  * @see Environment
  * @see PropertySourcesPropertyResolver
  */
-public interface PropertyResolver {
+public interface PropertyResolver { // 属性解析器
 
 	/**
 	 * Return whether the given property key is available for resolution,

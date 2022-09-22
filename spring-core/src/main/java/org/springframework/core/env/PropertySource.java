@@ -57,13 +57,13 @@ import org.springframework.util.ObjectUtils;
  * @see MutablePropertySources
  * @see org.springframework.context.annotation.PropertySource
  */
-public abstract class PropertySource<T> {
+public abstract class PropertySource<T> { // 属性源
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	protected final String name;
+	protected final String name; // 属性源名称（该类重写了equals方法，只要name相同则对象相同）
 
-	protected final T source;
+	protected final T source; // 属性源对象
 
 
 	/**
@@ -120,7 +120,7 @@ public abstract class PropertySource<T> {
 	 * @see PropertyResolver#getRequiredProperty(String)
 	 */
 	@Nullable
-	public abstract Object getProperty(String name);
+	public abstract Object getProperty(String name); // 获取属性（由各属性源子类来实现）
 
 
 	/**

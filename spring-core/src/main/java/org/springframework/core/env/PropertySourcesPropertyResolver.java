@@ -29,10 +29,10 @@ import org.springframework.lang.Nullable;
  * @see PropertySources
  * @see AbstractEnvironment
  */
-public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
+public class PropertySourcesPropertyResolver extends AbstractPropertyResolver { // 属性解析器，通过注入的属性源解析属性
 
 	@Nullable
-	private final PropertySources propertySources; // 默认为MutablePropertySources类
+	private final PropertySources propertySources; // 属性源，默认为MutablePropertySources类
 
 
 	/**
@@ -45,7 +45,7 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 
 	@Override
-	public boolean containsProperty(String key) {
+	public boolean containsProperty(String key) { // 判断是否包含属性
 		if (this.propertySources != null) {
 			for (PropertySource<?> propertySource : this.propertySources) {
 				if (propertySource.containsProperty(key)) {
@@ -58,33 +58,33 @@ public class PropertySourcesPropertyResolver extends AbstractPropertyResolver {
 
 	@Override
 	@Nullable
-	public String getProperty(String key) {
+	public String getProperty(String key) { // 获取属性，并进一步解析具有占位符的属性值
 		return getProperty(key, String.class, true);
 	}
 
 	@Override
 	@Nullable
-	public <T> T getProperty(String key, Class<T> targetValueType) {
+	public <T> T getProperty(String key, Class<T> targetValueType) { // 获取属性，并进一步解析具有占位符的属性值
 		return getProperty(key, targetValueType, true);
 	}
 
 	@Override
 	@Nullable
-	protected String getPropertyAsRawString(String key) { // 根据占位符属性名获取属性值
-		return getProperty(key, String.class, false); // 不解析内嵌的占位符
+	protected String getPropertyAsRawString(String key) { // 获取属性，并进一步解析具有占位符的属性值
+		return getProperty(key, String.class, false);
 	}
 
 	@Nullable
 	protected <T> T getProperty(String key, Class<T> targetValueType, boolean resolveNestedPlaceholders) { // 获取属性
 		if (this.propertySources != null) {
-			for (PropertySource<?> propertySource : this.propertySources) { // 遍历PropertySource
+			for (PropertySource<?> propertySource : this.propertySources) { // 遍历属性源PropertySource，默认会调用MutablePropertySources#iterator方法进行遍历
 				if (logger.isTraceEnabled()) {
 					logger.trace("Searching for key '" + key + "' in PropertySource '" +
 							propertySource.getName() + "'");
 				}
 				Object value = propertySource.getProperty(key); // 根据属性名获取属性值
 				if (value != null) {
-					if (resolveNestedPlaceholders && value instanceof String) {
+					if (resolveNestedPlaceholders && value instanceof String) { // 根据情况进一步解析具有占位符的属性值
 						value = resolveNestedPlaceholders((String) value);
 					}
 					logKeyFound(key, propertySource, value); // 打印日志
