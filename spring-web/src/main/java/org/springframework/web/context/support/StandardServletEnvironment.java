@@ -81,13 +81,13 @@ public class StandardServletEnvironment extends StandardEnvironment implements C
 	 * @see #initPropertySources(ServletContext, ServletConfig)
 	 */
 	@Override
-	protected void customizePropertySources(MutablePropertySources propertySources) { // 父类AbstractEnvironment无参构造函数的钩子方法
-		propertySources.addLast(new StubPropertySource(SERVLET_CONFIG_PROPERTY_SOURCE_NAME)); // Servlet Config配置属性源
-		propertySources.addLast(new StubPropertySource(SERVLET_CONTEXT_PROPERTY_SOURCE_NAME)); // Servlet Context配置属性源
+	protected void customizePropertySources(MutablePropertySources propertySources) { // 在初始化当前类时注入系统属性、系统环境变量属性源（在父类AbstractEnvironment无参构造器中进行调用）
+		propertySources.addLast(new StubPropertySource(SERVLET_CONFIG_PROPERTY_SOURCE_NAME)); // 注入Servlet Config配置属性源
+		propertySources.addLast(new StubPropertySource(SERVLET_CONTEXT_PROPERTY_SOURCE_NAME)); // 注入Servlet Context配置属性源
 		if (JndiLocatorDelegate.isDefaultJndiEnvironmentAvailable()) {
-			propertySources.addLast(new JndiPropertySource(JNDI_PROPERTY_SOURCE_NAME)); // JNDI配置属性源
+			propertySources.addLast(new JndiPropertySource(JNDI_PROPERTY_SOURCE_NAME)); // 注入JNDI配置属性源
 		}
-		super.customizePropertySources(propertySources); // 调用子类StandardEnvironment方法
+		super.customizePropertySources(propertySources); // 调用父类StandardEnvironment方法注入系统属性、系统环境变量属性源
 	}
 
 	@Override
