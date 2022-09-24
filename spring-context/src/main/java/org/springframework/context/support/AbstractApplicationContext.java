@@ -174,7 +174,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 	/** Environment used by this context. */
 	@Nullable
-	private ConfigurableEnvironment environment;
+	private ConfigurableEnvironment environment; // 默认情况下为StandardEnvironment
 
 	/** BeanFactoryPostProcessors to apply on refresh. */
 	private final List<BeanFactoryPostProcessor> beanFactoryPostProcessors = new ArrayList<>();
@@ -313,7 +313,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * {@link #createEnvironment()}.
 	 */
 	@Override
-	public ConfigurableEnvironment getEnvironment() { // 获取Environment
+	public ConfigurableEnvironment getEnvironment() { // 获取Environment（实现EnvironmentCapable接口方法）
 		if (this.environment == null) {
 			this.environment = createEnvironment(); // 当Environment不存在时，默认构建StandardEnvironment对象作为当前Environment
 		}
@@ -581,7 +581,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Prepare this context for refreshing, setting its startup date and
 	 * active flag as well as performing any initialization of property sources.
 	 */
-	protected void prepareRefresh() {
+	protected void prepareRefresh() { // 刷新预处理
 		// Switch to active.
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
@@ -601,7 +601,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
-		getEnvironment().validateRequiredProperties();
+		getEnvironment().validateRequiredProperties(); // 获取Environment
 
 		// Store pre-refresh ApplicationListeners...
 		if (this.earlyApplicationListeners == null) {
@@ -677,7 +677,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Register default environment beans.
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
-			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
+			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment()); // 将Environment对象注册到BeanFactory中
 		}
 		if (!beanFactory.containsLocalBean(SYSTEM_PROPERTIES_BEAN_NAME)) {
 			beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());

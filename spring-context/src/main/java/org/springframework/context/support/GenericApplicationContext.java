@@ -91,9 +91,9 @@ import org.springframework.util.Assert;
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
  */
-public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
+public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry { // AnnotationConfigApplicationContext的父类
 
-	private final DefaultListableBeanFactory beanFactory;
+	private final DefaultListableBeanFactory beanFactory; // 在无参构造器中进行创建
 
 	@Nullable
 	private ResourceLoader resourceLoader;
@@ -108,7 +108,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * @see #registerBeanDefinition
 	 * @see #refresh
 	 */
-	public GenericApplicationContext() {
+	public GenericApplicationContext() { // 初始化GenericApplicationContext，会创建DefaultListableBeanFactory
 		this.beanFactory = new DefaultListableBeanFactory();
 	}
 
@@ -154,8 +154,8 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 */
 	@Override
 	public void setParent(@Nullable ApplicationContext parent) {
-		super.setParent(parent); // 设置父容器
-		this.beanFactory.setParentBeanFactory(getInternalParentBeanFactory());
+		super.setParent(parent); // 设置父容器ApplicationContext
+		this.beanFactory.setParentBeanFactory(getInternalParentBeanFactory()); // 设置父BeanFactory
 	}
 
 	/**

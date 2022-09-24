@@ -62,7 +62,7 @@ import org.springframework.lang.Nullable;
  * @see FileSystemXmlApplicationContext
  * @see org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
-public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext {
+public abstract class AbstractRefreshableApplicationContext extends AbstractApplicationContext { // ClassPathXmlApplicationContext、AnnotationConfigWebApplicationContext的抽象类
 
 	@Nullable
 	private Boolean allowBeanDefinitionOverriding;
@@ -72,7 +72,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 
 	/** Bean factory for this context. */
 	@Nullable
-	private DefaultListableBeanFactory beanFactory;
+	private DefaultListableBeanFactory beanFactory; // 在refreshBeanFactory中进行创建
 
 	/** Synchronization monitor for the internal BeanFactory. */
 	private final Object beanFactoryMonitor = new Object();
@@ -132,7 +132,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 			customizeBeanFactory(beanFactory); // 自定义BeanFactory相关信息（设置是否允许BeanDefinition覆盖、是否可以循环依赖）
 			loadBeanDefinitions(beanFactory); // 加载BeanDefinition，将xml中的标签进行解析并封装成BeanDefinition对象
 			synchronized (this.beanFactoryMonitor) {
-				this.beanFactory = beanFactory;
+				this.beanFactory = beanFactory; // 赋值
 			}
 		}
 		catch (IOException ex) {
@@ -203,7 +203,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowCircularReferences
 	 * @see org.springframework.beans.factory.support.DefaultListableBeanFactory#setAllowRawInjectionDespiteWrapping
 	 */
-	protected DefaultListableBeanFactory createBeanFactory() {
+	protected DefaultListableBeanFactory createBeanFactory() { // 创建DefaultListableBeanFactory，即创建BeanFactory实例
 		return new DefaultListableBeanFactory(getInternalParentBeanFactory());
 	}
 
