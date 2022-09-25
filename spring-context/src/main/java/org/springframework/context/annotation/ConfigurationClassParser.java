@@ -258,7 +258,7 @@ class ConfigurationClassParser {
 	 * @return the superclass, or {@code null} if none found or previously processed
 	 */
 	@Nullable
-	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) // 处理解析配置类的具体逻辑
+	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) // 处理解析配置类的具体逻辑，解析@Component、@PropertySource、@ComponentScan、@Import、@ImportResource、@Bean注解
 			throws IOException {
 		// 一、判断配置类上面是否有@Component注解，如果有则递归解析轻量级配置内部类
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
@@ -559,7 +559,7 @@ class ConfigurationClassParser {
 					if (candidate.isAssignable(ImportSelector.class)) { // 如果Import类实现了ImportSelector接口，则递归调用ConfigurationClassParser#processImports(...)方法（DeferredImportSelector实例会延迟到批次解析完毕后调用）
 						// Candidate class is an ImportSelector -> delegate to it to determine imports
 						Class<?> candidateClass = candidate.loadClass();
-						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class, // 通过反射进行实例化ImportSelector
+						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class, // 通过反射进行实例化ImportSelector，并注入相关Aware
 								this.environment, this.resourceLoader, this.registry);
 						if (selector instanceof DeferredImportSelector) { // 如果Import类实现了DeferredImportSelector接口，则将DeferredImportSelector实例添加到当前ConfigurationClassParser的deferredImportSelectorHandler容器中，当前批次解析完成之后会处理DeferredImportSelector列表，并递归调用当前方法/ConfigurationClassParser#processImports(...)方法
 							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector); // 添加DeferredImportSelector类（处理的时机在ConfigurationClassParser#parse(...)方法的结束前）
@@ -575,7 +575,7 @@ class ConfigurationClassParser {
 						// delegate to it to register additional bean definitions
 						Class<?> candidateClass = candidate.loadClass();
 						ImportBeanDefinitionRegistrar registrar =
-								ParserStrategyUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class, // 通过反射进行实例化ImportBeanDefinitionRegistrar
+								ParserStrategyUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class, // 通过反射进行实例化ImportBeanDefinitionRegistrar，并注入相关Aware
 										this.environment, this.resourceLoader, this.registry);
 						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata()); // 添加ImportBeanDefinitionRegistrar与AnnotationMetadata的映射关系（并没有调用接口的registerBeanDefinitions方法）
 					}

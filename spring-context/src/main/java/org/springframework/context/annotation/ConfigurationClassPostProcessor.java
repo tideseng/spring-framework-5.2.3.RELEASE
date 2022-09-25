@@ -83,7 +83,7 @@ import org.springframework.util.ClassUtils;
  * @author Phillip Webb
  * @since 3.0
  */
-public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor, // 实现了BeanDefinitionRegistryPostProcessor接口，会重写相关方法解析配置类
+public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor, // 实现了BeanDefinitionRegistryPostProcessor接口，会重写相关方法解析配置类，处理@Component、@PropertySource、@ComponentScan、@Import、@ImportResource、@Bean注解
 		PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
 
 	/**

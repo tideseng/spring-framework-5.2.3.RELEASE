@@ -142,7 +142,7 @@ import org.springframework.util.StringValueResolver;
  * @see org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor
  */
 @SuppressWarnings("serial")
-public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBeanPostProcessor
+public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBeanPostProcessor // 处理@PostConstruct、@PreDestroy、@Resource注解
 		implements InstantiationAwareBeanPostProcessor, BeanFactoryAware, Serializable {
 
 	@Nullable
