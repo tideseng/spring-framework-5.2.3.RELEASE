@@ -365,7 +365,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * further configure the internal application context prior to refresh().
 	 * @see #DispatcherServlet(WebApplicationContext)
 	 */
-	public DispatcherServlet() {
+	public DispatcherServlet() { // 初始化DispatcherServlet
 		super();
 		setDispatchOptionsRequest(true);
 	}

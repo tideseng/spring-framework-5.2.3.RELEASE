@@ -588,7 +588,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		}
 		if (wac == null) {
 			// No context instance is defined for this servlet -> create a local one
-			wac = createWebApplicationContext(rootContext);
+			wac = createWebApplicationContext(rootContext); // 创建SpringMVC上下文
 		}
 
 		if (!this.refreshEventReceived) {
@@ -648,8 +648,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * @return the WebApplicationContext for this servlet
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext
 	 */
-	protected WebApplicationContext createWebApplicationContext(@Nullable ApplicationContext parent) {
-		Class<?> contextClass = getContextClass();
+	protected WebApplicationContext createWebApplicationContext(@Nullable ApplicationContext parent) { // 创建SpringMVC上下文
+		Class<?> contextClass = getContextClass(); // 获取Web应用上下文Class
 		if (!ConfigurableWebApplicationContext.class.isAssignableFrom(contextClass)) {
 			throw new ApplicationContextException(
 					"Fatal initialization error in servlet with name '" + getServletName() +
@@ -657,7 +657,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 					"] is not of type ConfigurableWebApplicationContext");
 		}
 		ConfigurableWebApplicationContext wac =
-				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass);
+				(ConfigurableWebApplicationContext) BeanUtils.instantiateClass(contextClass); // 通过反射实例化SpringMVC上下文
 
 		wac.setEnvironment(getEnvironment());
 		wac.setParent(parent);
@@ -665,7 +665,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		if (configLocation != null) {
 			wac.setConfigLocation(configLocation);
 		}
-		configureAndRefreshWebApplicationContext(wac);
+		configureAndRefreshWebApplicationContext(wac); // 初始化SpringMVC上下文
 
 		return wac;
 	}
@@ -712,8 +712,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext
 	 * @see #createWebApplicationContext(ApplicationContext)
 	 */
-	protected WebApplicationContext createWebApplicationContext(@Nullable WebApplicationContext parent) {
-		return createWebApplicationContext((ApplicationContext) parent);
+	protected WebApplicationContext createWebApplicationContext(@Nullable WebApplicationContext parent) { // 创建SpringMVC上下文
+		return createWebApplicationContext((ApplicationContext) parent); // 创建SpringMVC上下文
 	}
 
 	/**
