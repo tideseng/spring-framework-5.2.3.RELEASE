@@ -1041,11 +1041,11 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 				new ViewResolverRegistry(contentNegotiationManager, this.applicationContext); // 创建视图解析注册器
 		configureViewResolvers(registry); // 设置自定义视图解析器（钩子方法，由子类实现）
 
-		if (registry.getViewResolvers().isEmpty() && this.applicationContext != null) {
+		if (registry.getViewResolvers().isEmpty() && this.applicationContext != null) { // 当添加了视图解析器Bean时，则不会添加默认的视图解析器
 			String[] names = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
-					this.applicationContext, ViewResolver.class, true, false);
+					this.applicationContext, ViewResolver.class, true, false); // 获取容器BeanDefinitionMap中ViewResolver类型的beanName集合
 			if (names.length == 1) {
-				registry.getViewResolvers().add(new InternalResourceViewResolver());
+				registry.getViewResolvers().add(new InternalResourceViewResolver()); // 当容器没没有定义ViewResolver时，创建InternalResourceViewResolver实例并设置到视图解析注册器中
 			}
 		}
 

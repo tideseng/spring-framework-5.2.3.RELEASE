@@ -181,7 +181,7 @@ public abstract class AbstractCachingViewResolver extends WebApplicationObjectSu
 					view = this.viewCreationCache.get(cacheKey);
 					if (view == null) {
 						// Ask the subclass to create the View object.
-						view = createView(viewName, locale); // 创建视图
+						view = createView(viewName, locale); // 创建视图（会根据前缀和后缀进行拼接完整的视图地址）
 						if (view == null && this.cacheUnresolved) {
 							view = UNRESOLVED_VIEW;
 						}

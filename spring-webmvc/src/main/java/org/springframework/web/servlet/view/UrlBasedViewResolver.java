@@ -105,11 +105,11 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 
 
 	@Nullable
-	private Class<?> viewClass;
+	private Class<?> viewClass; // 视图Class对象
 
-	private String prefix = "";
+	private String prefix = ""; // 视图前缀
 
-	private String suffix = "";
+	private String suffix = ""; // 视图后缀
 
 	@Nullable
 	private String contentType;
@@ -473,7 +473,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		}
 
 		// Check for special "redirect:" prefix.
-		if (viewName.startsWith(REDIRECT_URL_PREFIX)) {
+		if (viewName.startsWith(REDIRECT_URL_PREFIX)) { // 重定向处理
 			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());
 			RedirectView view = new RedirectView(redirectUrl,
 					isRedirectContextRelative(), isRedirectHttp10Compatible());
@@ -485,7 +485,7 @@ public class UrlBasedViewResolver extends AbstractCachingViewResolver implements
 		}
 
 		// Check for special "forward:" prefix.
-		if (viewName.startsWith(FORWARD_URL_PREFIX)) {
+		if (viewName.startsWith(FORWARD_URL_PREFIX)) { // 转发处理
 			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());
 			InternalResourceView view = new InternalResourceView(forwardUrl);
 			return applyLifecycleMethods(FORWARD_URL_PREFIX, view);
