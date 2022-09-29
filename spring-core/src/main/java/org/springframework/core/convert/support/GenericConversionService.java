@@ -74,9 +74,9 @@ public class GenericConversionService implements ConfigurableConversionService {
 	private static final GenericConverter NO_MATCH = new NoOpConverter("NO_MATCH");
 
 
-	private final Converters converters = new Converters();
+	private final Converters converters = new Converters(); // 转换器组合器
 
-	private final Map<ConverterCacheKey, GenericConverter> converterCache = new ConcurrentReferenceHashMap<>(64);
+	private final Map<ConverterCacheKey, GenericConverter> converterCache = new ConcurrentReferenceHashMap<>(64); // 转换器映射缓存
 
 
 	// ConverterRegistry implementation
@@ -101,9 +101,9 @@ public class GenericConversionService implements ConfigurableConversionService {
 	}
 
 	@Override
-	public void addConverter(GenericConverter converter) {
-		this.converters.add(converter);
-		invalidateCache();
+	public void addConverter(GenericConverter converter) { // 添加转换器
+		this.converters.add(converter); // 添加转换器
+		invalidateCache(); // 失效缓存
 	}
 
 	@Override
@@ -497,13 +497,13 @@ public class GenericConversionService implements ConfigurableConversionService {
 	/**
 	 * Manages all converters registered with the service.
 	 */
-	private static class Converters {
+	private static class Converters { // 转换器组合器
 
 		private final Set<GenericConverter> globalConverters = new LinkedHashSet<>();
 
 		private final Map<ConvertiblePair, ConvertersForPair> converters = new LinkedHashMap<>(36);
 
-		public void add(GenericConverter converter) {
+		public void add(GenericConverter converter) { // 添加转换器
 			Set<ConvertiblePair> convertibleTypes = converter.getConvertibleTypes();
 			if (convertibleTypes == null) {
 				Assert.state(converter instanceof ConditionalConverter,
@@ -522,7 +522,7 @@ public class GenericConversionService implements ConfigurableConversionService {
 			ConvertersForPair convertersForPair = this.converters.get(convertiblePair);
 			if (convertersForPair == null) {
 				convertersForPair = new ConvertersForPair();
-				this.converters.put(convertiblePair, convertersForPair);
+				this.converters.put(convertiblePair, convertersForPair); // 添加转换器
 			}
 			return convertersForPair;
 		}

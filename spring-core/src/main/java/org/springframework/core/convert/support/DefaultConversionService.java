@@ -84,7 +84,7 @@ public class DefaultConversionService extends GenericConversionService {
 	 * (must also be castable to ConversionService, e.g. being a {@link ConfigurableConversionService})
 	 * @throws ClassCastException if the given ConverterRegistry could not be cast to a ConversionService
 	 */
-	public static void addDefaultConverters(ConverterRegistry converterRegistry) {
+	public static void addDefaultConverters(ConverterRegistry converterRegistry) { // 添加默认的转换器
 		addScalarConverters(converterRegistry);
 		addCollectionConverters(converterRegistry);
 
