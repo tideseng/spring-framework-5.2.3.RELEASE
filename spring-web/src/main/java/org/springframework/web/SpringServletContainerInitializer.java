@@ -109,7 +109,7 @@ import org.springframework.util.ReflectionUtils;
  * @see #onStartup(Set, ServletContext)
  * @see WebApplicationInitializer
  */
-@HandlesTypes(WebApplicationInitializer.class) // 收集WebApplicationInitializer实现类Class并注入到方法参数中
+@HandlesTypes(WebApplicationInitializer.class) // 收集WebApplicationInitializer相关类Class并注入到方法参数中
 public class SpringServletContainerInitializer implements ServletContainerInitializer { // 通过Servlet容器SPI机制调用Spring
 
 	/**
@@ -139,16 +139,16 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	 * @see AnnotationAwareOrderComparator
 	 */
 	@Override
-	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) // 注入收集的WebApplicationInitializer实现类Class（该方法由Servlet容器调用）
+	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) // 注入收集的WebApplicationInitializer相关类Class（该方法由Servlet容器调用）
 			throws ServletException {
 
 		List<WebApplicationInitializer> initializers = new LinkedList<>(); // WebApplicationInitializer实现类容器
 
 		if (webAppInitializerClasses != null) {
-			for (Class<?> waiClass : webAppInitializerClasses) { // 遍历WebApplicationInitializer实现类Class
+			for (Class<?> waiClass : webAppInitializerClasses) { // 遍历WebApplicationInitializer相关类Class
 				// Be defensive: Some servlet containers provide us with invalid classes,
 				// no matter what @HandlesTypes says...
-				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
+				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) && // 过滤掉接口和抽象类
 						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
 					try {
 						initializers.add((WebApplicationInitializer) // 通过反射实例化WebApplicationInitializer实现类

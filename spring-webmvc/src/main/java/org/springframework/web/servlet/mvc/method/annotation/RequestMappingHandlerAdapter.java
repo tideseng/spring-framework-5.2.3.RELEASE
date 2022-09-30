@@ -556,7 +556,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 	@Override
 	public void afterPropertiesSet() {
 		// Do this first, it may add ResponseBody advice beans
-		initControllerAdviceCache();
+		initControllerAdviceCache(); // 解析@ControllerAdvice注解类中的相关方法，并设置到modelAttributeAdviceCache、initBinderAdviceCache、requestResponseBodyAdvice中
 
 		if (this.argumentResolvers == null) {
 			List<HandlerMethodArgumentResolver> resolvers = getDefaultArgumentResolvers(); // 获取默认的和自定义的参数解析器
@@ -862,7 +862,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 
 			ModelAndViewContainer mavContainer = new ModelAndViewContainer(); // 创建ModelAndViewContainer
 			mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
-			modelFactory.initModel(webRequest, mavContainer, invocableMethod); // 在调用Controller方法之前先调用@ModelAttribute注解修饰的方法，将方法返回值存储到ModelAndViewContainer对象的map中（类似与@Before）
+			modelFactory.initModel(webRequest, mavContainer, invocableMethod); // 初始化Model，在调用Controller方法之前先调用@ModelAttribute注解修饰的方法，将方法返回值存储到ModelAndViewContainer对象的map中（类似与@Before）
 			mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
 			AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
@@ -907,7 +907,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter /
 		return new ServletInvocableHandlerMethod(handlerMethod);
 	}
 
-	private ModelFactory getModelFactory(HandlerMethod handlerMethod, WebDataBinderFactory binderFactory) { // 创建Model工厂ModelFactory，收集@ModelAttribute注解的方法
+	private ModelFactory getModelFactory(HandlerMethod handlerMethod, WebDataBinderFactory binderFactory) { // 创建Model工厂ModelFactory，收集@ModelAttribute、@SessionAttributes注解的方法
 		SessionAttributesHandler sessionAttrHandler = getSessionAttributesHandler(handlerMethod);
 		Class<?> handlerType = handlerMethod.getBeanType();
 		Set<Method> methods = this.modelAttributeCache.get(handlerType);

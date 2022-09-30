@@ -98,7 +98,7 @@ public final class ModelFactory {
 	 * @param handlerMethod the method for which the model is initialized
 	 * @throws Exception may arise from {@code @ModelAttribute} methods
 	 */
-	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod) // 调用@ModelAttribute注解修饰的方法
+	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod) // 初始化Model，调用@ModelAttribute注解修饰的方法初始化Model
 			throws Exception {
 
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
@@ -124,7 +124,7 @@ public final class ModelFactory {
 			throws Exception {
 
 		while (!this.modelMethods.isEmpty()) {
-			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod(); // 遍历InvocableHandlerMethod
+			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod(); // 按顺序遍历出当前的InvocableHandlerMethod
 			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class); // 获取方法上的@ModelAttribute注解
 			Assert.state(ann != null, "No ModelAttribute annotation");
 			if (container.containsAttribute(ann.name())) {
@@ -135,8 +135,8 @@ public final class ModelFactory {
 			}
 
 			Object returnValue = modelMethod.invokeForRequest(request, container); // 调用@ModelAttribute注解修饰的方法
-			if (!modelMethod.isVoid()){
-				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType());
+			if (!modelMethod.isVoid()){ // 返回值类型不是Void类型时
+				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType()); // 获取属性key
 				if (!ann.binding()) {
 					container.setBindingDisabled(returnValueName);
 				}
@@ -147,8 +147,8 @@ public final class ModelFactory {
 		}
 	}
 
-	private ModelMethod getNextModelMethod(ModelAndViewContainer container) {
-		for (ModelMethod modelMethod : this.modelMethods) {
+	private ModelMethod getNextModelMethod(ModelAndViewContainer container) { // 按顺序遍历出当前的InvocableHandlerMethod
+		for (ModelMethod modelMethod : this.modelMethods) { // 遍历ModelMethod
 			if (modelMethod.checkDependencies(container)) {
 				this.modelMethods.remove(modelMethod);
 				return modelMethod;
