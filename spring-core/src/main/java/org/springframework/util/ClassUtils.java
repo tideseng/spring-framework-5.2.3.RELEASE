@@ -279,15 +279,15 @@ public abstract class ClassUtils {
 			clToUse = getDefaultClassLoader();
 		}
 		try {
-			return Class.forName(name, false, clToUse);
+			return Class.forName(name, false, clToUse); // 第一次作为一般类调用Class#forName方法获取Class
 		}
 		catch (ClassNotFoundException ex) {
 			int lastDotIndex = name.lastIndexOf(PACKAGE_SEPARATOR);
 			if (lastDotIndex != -1) {
 				String innerClassName =
-						name.substring(0, lastDotIndex) + INNER_CLASS_SEPARATOR + name.substring(lastDotIndex + 1);
+						name.substring(0, lastDotIndex) + INNER_CLASS_SEPARATOR + name.substring(lastDotIndex + 1); // 获取内部类的Class类名
 				try {
-					return Class.forName(innerClassName, false, clToUse);
+					return Class.forName(innerClassName, false, clToUse); // 第二次作为内部类调用Class#forName方法获取Class
 				}
 				catch (ClassNotFoundException ex2) {
 					// Swallow - let original exception get through
@@ -347,7 +347,7 @@ public abstract class ClassUtils {
 	 * (typically a missing dependency declaration in a Jigsaw module definition
 	 * for a superclass or interface implemented by the class to be checked here)
 	 */
-	public static boolean isPresent(String className, @Nullable ClassLoader classLoader) {
+	public static boolean isPresent(String className, @Nullable ClassLoader classLoader) { // 判断Class类是否存在
 		try {
 			forName(className, classLoader);
 			return true;
