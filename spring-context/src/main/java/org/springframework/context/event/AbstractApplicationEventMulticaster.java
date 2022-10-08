@@ -107,12 +107,12 @@ public abstract class AbstractApplicationEventMulticaster // 事件广播器/管
 		synchronized (this.retrievalMutex) {
 			// Explicitly remove target for a proxy, if registered already,
 			// in order to avoid double invocations of the same listener.
-			Object singletonTarget = AopProxyUtils.getSingletonTarget(listener);
+			Object singletonTarget = AopProxyUtils.getSingletonTarget(listener); // 获取被代理对象实例
 			if (singletonTarget instanceof ApplicationListener) {
-				this.defaultRetriever.applicationListeners.remove(singletonTarget);
+				this.defaultRetriever.applicationListeners.remove(singletonTarget); // 如果当前是代理对象，则移除被代理对象，避免重复通知
 			}
 			this.defaultRetriever.applicationListeners.add(listener);
-			this.retrieverCache.clear();
+			this.retrieverCache.clear(); // 清除缓存
 		}
 	}
 
@@ -170,7 +170,7 @@ public abstract class AbstractApplicationEventMulticaster // 事件广播器/管
 	 * @return a Collection of ApplicationListeners
 	 * @see org.springframework.context.ApplicationListener
 	 */
-	protected Collection<ApplicationListener<?>> getApplicationListeners( // 获取事件监听器
+	protected Collection<ApplicationListener<?>> getApplicationListeners( // 获取匹配的事件监听器
 			ApplicationEvent event, ResolvableType eventType) {
 
 		Object source = event.getSource();
@@ -194,14 +194,14 @@ public abstract class AbstractApplicationEventMulticaster // 事件广播器/管
 				}
 				retriever = new ListenerRetriever(true);
 				Collection<ApplicationListener<?>> listeners =
-						retrieveApplicationListeners(eventType, sourceType, retriever); //  // 获取事件监听器并排序
+						retrieveApplicationListeners(eventType, sourceType, retriever); // 获取匹配的事件监听器并排序
 				this.retrieverCache.put(cacheKey, retriever); // 放入事件监听器缓存
 				return listeners;
 			}
 		}
-		else {
+		else { // 不用缓存时，每次查询
 			// No ListenerRetriever caching -> no synchronization necessary
-			return retrieveApplicationListeners(eventType, sourceType, null); //  // 获取事件监听器并排序
+			return retrieveApplicationListeners(eventType, sourceType, null); // 获取匹配的事件监听器并排序
 		}
 	}
 
@@ -212,7 +212,7 @@ public abstract class AbstractApplicationEventMulticaster // 事件广播器/管
 	 * @param retriever the ListenerRetriever, if supposed to populate one (for caching purposes)
 	 * @return the pre-filtered list of application listeners for the given event and source type
 	 */
-	private Collection<ApplicationListener<?>> retrieveApplicationListeners( // 获取事件监听器并排序
+	private Collection<ApplicationListener<?>> retrieveApplicationListeners( // 获取匹配的事件监听器并排序
 			ResolvableType eventType, @Nullable Class<?> sourceType, @Nullable ListenerRetriever retriever) {
 
 		List<ApplicationListener<?>> allListeners = new ArrayList<>(); // 封装所有对应的事件监听器
