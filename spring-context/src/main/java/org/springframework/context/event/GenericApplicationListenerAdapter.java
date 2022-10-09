@@ -36,12 +36,12 @@ import org.springframework.util.ConcurrentReferenceHashMap;
  * @since 3.0
  * @see org.springframework.context.ApplicationListener#onApplicationEvent
  */
-public class GenericApplicationListenerAdapter implements GenericApplicationListener, SmartApplicationListener {
+public class GenericApplicationListenerAdapter implements GenericApplicationListener, SmartApplicationListener { // 事件监听器适配器
 
 	private static final Map<Class<?>, ResolvableType> eventTypeCache = new ConcurrentReferenceHashMap<>();
 
 
-	private final ApplicationListener<ApplicationEvent> delegate;
+	private final ApplicationListener<ApplicationEvent> delegate; // 事件监听器
 
 	@Nullable
 	private final ResolvableType declaredEventType;
@@ -52,10 +52,10 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 	 * @param delegate the delegate listener to be invoked
 	 */
 	@SuppressWarnings("unchecked")
-	public GenericApplicationListenerAdapter(ApplicationListener<?> delegate) {
+	public GenericApplicationListenerAdapter(ApplicationListener<?> delegate) { // 初始化GenericApplicationListenerAdapter
 		Assert.notNull(delegate, "Delegate listener must not be null");
-		this.delegate = (ApplicationListener<ApplicationEvent>) delegate;
-		this.declaredEventType = resolveDeclaredEventType(this.delegate);
+		this.delegate = (ApplicationListener<ApplicationEvent>) delegate; // 赋值事件监听器
+		this.declaredEventType = resolveDeclaredEventType(this.delegate); // 解析出事件监听器监听事件所支持的ResolvableType对象
 	}
 
 
@@ -66,13 +66,13 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public boolean supportsEventType(ResolvableType eventType) {
-		if (this.delegate instanceof SmartApplicationListener) {
+	public boolean supportsEventType(ResolvableType eventType) { // 判断事件类型是否支持
+		if (this.delegate instanceof SmartApplicationListener) { // 如果被适配对象是SmartApplicationListener类型，则直接调用它的supportsEventType方法
 			Class<? extends ApplicationEvent> eventClass = (Class<? extends ApplicationEvent>) eventType.resolve();
 			return (eventClass != null && ((SmartApplicationListener) this.delegate).supportsEventType(eventClass));
 		}
 		else {
-			return (this.declaredEventType == null || this.declaredEventType.isAssignableFrom(eventType));
+			return (this.declaredEventType == null || this.declaredEventType.isAssignableFrom(eventType)); // 判断事件类型是否为监听事件所支持的ResolvableType对象类型或子类型
 		}
 	}
 
@@ -82,8 +82,8 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 	}
 
 	@Override
-	public boolean supportsSourceType(@Nullable Class<?> sourceType) {
-		return !(this.delegate instanceof SmartApplicationListener) ||
+	public boolean supportsSourceType(@Nullable Class<?> sourceType) { // 判断事件内容/事件源类型是否支持
+		return !(this.delegate instanceof SmartApplicationListener) || // 如果被适配监听器不是SmartApplicationListener类型，则直接支持，否则就调用它的supportsSourceType来判断
 				((SmartApplicationListener) this.delegate).supportsSourceType(sourceType);
 	}
 
