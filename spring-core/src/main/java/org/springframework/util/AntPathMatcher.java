@@ -509,7 +509,7 @@ public class AntPathMatcher implements PathMatcher { // 路径匹配器实现类
 	}
 
 	@Override
-	public Map<String, String> extractUriTemplateVariables(String pattern, String path) {
+	public Map<String, String> extractUriTemplateVariables(String pattern, String path) { // 提取uri模板变量
 		Map<String, String> variables = new LinkedHashMap<>();
 		boolean result = doMatch(pattern, path, true, variables);
 		if (!result) {
