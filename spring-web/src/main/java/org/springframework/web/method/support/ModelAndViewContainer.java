@@ -232,7 +232,7 @@ public class ModelAndViewContainer {
 	 * @param attributeName the name of the attribute
 	 * @since 4.3.13
 	 */
-	public void setBinding(String attributeName, boolean enabled) {
+	public void setBinding(String attributeName, boolean enabled) { // 设置是否绑定，绑定的就从noBinding集合里删除，否则就添加进去
 		if (!enabled) {
 			this.noBinding.add(attributeName);
 		}
