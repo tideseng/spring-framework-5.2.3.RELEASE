@@ -106,7 +106,7 @@ public class DefaultFormattingConversionService extends FormattingConversionServ
 	 * depending on the presence of the corresponding API on the classpath.
 	 * @param formatterRegistry the service to register default formatters with
 	 */
-	public static void addDefaultFormatters(FormatterRegistry formatterRegistry) { // 添加默认的格式化器
+	public static void addDefaultFormatters(FormatterRegistry formatterRegistry) { // 添加Spring默认的格式化器
 		// Default handling of number values
 		formatterRegistry.addFormatterForFieldAnnotation(new NumberFormatAnnotationFormatterFactory());
 
