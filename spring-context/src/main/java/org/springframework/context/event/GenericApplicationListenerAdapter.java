@@ -94,7 +94,7 @@ public class GenericApplicationListenerAdapter implements GenericApplicationList
 
 
 	@Nullable
-	private static ResolvableType resolveDeclaredEventType(ApplicationListener<ApplicationEvent> listener) {
+	private static ResolvableType resolveDeclaredEventType(ApplicationListener<ApplicationEvent> listener) { // 解析出事件监听器监听事件所支持的ResolvableType对象
 		ResolvableType declaredEventType = resolveDeclaredEventType(listener.getClass());
 		if (declaredEventType == null || declaredEventType.isAssignableFrom(ApplicationEvent.class)) {
 			Class<?> targetClass = AopUtils.getTargetClass(listener);

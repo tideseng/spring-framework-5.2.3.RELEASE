@@ -350,7 +350,7 @@ public abstract class AbstractApplicationEventMulticaster // 事件广播器/管
 
 		GenericApplicationListener smartListener = (listener instanceof GenericApplicationListener ?
 				(GenericApplicationListener) listener : new GenericApplicationListenerAdapter(listener)); // 当监听器不为GenericApplicationListener类型时，封装到GenericApplicationListenerAdapter进行适配
-		return (smartListener.supportsEventType(eventType) && smartListener.supportsSourceType(sourceType));
+		return (smartListener.supportsEventType(eventType) && smartListener.supportsSourceType(sourceType)); // 判断事件类型和事件内容是否支持
 	}
 
 
