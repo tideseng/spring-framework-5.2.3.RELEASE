@@ -278,7 +278,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	/** Additional logger to use when no mapped handler is found for a request. */
 	protected static final Log pageNotFoundLogger = LogFactory.getLog(PAGE_NOT_FOUND_LOG_CATEGORY);
 
-	private static final Properties defaultStrategies;
+	private static final Properties defaultStrategies; // DispatcherServlet.properties文件属性，当初始化相关策略时，如果容器中找不到则通过该文件属性进行初始化
 
 	static {
 		// Load default strategy implementations from properties file.
@@ -286,7 +286,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		// by application developers.
 		try {
 			ClassPathResource resource = new ClassPathResource(DEFAULT_STRATEGIES_PATH, DispatcherServlet.class);
-			defaultStrategies = PropertiesLoaderUtils.loadProperties(resource);
+			defaultStrategies = PropertiesLoaderUtils.loadProperties(resource); // 加载当前类的包路径下的DispatcherServlet.properties文件，并封装成Properties对象
 		}
 		catch (IOException ex) {
 			throw new IllegalStateException("Could not load '" + DEFAULT_STRATEGIES_PATH + "': " + ex.getMessage());
@@ -313,7 +313,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 
 	/** MultipartResolver used by this servlet. */
 	@Nullable
-	private MultipartResolver multipartResolver;
+	private MultipartResolver multipartResolver; // 文件上传解析器
 
 	/** LocaleResolver used by this servlet. */
 	@Nullable
@@ -491,7 +491,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * This implementation calls {@link #initStrategies}.
 	 */
 	@Override
-	protected void onRefresh(ApplicationContext context) { // 处理SpringMVC容器的ContextRefreshedEvent事件（Bean对象已全部实例化并初始化）
+	protected void onRefresh(ApplicationContext context) { // 处理SpringMVC容器的ContextRefreshedEvent事件（由finishRefresh触发，此时Bean对象已全部实例化并初始化）
 		initStrategies(context); // 初始化相关信息
 	}
 
@@ -500,15 +500,15 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>May be overridden in subclasses in order to initialize further strategy objects.
 	 */
 	protected void initStrategies(ApplicationContext context) { // 初始化相关信息
-		initMultipartResolver(context);
-		initLocaleResolver(context);
-		initThemeResolver(context);
+		initMultipartResolver(context); // 初始化文件上传解析器（如果容器中不存在则为null）
+		initLocaleResolver(context); // 初始化本地化解析器（如果容器中不存在则通过DispatcherServlet.properties文件获取唯一的实现类）
+		initThemeResolver(context); // 初始化主题解析器（如果容器中不存在则通过DispatcherServlet.properties文件获取唯一的实现类）
 		initHandlerMappings(context); // 初始化HandlerMapping
 		initHandlerAdapters(context); // 初始化HandlerAdapter
 		initHandlerExceptionResolvers(context); // 初始化HandlerExceptionResolver
-		initRequestToViewNameTranslator(context);
+		initRequestToViewNameTranslator(context); // 初始化视图名翻译器（如果容器中不存在则通过DispatcherServlet.properties文件获取唯一的类）
 		initViewResolvers(context); // 初始化视图解析器
-		initFlashMapManager(context);
+		initFlashMapManager(context); // 初始化重定向数据管理器（如果容器中不存在则通过DispatcherServlet.properties文件获取唯一的类）
 	}
 
 	/**
@@ -516,9 +516,9 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * no multipart handling is provided.
 	 */
-	private void initMultipartResolver(ApplicationContext context) {
+	private void initMultipartResolver(ApplicationContext context) { // 初始化文件上传解析器
 		try {
-			this.multipartResolver = context.getBean(MULTIPART_RESOLVER_BEAN_NAME, MultipartResolver.class);
+			this.multipartResolver = context.getBean(MULTIPART_RESOLVER_BEAN_NAME, MultipartResolver.class); // 从容器中获取beanName为multipartResolver的实例，如果不存在就为null（默认为StandardServletMultipartResolver，在MultipartAutoConfiguration中进行定义）
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.multipartResolver);
 			}
@@ -542,7 +542,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 */
 	private void initLocaleResolver(ApplicationContext context) {
 		try {
-			this.localeResolver = context.getBean(LOCALE_RESOLVER_BEAN_NAME, LocaleResolver.class);
+			this.localeResolver = context.getBean(LOCALE_RESOLVER_BEAN_NAME, LocaleResolver.class); // 从容器中获取beanName为localeResolver的实例，如果不存在则使用默认的DispatcherServlet.properties文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.localeResolver);
 			}
@@ -552,7 +552,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		}
 		catch (NoSuchBeanDefinitionException ex) {
 			// We need to use the default.
-			this.localeResolver = getDefaultStrategy(context, LocaleResolver.class);
+			this.localeResolver = getDefaultStrategy(context, LocaleResolver.class); // 使用默认的DispatcherServlet.properties文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("No LocaleResolver '" + LOCALE_RESOLVER_BEAN_NAME +
 						"': using default [" + this.localeResolver.getClass().getSimpleName() + "]");
@@ -567,7 +567,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 */
 	private void initThemeResolver(ApplicationContext context) {
 		try {
-			this.themeResolver = context.getBean(THEME_RESOLVER_BEAN_NAME, ThemeResolver.class);
+			this.themeResolver = context.getBean(THEME_RESOLVER_BEAN_NAME, ThemeResolver.class); // 从容器中获取beanName为themeResolver的实例，如果不存在则使用默认的DispatcherServlet.properties文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.themeResolver);
 			}
@@ -590,10 +590,10 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no HandlerMapping beans are defined in the BeanFactory for this namespace,
 	 * we default to BeanNameUrlHandlerMapping.
 	 */
-	private void initHandlerMappings(ApplicationContext context) { // 初始化HandlerMapping
+	private void initHandlerMappings(ApplicationContext context) { // 初始化HandlerMapping（WebMvcConfigurationSupport、WebMvcAutoConfiguration、WebMvcEndpointManagementContextConfiguration、Swagger2DocumentationConfiguration中进行了定义）
 		this.handlerMappings = null;
 
-		if (this.detectAllHandlerMappings) { // 默认为true
+		if (this.detectAllHandlerMappings) { // 默认为true，获取所有的实现类
 			// Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
 			Map<String, HandlerMapping> matchingBeans =
 					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false); // 获取所有HandlerMapping实现类Map容器
@@ -605,7 +605,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 		}
 		else {
 			try {
-				HandlerMapping hm = context.getBean(HANDLER_MAPPING_BEAN_NAME, HandlerMapping.class);
+				HandlerMapping hm = context.getBean(HANDLER_MAPPING_BEAN_NAME, HandlerMapping.class); // 只获取一个
 				this.handlerMappings = Collections.singletonList(hm);
 			}
 			catch (NoSuchBeanDefinitionException ex) {
@@ -629,7 +629,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no HandlerAdapter beans are defined in the BeanFactory for this namespace,
 	 * we default to SimpleControllerHandlerAdapter.
 	 */
-	private void initHandlerAdapters(ApplicationContext context) { // 初始化HandlerAdapter
+	private void initHandlerAdapters(ApplicationContext context) { // 初始化HandlerAdapter（WebMvcConfigurationSupport、WebMvcAutoConfiguration中进行了定义）
 		this.handlerAdapters = null;
 
 		if (this.detectAllHandlerAdapters) { // 默认为true
@@ -668,7 +668,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no bean is defined with the given name in the BeanFactory for this namespace,
 	 * we default to no exception resolver.
 	 */
-	private void initHandlerExceptionResolvers(ApplicationContext context) { // 初始化HandlerExceptionResolver
+	private void initHandlerExceptionResolvers(ApplicationContext context) { // 初始化HandlerExceptionResolver（WebMvcConfigurationSupport、ErrorMvcAutoConfiguration中进行了定义）
 		this.handlerExceptionResolvers = null;
 
 		if (this.detectAllHandlerExceptionResolvers) { // 默认为true
@@ -710,7 +710,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	private void initRequestToViewNameTranslator(ApplicationContext context) {
 		try {
 			this.viewNameTranslator =
-					context.getBean(REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME, RequestToViewNameTranslator.class);
+					context.getBean(REQUEST_TO_VIEW_NAME_TRANSLATOR_BEAN_NAME, RequestToViewNameTranslator.class); // 从容器中获取beanName为viewNameTranslator的实例，如果不存在则使用默认的DispatcherServlet.properties文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.viewNameTranslator.getClass().getSimpleName());
 			}
@@ -733,7 +733,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * <p>If no ViewResolver beans are defined in the BeanFactory for this
 	 * namespace, we default to InternalResourceViewResolver.
 	 */
-	private void initViewResolvers(ApplicationContext context) { // 初始化视图解析器
+	private void initViewResolvers(ApplicationContext context) { // 初始化视图解析器（WebMvcConfigurationSupport、WebMvcAutoConfiguration、FreeMarkerServletWebConfiguration、ThymeleafAutoConfiguration中进行了定义）
 		this.viewResolvers = null;
 
 		if (this.detectAllViewResolvers) { // 默认为true
@@ -774,7 +774,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 */
 	private void initFlashMapManager(ApplicationContext context) {
 		try {
-			this.flashMapManager = context.getBean(FLASH_MAP_MANAGER_BEAN_NAME, FlashMapManager.class);
+			this.flashMapManager = context.getBean(FLASH_MAP_MANAGER_BEAN_NAME, FlashMapManager.class); // 从容器中获取beanName为flashMapManager的实例，如果不存在则使用默认的DispatcherServlet.properties文件进行初始化
 			if (logger.isTraceEnabled()) {
 				logger.trace("Detected " + this.flashMapManager.getClass().getSimpleName());
 			}
@@ -838,13 +838,13 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	 * @return the corresponding strategy object
 	 * @see #getDefaultStrategies
 	 */
-	protected <T> T getDefaultStrategy(ApplicationContext context, Class<T> strategyInterface) {
-		List<T> strategies = getDefaultStrategies(context, strategyInterface);
-		if (strategies.size() != 1) {
+	protected <T> T getDefaultStrategy(ApplicationContext context, Class<T> strategyInterface) { // 使用默认的DispatcherServlet.properties文件进行初始化
+		List<T> strategies = getDefaultStrategies(context, strategyInterface); // 使用默认的DispatcherServlet.properties文件进行初始化
+		if (strategies.size() != 1) { // 默认相关的实现类必须有且仅有一个，否则抛出异常
 			throw new BeanInitializationException(
 					"DispatcherServlet needs exactly 1 strategy for interface [" + strategyInterface.getName() + "]");
 		}
-		return strategies.get(0);
+		return strategies.get(0); // 返回集合中的第一个元素
 	}
 
 	/**
@@ -1231,7 +1231,7 @@ public class DispatcherServlet extends FrameworkServlet { // DispatcherServlet�
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception { // 获取请求的HandlerExecutionChain
 		if (this.handlerMappings != null) {
 			for (HandlerMapping mapping : this.handlerMappings) { // 遍历HandlerMapping实例
-				HandlerExecutionChain handler = mapping.getHandler(request); // 获取handler和拦截器链的包装类HandlerExecutionChain
+				HandlerExecutionChain handler = mapping.getHandler(request); // 获取handler和拦截器链并封装到HandlerExecutionChain中
 				if (handler != null) { // 一旦HandlerMapping匹配并获取到，就不再遍历
 					return handler;
 				}

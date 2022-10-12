@@ -687,7 +687,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		wac.setServletContext(getServletContext());
 		wac.setServletConfig(getServletConfig());
 		wac.setNamespace(getNamespace());
-		wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener())); // 注册SpringMVC事件监听器
+		wac.addApplicationListener(new SourceFilteringListener(wac, new ContextRefreshListener())); // 注册SpringMVC事件监听器，监听ContextRefreshedEvent事件
 
 		// The wac environment's #initPropertySources will be called in any case when the context
 		// is refreshed; do it eagerly here to ensure servlet property sources are in place for
