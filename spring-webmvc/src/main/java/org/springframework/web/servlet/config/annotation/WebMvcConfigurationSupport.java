@@ -458,7 +458,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 		addViewControllers(registry); // 通过钩子方法添加自定义视图控制器（通过钩子方法注入自定义WebMvcConfigurer相关）
 
 		AbstractHandlerMapping handlerMapping = registry.buildHandlerMapping(); // 构建SimpleUrlHandlerMapping
-		if (handlerMapping == null) {
+		if (handlerMapping == null) { // 当没有自定义视图时为null（默认情况下没有自定义视图，所以返回null）
 			return null;
 		}
 		handlerMapping.setPathMatcher(pathMatcher);

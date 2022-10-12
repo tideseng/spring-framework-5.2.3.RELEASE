@@ -223,8 +223,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 */
 	@Override
 	@Nullable
-	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) { // 构建RequestMappingInfo
-		RequestMappingInfo info = createRequestMappingInfo(method); // 根据方法上的@RequestMapping注解构建RequestMappingInfo
+	protected RequestMappingInfo getMappingForMethod(Method method, Class<?> handlerType) { // 构建RequestMappingInfo，不存在则返回null
+		RequestMappingInfo info = createRequestMappingInfo(method); // 根据方法上的@RequestMapping注解构建RequestMappingInfo，不存在则返回null
 		if (info != null) { // 如果方法上没有@RequestMapping注解，直接返回null
 			RequestMappingInfo typeInfo = createRequestMappingInfo(handlerType); // 根据类上的@RequestMapping注解构建RequestMappingInfo
 			if (typeInfo != null) {
@@ -260,8 +260,8 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	 * @see #getCustomMethodCondition(Method)
 	 */
 	@Nullable
-	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) { // 构建RequestMappingInfo
-		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class);
+	private RequestMappingInfo createRequestMappingInfo(AnnotatedElement element) { // 根据@RequestMapping注解构建RequestMappingInfo
+		RequestMapping requestMapping = AnnotatedElementUtils.findMergedAnnotation(element, RequestMapping.class); // 获取元素上的@RequestMapping注解
 		RequestCondition<?> condition = (element instanceof Class ?
 				getCustomTypeCondition((Class<?>) element) : getCustomMethodCondition((Method) element));
 		return (requestMapping != null ? createRequestMappingInfo(requestMapping, condition) : null); // 构建RequestMappingInfo

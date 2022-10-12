@@ -299,7 +299,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	}
 
 	@Override
-	public boolean equals(@Nullable Object other) {
+	public boolean equals(@Nullable Object other) { // 重写equals方法
 		if (this == other) {
 			return true;
 		}
