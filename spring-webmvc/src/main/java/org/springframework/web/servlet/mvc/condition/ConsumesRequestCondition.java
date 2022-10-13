@@ -54,7 +54,7 @@ public final class ConsumesRequestCondition extends AbstractRequestCondition<Con
 
 	private final List<ConsumeMediaTypeExpression> expressions;
 
-	private boolean bodyRequired = true;
+	private boolean bodyRequired = true; // 默认为true（会被@RequestBody注解中的required属性值覆盖）
 
 
 	/**

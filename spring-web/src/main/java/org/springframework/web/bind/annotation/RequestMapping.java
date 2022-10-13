@@ -187,7 +187,7 @@ public @interface RequestMapping {
 	 * @see org.springframework.http.MediaType
 	 * @see javax.servlet.http.HttpServletRequest#getContentType()
 	 */
-	String[] consumes() default {};
+	String[] consumes() default {}; // 限定请求头的Content-Type，不匹配则不会被调用
 
 	/**
 	 * Narrows the primary mapping by media types that can be produced by the
@@ -214,6 +214,6 @@ public @interface RequestMapping {
 	 * @see org.springframework.http.MediaType
 	 * @see org.springframework.http.MediaType
 	 */
-	String[] produces() default {};
+	String[] produces() default {}; // 获取可生成的MediaType列表用于返回（默认该内容会响应到响应头Content-Type）
 
 }

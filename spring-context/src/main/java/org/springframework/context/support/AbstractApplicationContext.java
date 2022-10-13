@@ -938,18 +938,18 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #doClose()
 	 */
 	@Override
-	public void registerShutdownHook() {
+	public void registerShutdownHook() { // 注册关闭线程
 		if (this.shutdownHook == null) {
 			// No shutdown hook registered yet.
 			this.shutdownHook = new Thread(SHUTDOWN_HOOK_THREAD_NAME) {
 				@Override
 				public void run() {
 					synchronized (startupShutdownMonitor) {
-						doClose();
+						doClose(); // 关闭
 					}
 				}
 			};
-			Runtime.getRuntime().addShutdownHook(this.shutdownHook);
+			Runtime.getRuntime().addShutdownHook(this.shutdownHook); // 注册关闭线程
 		}
 	}
 
@@ -998,9 +998,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see #close()
 	 * @see #registerShutdownHook()
 	 */
-	protected void doClose() {
+	protected void doClose() { // 关闭
 		// Check whether an actual close attempt is necessary...
-		if (this.active.get() && this.closed.compareAndSet(false, true)) {
+		if (this.active.get() && this.closed.compareAndSet(false, true)) { // 原子操作
 			if (logger.isDebugEnabled()) {
 				logger.debug("Closing " + this);
 			}
@@ -1009,7 +1009,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 			try {
 				// Publish shutdown event.
-				publishEvent(new ContextClosedEvent(this));
+				publishEvent(new ContextClosedEvent(this)); // 发布ContextClosedEvent事件
 			}
 			catch (Throwable ex) {
 				logger.warn("Exception thrown from ApplicationListener handling ContextClosedEvent", ex);

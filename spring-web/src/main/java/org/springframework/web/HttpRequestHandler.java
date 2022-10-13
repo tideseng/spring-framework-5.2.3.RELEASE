@@ -75,7 +75,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see org.springframework.remoting.caucho.HessianServiceExporter
  */
 @FunctionalInterface
-public interface HttpRequestHandler {
+public interface HttpRequestHandler { // 通过HttpRequestHandler实现类可以处理Http请求返回响应结果，作用同@RequestMapping、Controlller实现类
 
 	/**
 	 * Process the given request, generating a response.

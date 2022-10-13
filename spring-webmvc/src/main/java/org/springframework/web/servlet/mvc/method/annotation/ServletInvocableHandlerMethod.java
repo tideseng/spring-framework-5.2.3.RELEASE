@@ -72,14 +72,14 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	/**
 	 * Creates an instance from the given handler and method.
 	 */
-	public ServletInvocableHandlerMethod(Object handler, Method method) { // 初始化ServletInvocableHandlerMethod
+	public ServletInvocableHandlerMethod(Object handler, Method method) { // 实例化ServletInvocableHandlerMethod
 		super(handler, method); // 调用父类构造函数，注入@ExceptionHandler注解方法
 	}
 
 	/**
 	 * Create an instance from a {@code HandlerMethod}.
 	 */
-	public ServletInvocableHandlerMethod(HandlerMethod handlerMethod) {
+	public ServletInvocableHandlerMethod(HandlerMethod handlerMethod) { // 实例化ServletInvocableHandlerMethod
 		super(handlerMethod);
 	}
 

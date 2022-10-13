@@ -45,13 +45,13 @@ public class RequestMappingInfoHandlerMethodMappingNamingStrategy
 			return mapping.getName();
 		}
 		StringBuilder sb = new StringBuilder();
-		String simpleTypeName = handlerMethod.getBeanType().getSimpleName();
+		String simpleTypeName = handlerMethod.getBeanType().getSimpleName(); // 获取HandlerMethod所在类的简单类名
 		for (int i = 0; i < simpleTypeName.length(); i++) {
 			if (Character.isUpperCase(simpleTypeName.charAt(i))) {
-				sb.append(simpleTypeName.charAt(i));
+				sb.append(simpleTypeName.charAt(i)); // 获取简单类名的所有大写字母
 			}
 		}
-		sb.append(SEPARATOR).append(handlerMethod.getMethod().getName());
+		sb.append(SEPARATOR).append(handlerMethod.getMethod().getName()); // 名称为简单类名的所有大写字母+"#"+HandlerMethod的方法名
 		return sb.toString();
 	}
 

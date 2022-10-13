@@ -348,10 +348,10 @@ public class RequestMappingHandlerMapping extends RequestMappingInfoHandlerMappi
 	@Override
 	protected void registerHandlerMethod(Object handler, Method method, RequestMappingInfo mapping) { // 注册HandlerMethod到MappingRegistry，建立映射关系
 		super.registerHandlerMethod(handler, method, mapping); // 注册HandlerMethod到MappingRegistry，建立映射关系
-		updateConsumesCondition(mapping, method);
+		updateConsumesCondition(mapping, method); // 更新@RequestMapping注解的consumes条件，将@RequestBody注解中的required属性值同步到consumes条件中
 	}
 
-	private void updateConsumesCondition(RequestMappingInfo info, Method method) {
+	private void updateConsumesCondition(RequestMappingInfo info, Method method) { // 更新@RequestMapping注解的consumes条件，将@RequestBody注解中的required属性值同步到consumes条件中
 		ConsumesRequestCondition condition = info.getConsumesCondition();
 		if (!condition.isEmpty()) {
 			for (Parameter parameter : method.getParameters()) {

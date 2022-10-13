@@ -285,7 +285,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	protected void initApplicationContext() throws BeansException { // 实现父类ApplicationObjectSupport实现setApplicationContext埋下的钩子方法（父类实现了ApplicationContextAware接口，但在setApplicationContext方法中进行类埋点，在初始化Bean时通过BeanPostProcessor进行调用）
 		extendInterceptors(this.interceptors); // 定义埋点方法，供子类进行扩展添加拦截器
 		detectMappedInterceptors(this.adaptedInterceptors); // 添加容器中MappedInterceptor类型的拦截器
-		initInterceptors(); // 将interceptors中的拦截器添加到adaptedInterceptors中
+		initInterceptors(); // 将实例化阶段生成的interceptors中的拦截器添加到adaptedInterceptors中
 	}
 
 	/**
@@ -307,7 +307,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 	 * from the current context and its ancestors. Subclasses can override and refine this policy.
 	 * @param mappedInterceptors an empty list to add {@link MappedInterceptor} instances to
 	 */
-	protected void detectMappedInterceptors(List<HandlerInterceptor> mappedInterceptors) {
+	protected void detectMappedInterceptors(List<HandlerInterceptor> mappedInterceptors) { // 获取容器中MappedInterceptor类型的拦截器
 		mappedInterceptors.addAll(
 				BeanFactoryUtils.beansOfTypeIncludingAncestors(
 						obtainApplicationContext(), MappedInterceptor.class, true, false).values());
@@ -471,7 +471,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 		for (HandlerInterceptor interceptor : this.adaptedInterceptors) { // 遍历拦截器
 			if (interceptor instanceof MappedInterceptor) {
 				MappedInterceptor mappedInterceptor = (MappedInterceptor) interceptor;
-				if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) { // 当拦截器为MappedInterceptor类类型时，判断是否拦截
+				if (mappedInterceptor.matches(lookupPath, this.pathMatcher)) { // 当拦截器为MappedInterceptor类类型时，判断请求路径是否需要拦截
 					chain.addInterceptor(mappedInterceptor.getInterceptor()); // 添加拦截器
 				}
 			}

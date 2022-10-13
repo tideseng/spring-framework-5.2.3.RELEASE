@@ -69,19 +69,19 @@ public class HandlerMethod {
 	@Nullable
 	private final BeanFactory beanFactory;
 
-	private final Class<?> beanType;
+	private final Class<?> beanType; // Controller的class类
 
 	private final Method method; // 当前@RequestMapping注解修饰的方法
 
-	private final Method bridgedMethod; // 桥接方法
+	private final Method bridgedMethod; // 当前@RequestMapping注解修饰的方法的桥接方法
 
 	private final MethodParameter[] parameters; // 方法入参包装类数组
 
 	@Nullable
-	private HttpStatus responseStatus; // @ResponseStatus注解的状态码
+	private HttpStatus responseStatus; // 当前方法或类上@ResponseStatus注解的状态码
 
 	@Nullable
-	private String responseStatusReason; // @ResponseStatus注解的描述信息
+	private String responseStatusReason; // 当前方法或类上@ResponseStatus注解的描述信息
 
 	@Nullable
 	private HandlerMethod resolvedFromHandlerMethod;
@@ -89,7 +89,7 @@ public class HandlerMethod {
 	@Nullable
 	private volatile List<Annotation[][]> interfaceParameterAnnotations;
 
-	private final String description;
+	private final String description; // 描述信息（作为toString方法输出）
 
 
 	/**
@@ -103,7 +103,7 @@ public class HandlerMethod {
 		this.beanType = ClassUtils.getUserClass(bean);
 		this.method = method;
 		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-		this.parameters = initMethodParameters();
+		this.parameters = initMethodParameters(); // 方法入参包装类数组
 		evaluateResponseStatus(); // 解析当前@RequestMapping方法上的@ResponseStatus注解
 		this.description = initDescription(this.beanType, this.method);
 	}
@@ -130,22 +130,22 @@ public class HandlerMethod {
 	 * The method {@link #createWithResolvedBean()} may be used later to
 	 * re-create the {@code HandlerMethod} with an initialized bean.
 	 */
-	public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) { // 初始化HandlerMethod
+	public HandlerMethod(String beanName, BeanFactory beanFactory, Method method) { // 实例化HandlerMethod
 		Assert.hasText(beanName, "Bean name is required");
 		Assert.notNull(beanFactory, "BeanFactory is required");
 		Assert.notNull(method, "Method is required");
 		this.bean = beanName;
 		this.beanFactory = beanFactory;
-		Class<?> beanType = beanFactory.getType(beanName);
+		Class<?> beanType = beanFactory.getType(beanName); // Controller的Class类
 		if (beanType == null) {
 			throw new IllegalStateException("Cannot resolve bean type for bean with name '" + beanName + "'");
 		}
-		this.beanType = ClassUtils.getUserClass(beanType);
-		this.method = method;
-		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
-		this.parameters = initMethodParameters();
+		this.beanType = ClassUtils.getUserClass(beanType); // 获取用户定义的Class类
+		this.method = method; // 当前@RequestMapping注解修饰的方法
+		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method); // 获取桥接方法
+		this.parameters = initMethodParameters(); // 方法入参包装类数组
 		evaluateResponseStatus(); // 解析当前@RequestMapping方法上的@ResponseStatus注解
-		this.description = initDescription(this.beanType, this.method);
+		this.description = initDescription(this.beanType, this.method); // 生成描述信息
 	}
 
 	/**
@@ -168,10 +168,10 @@ public class HandlerMethod {
 	/**
 	 * Re-create HandlerMethod with the resolved handler.
 	 */
-	private HandlerMethod(HandlerMethod handlerMethod, Object handler) {
+	private HandlerMethod(HandlerMethod handlerMethod, Object handler) { // 实例化HandlerMethod（设置Controller实例，拷贝其它属性到新对象中）
 		Assert.notNull(handlerMethod, "HandlerMethod is required");
 		Assert.notNull(handler, "Handler object is required");
-		this.bean = handler;
+		this.bean = handler; // 传入Controller实例
 		this.beanFactory = handlerMethod.beanFactory;
 		this.beanType = handlerMethod.beanType;
 		this.method = handlerMethod.method;
@@ -183,11 +183,11 @@ public class HandlerMethod {
 		this.description = handlerMethod.description;
 	}
 
-	private MethodParameter[] initMethodParameters() {
-		int count = this.bridgedMethod.getParameterCount();
+	private MethodParameter[] initMethodParameters() { // 方法入参包装类数组
+		int count = this.bridgedMethod.getParameterCount(); // 获取桥接方法的入参数量
 		MethodParameter[] result = new MethodParameter[count];
 		for (int i = 0; i < count; i++) {
-			result[i] = new HandlerMethodParameter(i);
+			result[i] = new HandlerMethodParameter(i); // 创建HandlerMethodParameter
 		}
 		return result;
 	}
@@ -203,7 +203,7 @@ public class HandlerMethod {
 		}
 	}
 
-	private static String initDescription(Class<?> beanType, Method method) {
+	private static String initDescription(Class<?> beanType, Method method) { // 生成描述信息
 		StringJoiner joiner = new StringJoiner(", ", "(", ")");
 		for (Class<?> paramType : method.getParameterTypes()) {
 			joiner.add(paramType.getSimpleName());
@@ -328,14 +328,14 @@ public class HandlerMethod {
 	 * If the provided instance contains a bean name rather than an object instance,
 	 * the bean name is resolved before a {@link HandlerMethod} is created and returned.
 	 */
-	public HandlerMethod createWithResolvedBean() {
+	public HandlerMethod createWithResolvedBean() { // 将HandlerMethod中的Controller类名bean，转为Controller实例
 		Object handler = this.bean;
 		if (this.bean instanceof String) { // 当bean属性为Controller名称时
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
 			String beanName = (String) this.bean;
 			handler = this.beanFactory.getBean(beanName); // 获取该Controller的实例
 		}
-		return new HandlerMethod(this, handler);
+		return new HandlerMethod(this, handler); // 创建HandlerMethod
 	}
 
 	/**

@@ -98,8 +98,8 @@ public abstract class RequestMappingInfoHandlerMapping extends AbstractHandlerMe
 	 * Provide a Comparator to sort RequestMappingInfos matched to a request.
 	 */
 	@Override
-	protected Comparator<RequestMappingInfo> getMappingComparator(final HttpServletRequest request) {
-		return (info1, info2) -> info1.compareTo(info2, request);
+	protected Comparator<RequestMappingInfo> getMappingComparator(final HttpServletRequest request) { // 获取RequestMappingInfo比较器
+		return (info1, info2) -> info1.compareTo(info2, request); // 比较RequestMappingInfo
 	}
 
 	/**

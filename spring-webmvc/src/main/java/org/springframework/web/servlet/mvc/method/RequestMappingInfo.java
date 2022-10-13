@@ -257,7 +257,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 	 * content relevant to current request.
 	 */
 	@Override
-	public int compareTo(RequestMappingInfo other, HttpServletRequest request) {
+	public int compareTo(RequestMappingInfo other, HttpServletRequest request) { // 比较RequestMappingInfo（委托给各条件进行比较）
 		int result;
 		// Automatic vs explicit HTTP HEAD mapping
 		if (HttpMethod.HEAD.matches(request.getMethod())) {

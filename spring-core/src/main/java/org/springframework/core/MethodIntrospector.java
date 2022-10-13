@@ -66,7 +66,7 @@ public final class MethodIntrospector {
 		}
 		handlerTypes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetType)); // 添加接口类
 
-		for (Class<?> currentHandlerType : handlerTypes) { // 遍历Class类
+		for (Class<?> currentHandlerType : handlerTypes) { // 遍历上面添加的类
 			final Class<?> targetClass = (specificHandlerType != null ? specificHandlerType : currentHandlerType);
 
 			ReflectionUtils.doWithMethods(currentHandlerType, method -> { // 遍历当前Class类的所有方法
@@ -75,7 +75,7 @@ public final class MethodIntrospector {
 				if (result != null) { // 返回值不为空，说明当前方法有@RequestMapping注解
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 					if (bridgedMethod == specificMethod || metadataLookup.inspect(bridgedMethod) == null) {
-						methodMap.put(specificMethod, result); // 将方法对象与RequestMappingInfo的映射关系放入容器
+						methodMap.put(specificMethod, result); // 将Method方法对象与RequestMappingInfo的映射关系放入容器
 					}
 				}
 			}, ReflectionUtils.USER_DECLARED_METHODS);

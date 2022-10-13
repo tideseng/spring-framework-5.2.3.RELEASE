@@ -119,15 +119,15 @@ public class ContentNegotiationManager implements ContentNegotiationStrategy, Me
 	}
 
 	@Override
-	public List<MediaType> resolveMediaTypes(NativeWebRequest request) throws HttpMediaTypeNotAcceptableException {
+	public List<MediaType> resolveMediaTypes(NativeWebRequest request) throws HttpMediaTypeNotAcceptableException { // 获取请求的媒体类型
 		for (ContentNegotiationStrategy strategy : this.strategies) {
 			List<MediaType> mediaTypes = strategy.resolveMediaTypes(request);
 			if (mediaTypes.equals(MEDIA_TYPE_ALL_LIST)) {
 				continue;
 			}
-			return mediaTypes;
+			return mediaTypes; // 解析成功，则返回合法的MediaType
 		}
-		return MEDIA_TYPE_ALL_LIST;
+		return MEDIA_TYPE_ALL_LIST; // 解析失败时，返回MediaType.ALL
 	}
 
 	@Override

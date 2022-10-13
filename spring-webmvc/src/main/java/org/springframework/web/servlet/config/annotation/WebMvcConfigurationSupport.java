@@ -339,7 +339,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			addInterceptors(registry); // 通过钩子方法添加自定义拦截器（通过钩子方法注入自定义WebMvcConfigurer相关）
 			registry.addInterceptor(new ConversionServiceExposingInterceptor(mvcConversionService)); // 注册默认的拦截器ConversionServiceExposingInterceptor
 			registry.addInterceptor(new ResourceUrlProviderExposingInterceptor(mvcResourceUrlProvider)); // 注册默认的拦截器ResourceUrlProviderExposingInterceptor
-			this.interceptors = registry.getInterceptors(); // 获取拦截器列表（返回的可能是真实的拦截器，也可能是包装类MappedInterceptor）
+			this.interceptors = registry.getInterceptors(); // 获取拦截器列表（当匹配路径不为空或放行路径不为空时返回的是包装类MappedInterceptor，否则返回是真实的拦截器）
 		}
 		return this.interceptors.toArray();
 	}

@@ -98,7 +98,7 @@ public final class ModelFactory {
 	 * @param handlerMethod the method for which the model is initialized
 	 * @throws Exception may arise from {@code @ModelAttribute} methods
 	 */
-	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod) // 初始化Model，调用@ModelAttribute注解修饰的方法初始化Model
+	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod) // 初始化模型Model，调用@ModelAttribute注解修饰的方法初始化Model
 			throws Exception {
 
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);

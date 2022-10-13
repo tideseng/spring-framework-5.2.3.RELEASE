@@ -324,7 +324,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	 * @param method the target method
 	 * @return the created HandlerMethod
 	 */
-	protected HandlerMethod createHandlerMethod(Object handler, Method method) { // 构建HandlerMethod
+	protected HandlerMethod createHandlerMethod(Object handler, Method method) { // 构建HandlerMethod，注入Controller类名、Method对象
 		if (handler instanceof String) {
 			return new HandlerMethod((String) handler, // 创建HandlerMethod
 					obtainApplicationContext().getAutowireCapableBeanFactory(), method);
@@ -394,7 +394,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		}
 
 		if (!matches.isEmpty()) { // 匹配到的Match集合不为空时
-			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
+			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request)); // Match比较器
 			matches.sort(comparator); // 排序
 			Match bestMatch = matches.get(0); // 获取集合的第一个元素作为最优匹配
 			if (matches.size() > 1) { // 当匹配到多个时，判断前两个元素的优先级是否相同，如果是则抛出IllegalStateException异常
@@ -624,7 +624,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 		private void validateMethodMapping(HandlerMethod handlerMethod, T mapping) { // 校验是否唯一
 			// Assert that the supplied mapping is unique.
-			HandlerMethod existingHandlerMethod = this.mappingLookup.get(mapping);
+			HandlerMethod existingHandlerMethod = this.mappingLookup.get(mapping); // 如果RequestMappingInfo对应的HandlerMethod已存在，且和传入的相同，则抛出异常
 			if (existingHandlerMethod != null && !existingHandlerMethod.equals(handlerMethod)) {
 				throw new IllegalStateException(
 						"Ambiguous mapping. Cannot map '" + handlerMethod.getBean() + "' method \n" +
@@ -717,16 +717,16 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 	private static class MappingRegistration<T> {
 
-		private final T mapping;
+		private final T mapping; // RequestMappingInfo
 
 		private final HandlerMethod handlerMethod;
 
 		private final List<String> directUrls;
 
 		@Nullable
-		private final String mappingName;
+		private final String mappingName; // HandlerMethod对应的mappingName
 
-		public MappingRegistration(T mapping, HandlerMethod handlerMethod,
+		public MappingRegistration(T mapping, HandlerMethod handlerMethod, // 实例化MappingRegistration
 				@Nullable List<String> directUrls, @Nullable String mappingName) {
 
 			Assert.notNull(mapping, "Mapping must not be null");
@@ -778,16 +778,16 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	}
 
 
-	private class MatchComparator implements Comparator<Match> {
+	private class MatchComparator implements Comparator<Match> { // Match比较器
 
 		private final Comparator<T> comparator;
 
-		public MatchComparator(Comparator<T> comparator) {
+		public MatchComparator(Comparator<T> comparator) { // 创建Match比较器，传入一个比较器
 			this.comparator = comparator;
 		}
 
 		@Override
-		public int compare(Match match1, Match match2) {
+		public int compare(Match match1, Match match2) { // 比较Match
 			return this.comparator.compare(match1.mapping, match2.mapping);
 		}
 	}

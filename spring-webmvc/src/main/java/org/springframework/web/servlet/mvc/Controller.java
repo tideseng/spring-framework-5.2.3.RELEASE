@@ -108,7 +108,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @see org.springframework.web.context.support.WebApplicationObjectSupport
  */
 @FunctionalInterface
-public interface Controller {
+public interface Controller { // 通过Controlller实现类可以处理Http请求返回ModelAndView对象，作用同@RequestMapping、HttpRequestHandler实现类
 
 	/**
 	 * Process the request and return a ModelAndView object which the DispatcherServlet
