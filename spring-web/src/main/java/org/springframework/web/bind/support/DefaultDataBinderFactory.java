@@ -50,14 +50,14 @@ public class DefaultDataBinderFactory implements WebDataBinderFactory {
 	 */
 	@Override
 	@SuppressWarnings("deprecation")
-	public final WebDataBinder createBinder(
+	public final WebDataBinder createBinder( // 创建数据绑定器，注入方法参数对应的名称
 			NativeWebRequest webRequest, @Nullable Object target, String objectName) throws Exception {
 
-		WebDataBinder dataBinder = createBinderInstance(target, objectName, webRequest);
+		WebDataBinder dataBinder = createBinderInstance(target, objectName, webRequest); // 创建数据绑定实例WebRequestDataBinder
 		if (this.initializer != null) {
 			this.initializer.initBinder(dataBinder, webRequest);
 		}
-		initBinder(dataBinder, webRequest);
+		initBinder(dataBinder, webRequest); // 初始化Binder，即执行@InitBinder注解方法
 		return dataBinder;
 	}
 

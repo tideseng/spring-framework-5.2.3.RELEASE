@@ -152,7 +152,7 @@ public class WebDataBinder extends DataBinder {
 	 * marker for the given field.
 	 * @see #DEFAULT_FIELD_DEFAULT_PREFIX
 	 */
-	public void setFieldDefaultPrefix(@Nullable String fieldDefaultPrefix) {
+	public void setFieldDefaultPrefix(@Nullable String fieldDefaultPrefix) { // 设置请求参数的默认前缀
 		this.fieldDefaultPrefix = fieldDefaultPrefix;
 	}
 
@@ -191,10 +191,10 @@ public class WebDataBinder extends DataBinder {
 	 * @see #checkFieldMarkers
 	 */
 	@Override
-	protected void doBind(MutablePropertyValues mpvs) {
-		checkFieldDefaults(mpvs);
-		checkFieldMarkers(mpvs);
-		super.doBind(mpvs);
+	protected void doBind(MutablePropertyValues mpvs) { // 绑定请求参数（最后做一些属性名的检查，再绑定到DataBinder中）
+		checkFieldDefaults(mpvs); // 检查默认前缀
+		checkFieldMarkers(mpvs); // 检查标记前缀
+		super.doBind(mpvs); // 绑定请求参数
 	}
 
 	/**
@@ -205,12 +205,12 @@ public class WebDataBinder extends DataBinder {
 	 * @param mpvs the property values to be bound (can be modified)
 	 * @see #getFieldDefaultPrefix
 	 */
-	protected void checkFieldDefaults(MutablePropertyValues mpvs) {
-		String fieldDefaultPrefix = getFieldDefaultPrefix();
-		if (fieldDefaultPrefix != null) {
+	protected void checkFieldDefaults(MutablePropertyValues mpvs) { // 检查默认前缀
+		String fieldDefaultPrefix = getFieldDefaultPrefix(); // 获取默认前缀
+		if (fieldDefaultPrefix != null) { // 默认前缀不为空时
 			PropertyValue[] pvArray = mpvs.getPropertyValues();
 			for (PropertyValue pv : pvArray) {
-				if (pv.getName().startsWith(fieldDefaultPrefix)) {
+				if (pv.getName().startsWith(fieldDefaultPrefix)) { // 将改参数的前缀去掉，放入请求参数集合里，并把原来的删除，剩下的参数名跟属性名对应上的话，就赋值给相应属性
 					String field = pv.getName().substring(fieldDefaultPrefix.length());
 					if (getPropertyAccessor().isWritableProperty(field) && !mpvs.contains(field)) {
 						mpvs.add(field, pv.getValue());

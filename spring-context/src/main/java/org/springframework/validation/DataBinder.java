@@ -246,10 +246,10 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * @see #initDirectFieldAccess()
 	 * @see #createBeanPropertyBindingResult()
 	 */
-	public void initBeanPropertyAccess() {
+	public void initBeanPropertyAccess() { // 初始化绑定结果
 		Assert.state(this.bindingResult == null,
 				"DataBinder is already initialized - call initBeanPropertyAccess before other configuration methods");
-		this.bindingResult = createBeanPropertyBindingResult();
+		this.bindingResult = createBeanPropertyBindingResult(); // 初始化绑定结果，并赋值给bindingResult变量
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * JavaBean property access.
 	 * @since 4.2.1
 	 */
-	protected AbstractPropertyBindingResult createBeanPropertyBindingResult() {
+	protected AbstractPropertyBindingResult createBeanPropertyBindingResult() { // 初始化绑定结果
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(getTarget(),
 				getObjectName(), isAutoGrowNestedPaths(), getAutoGrowCollectionLimit());
 
@@ -306,9 +306,9 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * Return the internal BindingResult held by this DataBinder,
 	 * as an AbstractPropertyBindingResult.
 	 */
-	protected AbstractPropertyBindingResult getInternalBindingResult() {
-		if (this.bindingResult == null) {
-			initBeanPropertyAccess();
+	protected AbstractPropertyBindingResult getInternalBindingResult() { // 获取内部绑定结果
+		if (this.bindingResult == null) { // 当bindingResult为空时，初始化绑定结果
+			initBeanPropertyAccess(); // 初始化绑定结果
 		}
 		return this.bindingResult;
 	}
@@ -687,10 +687,10 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 
 	@Override
 	@Nullable
-	public <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType,
+	public <T> T convertIfNecessary(@Nullable Object value, @Nullable Class<T> requiredType, // 数据类型转换
 			@Nullable MethodParameter methodParam) throws TypeMismatchException {
 
-		return getTypeConverter().convertIfNecessary(value, requiredType, methodParam);
+		return getTypeConverter().convertIfNecessary(value, requiredType, methodParam); // 数据类型转换
 	}
 
 	@Override

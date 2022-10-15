@@ -92,7 +92,7 @@ public class BeanPropertyBindingResult extends AbstractPropertyBindingResult imp
 	 * @see #createBeanWrapper()
 	 */
 	@Override
-	public final ConfigurablePropertyAccessor getPropertyAccessor() {
+	public final ConfigurablePropertyAccessor getPropertyAccessor() { // 获取属性处理器
 		if (this.beanWrapper == null) {
 			this.beanWrapper = createBeanWrapper();
 			this.beanWrapper.setExtractOldValueForEditor(true);
