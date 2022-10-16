@@ -38,7 +38,7 @@ package org.springframework.core;
  */
 public class DefaultParameterNameDiscoverer extends PrioritizedParameterNameDiscoverer {
 
-	public DefaultParameterNameDiscoverer() {
+	public DefaultParameterNameDiscoverer() { // 实例化DefaultParameterNameDiscoverer
 		if (!GraalDetector.inImageCode()) {
 			if (KotlinDetector.isKotlinReflectPresent()) {
 				addDiscoverer(new KotlinReflectionParameterNameDiscoverer());

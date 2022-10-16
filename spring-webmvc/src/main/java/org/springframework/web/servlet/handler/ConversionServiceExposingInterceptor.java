@@ -55,7 +55,7 @@ public class ConversionServiceExposingInterceptor extends HandlerInterceptorAdap
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws ServletException, IOException {
 
-		request.setAttribute(ConversionService.class.getName(), this.conversionService);
+		request.setAttribute(ConversionService.class.getName(), this.conversionService); // 设置请求的转换服务到Request中，跟数据绑定有关
 		return true;
 	}
 

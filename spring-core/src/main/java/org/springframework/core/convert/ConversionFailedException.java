@@ -45,7 +45,7 @@ public class ConversionFailedException extends ConversionException {
 	 * @param value the value we tried to convert
 	 * @param cause the cause of the conversion failure
 	 */
-	public ConversionFailedException(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType,
+	public ConversionFailedException(@Nullable TypeDescriptor sourceType, TypeDescriptor targetType, // 实例化ConversionFailedException
 			@Nullable Object value, Throwable cause) {
 
 		super("Failed to convert from type [" + sourceType + "] to type [" + targetType +

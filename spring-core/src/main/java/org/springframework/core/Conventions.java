@@ -98,7 +98,7 @@ public final class Conventions {
 	 * @param parameter the method or constructor parameter
 	 * @return the generated variable name
 	 */
-	public static String getVariableNameForParameter(MethodParameter parameter) {
+	public static String getVariableNameForParameter(MethodParameter parameter) { // 获取方法参数对应的名称
 		Assert.notNull(parameter, "MethodParameter must not be null");
 		Class<?> valueClass;
 		boolean pluralize = false;
@@ -117,7 +117,7 @@ public final class Conventions {
 			pluralize = true;
 		}
 		else {
-			valueClass = parameter.getParameterType();
+			valueClass = parameter.getParameterType(); // 获取参数类型
 			ReactiveAdapter adapter = ReactiveAdapterRegistry.getSharedInstance().getAdapter(valueClass);
 			if (adapter != null && !adapter.getDescriptor().isNoValue()) {
 				reactiveSuffix = ClassUtils.getShortName(valueClass);
@@ -125,7 +125,7 @@ public final class Conventions {
 			}
 		}
 
-		String name = ClassUtils.getShortNameAsProperty(valueClass);
+		String name = ClassUtils.getShortNameAsProperty(valueClass); // 默认为参数类型的简单名，且首字母小写
 		return (pluralize ? pluralize(name) : name + reactiveSuffix);
 	}
 

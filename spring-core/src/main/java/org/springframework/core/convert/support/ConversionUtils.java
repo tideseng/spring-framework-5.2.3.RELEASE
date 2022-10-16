@@ -34,17 +34,17 @@ import org.springframework.util.ClassUtils;
 abstract class ConversionUtils {
 
 	@Nullable
-	public static Object invokeConverter(GenericConverter converter, @Nullable Object source,
+	public static Object invokeConverter(GenericConverter converter, @Nullable Object source, // 调用转换器转换类型
 			TypeDescriptor sourceType, TypeDescriptor targetType) {
 
 		try {
-			return converter.convert(source, sourceType, targetType);
+			return converter.convert(source, sourceType, targetType); // 调用转换器转换类型（ConverterFactoryAdapter）
 		}
 		catch (ConversionFailedException ex) {
 			throw ex;
 		}
 		catch (Throwable ex) {
-			throw new ConversionFailedException(sourceType, targetType, source, ex);
+			throw new ConversionFailedException(sourceType, targetType, source, ex); // 转换失败时，将异常包装成ConversionFailedException异常
 		}
 	}
 
