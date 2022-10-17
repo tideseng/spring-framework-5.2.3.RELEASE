@@ -38,10 +38,10 @@ public class ServletRequestDataBinderFactory extends InitBinderDataBinderFactory
 	 * @param binderMethods one or more {@code @InitBinder} methods
 	 * @param initializer provides global data binder initialization
 	 */
-	public ServletRequestDataBinderFactory(@Nullable List<InvocableHandlerMethod> binderMethods,
+	public ServletRequestDataBinderFactory(@Nullable List<InvocableHandlerMethod> binderMethods, // 实例化ServletRequestDataBinderFactory
 			@Nullable WebBindingInitializer initializer) {
 
-		super(binderMethods, initializer);
+		super(binderMethods, initializer); // 调用父类方法创建InitBinderDataBinderFactory
 	}
 
 	/**

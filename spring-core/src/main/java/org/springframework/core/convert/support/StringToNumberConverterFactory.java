@@ -41,12 +41,12 @@ import org.springframework.util.NumberUtils;
 final class StringToNumberConverterFactory implements ConverterFactory<String, Number> {
 
 	@Override
-	public <T extends Number> Converter<String, T> getConverter(Class<T> targetType) {
-		return new StringToNumber<>(targetType);
+	public <T extends Number> Converter<String, T> getConverter(Class<T> targetType) { // 获取转换器，传入目标类型
+		return new StringToNumber<>(targetType); // 创建转换器，传入目标类型
 	}
 
 
-	private static final class StringToNumber<T extends Number> implements Converter<String, T> {
+	private static final class StringToNumber<T extends Number> implements Converter<String, T> { // 转换类型
 
 		private final Class<T> targetType;
 
@@ -55,7 +55,7 @@ final class StringToNumberConverterFactory implements ConverterFactory<String, N
 		}
 
 		@Override
-		public T convert(String source) {
+		public T convert(String source) { // 转换类型，将String类型转换为目标类型
 			if (source.isEmpty()) {
 				return null;
 			}

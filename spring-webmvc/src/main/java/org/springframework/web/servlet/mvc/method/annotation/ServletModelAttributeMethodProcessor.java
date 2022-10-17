@@ -70,19 +70,19 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	 * @see #createAttributeFromRequestValue
 	 */
 	@Override
-	protected final Object createAttribute(String attributeName, MethodParameter parameter,
+	protected final Object createAttribute(String attributeName, MethodParameter parameter, // 当模型容器中不存在该属性时进行创建，先从请求的参数里拿（包括uri和表单参数），还不存在则调用默认的构造函数创建
 			WebDataBinderFactory binderFactory, NativeWebRequest request) throws Exception {
 
-		String value = getRequestValueForAttribute(attributeName, request);
+		String value = getRequestValueForAttribute(attributeName, request); // 先从请求中获取属性（包括uri和表单参数），否则通过反射创建一个属性
 		if (value != null) {
-			Object attribute = createAttributeFromRequestValue(
+			Object attribute = createAttributeFromRequestValue( // 如果存在，则根据数据绑定工厂进行绑定和数据转换
 					value, attributeName, parameter, binderFactory, request);
 			if (attribute != null) {
 				return attribute;
 			}
 		}
 
-		return super.createAttribute(attributeName, parameter, binderFactory, request);
+		return super.createAttribute(attributeName, parameter, binderFactory, request); // 调用默认的构造函数进行创建
 	}
 
 	/**
@@ -95,13 +95,13 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	 * @return the request value to try to convert, or {@code null} if none
 	 */
 	@Nullable
-	protected String getRequestValueForAttribute(String attributeName, NativeWebRequest request) {
-		Map<String, String> variables = getUriTemplateVariables(request);
+	protected String getRequestValueForAttribute(String attributeName, NativeWebRequest request) { // 先从请求中获取属性（包括uri和表单参数）
+		Map<String, String> variables = getUriTemplateVariables(request); // 从请求的uri（uriTemplateVariables）中获取属性
 		String variableValue = variables.get(attributeName);
 		if (StringUtils.hasText(variableValue)) {
 			return variableValue;
 		}
-		String parameterValue = request.getParameter(attributeName);
+		String parameterValue = request.getParameter(attributeName); // 从请求的表单参数中获取属性
 		if (StringUtils.hasText(parameterValue)) {
 			return parameterValue;
 		}
@@ -129,17 +129,17 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	 * conversion found
 	 */
 	@Nullable
-	protected Object createAttributeFromRequestValue(String sourceValue, String attributeName,
+	protected Object createAttributeFromRequestValue(String sourceValue, String attributeName, // 根据数据绑定工厂进行绑定和数据转换
 			MethodParameter parameter, WebDataBinderFactory binderFactory, NativeWebRequest request)
 			throws Exception {
 
-		DataBinder binder = binderFactory.createBinder(request, null, attributeName);
+		DataBinder binder = binderFactory.createBinder(request, null, attributeName); // 创建数据绑定器
 		ConversionService conversionService = binder.getConversionService();
 		if (conversionService != null) {
-			TypeDescriptor source = TypeDescriptor.valueOf(String.class);
+			TypeDescriptor source = TypeDescriptor.valueOf(String.class); // 将属性值类型和参数类型封装成TypeDescriptor
 			TypeDescriptor target = new TypeDescriptor(parameter);
-			if (conversionService.canConvert(source, target)) {
-				return binder.convertIfNecessary(sourceValue, parameter.getParameterType(), parameter);
+			if (conversionService.canConvert(source, target)) { // 判断类型能否转换
+				return binder.convertIfNecessary(sourceValue, parameter.getParameterType(), parameter); // 数据类型转换
 			}
 		}
 		return null;
@@ -151,11 +151,11 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	 * @see ServletRequestDataBinderFactory
 	 */
 	@Override
-	protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) {
+	protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) { // 绑定请求参数
 		ServletRequest servletRequest = request.getNativeRequest(ServletRequest.class);
 		Assert.state(servletRequest != null, "No ServletRequest");
 		ServletRequestDataBinder servletBinder = (ServletRequestDataBinder) binder;
-		servletBinder.bind(servletRequest);
+		servletBinder.bind(servletRequest); // 绑定请求参数
 	}
 
 }

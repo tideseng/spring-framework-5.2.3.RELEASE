@@ -149,18 +149,18 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 		MethodParameter[] parameters = getMethodParameters(); // 获取方法入参包装类数组（包装了参数类型、参数名称、参数注解）
 		if (ObjectUtils.isEmpty(parameters)) {
-			return EMPTY_ARGS;
+			return EMPTY_ARGS; // 如果方法无参，则直接返回空数组
 		}
 
-		Object[] args = new Object[parameters.length];
-		for (int i = 0; i < parameters.length; i++) {
-			MethodParameter parameter = parameters[i];
+		Object[] args = new Object[parameters.length]; // 封装方法参数数组
+		for (int i = 0; i < parameters.length; i++) { // 遍历方法参数索引
+			MethodParameter parameter = parameters[i]; // 获取当前MethodParameter
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer); // 设置参数名称解析器
-			args[i] = findProvidedArgument(parameter, providedArgs);
+			args[i] = findProvidedArgument(parameter, providedArgs); // 从给定的providedArgs可变数组中获取参数，如果获取的到则遍历下一个
 			if (args[i] != null) {
 				continue;
 			}
-			if (!this.resolvers.supportsParameter(parameter)) { // 根据参数匹配参数解析器（典型的策略模式）
+			if (!this.resolvers.supportsParameter(parameter)) { // 遍历所有参数解析器判断是否有参数解析器支持解析，没有则抛出异常（典型的策略模式）
 				throw new IllegalStateException(formatArgumentError(parameter, "No suitable resolver"));
 			}
 			try {

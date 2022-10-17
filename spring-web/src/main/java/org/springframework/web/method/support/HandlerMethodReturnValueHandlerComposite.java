@@ -117,7 +117,7 @@ public class HandlerMethodReturnValueHandlerComposite implements HandlerMethodRe
 	/**
 	 * Add the given {@link HandlerMethodReturnValueHandler HandlerMethodReturnValueHandlers}.
 	 */
-	public HandlerMethodReturnValueHandlerComposite addHandlers( // 设置返回值解析器
+	public HandlerMethodReturnValueHandlerComposite addHandlers( // 设置返回值解析器（在RequestMappingHandlerAdapter的初始化方法afterPropertiesSet中调用）
 			@Nullable List<? extends HandlerMethodReturnValueHandler> handlers) {
 
 		if (handlers != null) {

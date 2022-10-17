@@ -93,7 +93,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 
 	@Override
 	@Nullable
-	public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+	public final Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, // 解析方法参数
 			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
 		NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
@@ -106,11 +106,11 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		}
 
 		Object arg = resolveName(resolvedName.toString(), nestedParameter, webRequest); // 解析参数值
-		if (arg == null) {
-			if (namedValueInfo.defaultValue != null) {
+		if (arg == null) { // 当参数值为空时
+			if (namedValueInfo.defaultValue != null) { // 如果存在默认值
 				arg = resolveStringValue(namedValueInfo.defaultValue);
 			}
-			else if (namedValueInfo.required && !nestedParameter.isOptional()) {
+			else if (namedValueInfo.required && !nestedParameter.isOptional()) { // 如果不存在默认值且不为(Optional参数类型和@Nullable注解修饰)，则抛出ServletRequestBindingException异常
 				handleMissingValue(namedValueInfo.name, nestedParameter, webRequest);
 			}
 			arg = handleNullValue(namedValueInfo.name, arg, nestedParameter.getNestedParameterType());
@@ -119,10 +119,10 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 			arg = resolveStringValue(namedValueInfo.defaultValue);
 		}
 
-		if (binderFactory != null) {
+		if (binderFactory != null) { // 当数据绑定工厂存在是，进行数据绑定
 			WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
 			try {
-				arg = binder.convertIfNecessary(arg, parameter.getParameterType(), parameter);
+				arg = binder.convertIfNecessary(arg, parameter.getParameterType(), parameter); // 类型转换
 			}
 			catch (ConversionNotSupportedException ex) {
 				throw new MethodArgumentConversionNotSupportedException(arg, ex.getRequiredType(),

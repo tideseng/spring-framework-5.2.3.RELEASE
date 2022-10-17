@@ -70,7 +70,7 @@ public class PathVariableMethodArgumentResolver extends AbstractNamedValueMethod
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		if (!parameter.hasParameterAnnotation(PathVariable.class)) {
+		if (!parameter.hasParameterAnnotation(PathVariable.class)) { // 方法参数上需要有@PathVariable注解
 			return false;
 		}
 		if (Map.class.isAssignableFrom(parameter.nestedIfOptional().getNestedParameterType())) {

@@ -39,14 +39,14 @@ public abstract class AbstractHandlerMethodExceptionResolver extends AbstractHan
 	 * passing the bean of the {@code HandlerMethod}. Otherwise returns {@code false}.
 	 */
 	@Override
-	protected boolean shouldApplyTo(HttpServletRequest request, @Nullable Object handler) {
+	protected boolean shouldApplyTo(HttpServletRequest request, @Nullable Object handler) { // 判断能否解析
 		if (handler == null) {
 			return super.shouldApplyTo(request, null);
 		}
-		else if (handler instanceof HandlerMethod) {
+		else if (handler instanceof HandlerMethod) { // 当handler为HandlerMethod时
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 			handler = handlerMethod.getBean();
-			return super.shouldApplyTo(request, handler);
+			return super.shouldApplyTo(request, handler); // 调用父类方法判断能否解析
 		}
 		else {
 			return false;

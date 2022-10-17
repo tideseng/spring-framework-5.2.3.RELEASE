@@ -103,25 +103,25 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	public void invokeAndHandle(ServletWebRequest webRequest, ModelAndViewContainer mavContainer, // 调用Controller方法或异常处理方法
 			Object... providedArgs) throws Exception {
 
-		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs); // 调用@RequestMapping或@ExceptionHandler注解修饰的方法
+		Object returnValue = invokeForRequest(webRequest, mavContainer, providedArgs); // 调用@RequestMapping或@ExceptionHandler注解修饰的方法，并获取返回值
 		setResponseStatus(webRequest);
 
-		if (returnValue == null) {
+		if (returnValue == null) { // 无返回值时
 			if (isRequestNotModified(webRequest) || getResponseStatus() != null || mavContainer.isRequestHandled()) {
 				disableContentCachingIfNecessary(webRequest);
-				mavContainer.setRequestHandled(true);
+				mavContainer.setRequestHandled(true); // 设置处理完毕
 				return;
 			}
 		}
-		else if (StringUtils.hasText(getResponseStatusReason())) {
-			mavContainer.setRequestHandled(true);
+		else if (StringUtils.hasText(getResponseStatusReason())) { // 当前方法或类上@ResponseStatus注解的描述信息不为空时
+			mavContainer.setRequestHandled(true); // 设置处理完毕
 			return;
 		}
 
-		mavContainer.setRequestHandled(false); // 默认将requestHandled设置为false
+		mavContainer.setRequestHandled(false); // 默认将requestHandled设置为false，设置未处理完毕
 		Assert.state(this.returnValueHandlers != null, "No return value handlers");
 		try {
-			this.returnValueHandlers.handleReturnValue( // 返回值处理（返回值解析器会根据情况修改requestHandled值）
+			this.returnValueHandlers.handleReturnValue( // 处理返回值（返回值解析器会根据情况修改requestHandled值）
 					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		}
 		catch (Exception ex) {
