@@ -58,9 +58,9 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public final class ModelFactory {
 
-	private final List<ModelMethod> modelMethods = new ArrayList<>();
+	private final List<ModelMethod> modelMethods = new ArrayList<>(); // @ModelAttribute注解方法对应的InvocableHandlerMethod包装成ModelMethod列表
 
-	private final WebDataBinderFactory dataBinderFactory;
+	private final WebDataBinderFactory dataBinderFactory; // 数据绑定工厂，维护了@InitBinder注解方法对应的InvocableHandlerMethod列表
 
 	private final SessionAttributesHandler sessionAttributesHandler;
 
@@ -71,12 +71,12 @@ public final class ModelFactory {
 	 * @param binderFactory for preparation of {@link BindingResult} attributes
 	 * @param attributeHandler for access to session attributes
 	 */
-	public ModelFactory(@Nullable List<InvocableHandlerMethod> handlerMethods, // 初始化ModelFactory
+	public ModelFactory(@Nullable List<InvocableHandlerMethod> handlerMethods, // 初始化ModelFactory，注入@ModelAttribute注解方法对应的InvocableHandlerMethod、数据绑定工厂
 			WebDataBinderFactory binderFactory, SessionAttributesHandler attributeHandler) {
 
 		if (handlerMethods != null) {
 			for (InvocableHandlerMethod handlerMethod : handlerMethods) {
-				this.modelMethods.add(new ModelMethod(handlerMethod));
+				this.modelMethods.add(new ModelMethod(handlerMethod)); // 创建ModelMethod，将@ModelAttribute注解方法对应的InvocableHandlerMethod包装成ModelMethod
 			}
 		}
 		this.dataBinderFactory = binderFactory;
@@ -103,7 +103,7 @@ public final class ModelFactory {
 
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
 		container.mergeAttributes(sessionAttributes);
-		invokeModelAttributeMethods(request, container); // 调用@ModelAttribute注解修饰的方法
+		invokeModelAttributeMethods(request, container); // 调用@ModelAttribute注解修饰的模型方法
 
 		for (String name : findSessionAttributeArguments(handlerMethod)) {
 			if (!container.containsAttribute(name)) {
@@ -127,8 +127,8 @@ public final class ModelFactory {
 			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod(); // 按顺序遍历出当前的InvocableHandlerMethod
 			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class); // 获取方法上的@ModelAttribute注解
 			Assert.state(ann != null, "No ModelAttribute annotation");
-			if (container.containsAttribute(ann.name())) {
-				if (!ann.binding()) {
+			if (container.containsAttribute(ann.name())) { // 当ModelAndViewContainer模型容器存在该属性时，直接遍历下一个，不会进行覆盖
+				if (!ann.binding()) { // 如果重复且当前设置为不启动绑定，则将ModelAndViewContainer模型容器中设置该属性不启动绑定
 					container.setBindingDisabled(ann.name());
 				}
 				continue;
@@ -141,7 +141,7 @@ public final class ModelFactory {
 					container.setBindingDisabled(returnValueName);
 				}
 				if (!container.containsAttribute(returnValueName)) {
-					container.addAttribute(returnValueName, returnValue); // 将方法返回值存储到ModelAndViewContainer对象的map中
+					container.addAttribute(returnValueName, returnValue); // 当模型容器中不存在时，将方法返回值存储到ModelAndViewContainer模型容器中
 				}
 			}
 		}
@@ -149,7 +149,7 @@ public final class ModelFactory {
 
 	private ModelMethod getNextModelMethod(ModelAndViewContainer container) { // 按顺序遍历出当前的InvocableHandlerMethod
 		for (ModelMethod modelMethod : this.modelMethods) { // 遍历ModelMethod
-			if (modelMethod.checkDependencies(container)) {
+			if (modelMethod.checkDependencies(container)) { // 依赖判断，检查模型容器中是否完全包含依赖列表，即先按顺序处理没依赖的，最后才是剩下来的
 				this.modelMethods.remove(modelMethod);
 				return modelMethod;
 			}
@@ -183,7 +183,7 @@ public final class ModelFactory {
 	 * @param container contains the model to update
 	 * @throws Exception if creating BindingResult attributes fails
 	 */
-	public void updateModel(NativeWebRequest request, ModelAndViewContainer container) throws Exception {
+	public void updateModel(NativeWebRequest request, ModelAndViewContainer container) throws Exception { // 更新模型
 		ModelMap defaultModel = container.getDefaultModel();
 		if (container.getSessionStatus().isComplete()){
 			this.sessionAttributesHandler.cleanupAttributes(request);
@@ -192,14 +192,14 @@ public final class ModelFactory {
 			this.sessionAttributesHandler.storeAttributes(request, defaultModel);
 		}
 		if (!container.isRequestHandled() && container.getModel() == defaultModel) {
-			updateBindingResult(request, defaultModel);
+			updateBindingResult(request, defaultModel); // 更新绑定结果
 		}
 	}
 
 	/**
 	 * Add {@link BindingResult} attributes to the model for attributes that require it.
 	 */
-	private void updateBindingResult(NativeWebRequest request, ModelMap model) throws Exception {
+	private void updateBindingResult(NativeWebRequest request, ModelMap model) throws Exception { // 更新绑定结果
 		List<String> keyNames = new ArrayList<>(model.keySet());
 		for (String name : keyNames) {
 			Object value = model.get(name);
@@ -238,10 +238,10 @@ public final class ModelFactory {
 	 * @return the derived name
 	 * @see Conventions#getVariableNameForParameter(MethodParameter)
 	 */
-	public static String getNameForParameter(MethodParameter parameter) {
+	public static String getNameForParameter(MethodParameter parameter) { // 获取方法参数对应的名称，命名规则：优先取@ModelAttribute注解中的value值、参数类型的简单名且首字母小写
 		ModelAttribute ann = parameter.getParameterAnnotation(ModelAttribute.class);
 		String name = (ann != null ? ann.value() : null);
-		return (StringUtils.hasText(name) ? name : Conventions.getVariableNameForParameter(parameter));
+		return (StringUtils.hasText(name) ? name : Conventions.getVariableNameForParameter(parameter)); // 获取方法参数对应的名称
 	}
 
 	/**
@@ -271,17 +271,17 @@ public final class ModelFactory {
 	}
 
 
-	private static class ModelMethod {
+	private static class ModelMethod { // 一个@ModelAttribute注解方法对应一个ModelMethod
 
-		private final InvocableHandlerMethod handlerMethod;
+		private final InvocableHandlerMethod handlerMethod; // @ModelAttribute注解方法对应的InvocableHandlerMethod
 
-		private final Set<String> dependencies = new HashSet<>();
+		private final Set<String> dependencies = new HashSet<>(); // @ModelAttribute注解方法参数中依赖的@ModelAttribute注解参数
 
-		public ModelMethod(InvocableHandlerMethod handlerMethod) {
+		public ModelMethod(InvocableHandlerMethod handlerMethod) { // 实例化ModelMethod，将@ModelAttribute注解方法对应的InvocableHandlerMethod包装成ModelMethod
 			this.handlerMethod = handlerMethod;
-			for (MethodParameter parameter : handlerMethod.getMethodParameters()) {
-				if (parameter.hasParameterAnnotation(ModelAttribute.class)) {
-					this.dependencies.add(getNameForParameter(parameter));
+			for (MethodParameter parameter : handlerMethod.getMethodParameters()) { // 遍历@ModelAttribute注解方法中的参数
+				if (parameter.hasParameterAnnotation(ModelAttribute.class)) { // 当方法参数上有@ModelAttribute注解时，获取其对应的名称并设置到dependencies集合中
+					this.dependencies.add(getNameForParameter(parameter)); // 获取其对应的名称，命名规则：优先取@ModelAttribute注解中的value值、参数类型的简单名且首字母小写
 				}
 			}
 		}
@@ -290,7 +290,7 @@ public final class ModelFactory {
 			return this.handlerMethod;
 		}
 
-		public boolean checkDependencies(ModelAndViewContainer mavContainer) {
+		public boolean checkDependencies(ModelAndViewContainer mavContainer) { // 依赖判断
 			for (String name : this.dependencies) {
 				if (!mavContainer.containsAttribute(name)) {
 					return false;

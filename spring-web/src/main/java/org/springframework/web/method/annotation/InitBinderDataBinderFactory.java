@@ -38,7 +38,7 @@ import org.springframework.web.method.support.InvocableHandlerMethod;
  */
 public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 
-	private final List<InvocableHandlerMethod> binderMethods;
+	private final List<InvocableHandlerMethod> binderMethods; // @InitBinder注解方法对应的InvocableHandlerMethod列表
 
 
 	/**
@@ -46,7 +46,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	 * @param binderMethods {@code @InitBinder} methods
 	 * @param initializer for global data binder initialization
 	 */
-	public InitBinderDataBinderFactory(@Nullable List<InvocableHandlerMethod> binderMethods,
+	public InitBinderDataBinderFactory(@Nullable List<InvocableHandlerMethod> binderMethods, // 实例化InitBinderDataBinderFactory
 			@Nullable WebBindingInitializer initializer) {
 
 		super(initializer);
@@ -62,10 +62,10 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	 * @see #isBinderMethodApplicable
 	 */
 	@Override
-	public void initBinder(WebDataBinder dataBinder, NativeWebRequest request) throws Exception {
-		for (InvocableHandlerMethod binderMethod : this.binderMethods) {
-			if (isBinderMethodApplicable(binderMethod, dataBinder)) {
-				Object returnValue = binderMethod.invokeForRequest(request, null, dataBinder);
+	public void initBinder(WebDataBinder dataBinder, NativeWebRequest request) throws Exception { // 初始化Binder，即执行@InitBinder注解方法
+		for (InvocableHandlerMethod binderMethod : this.binderMethods) { // 遍历@InitBinder注解方法对应的InvocableHandlerMethod列表
+			if (isBinderMethodApplicable(binderMethod, dataBinder)) { // 判断是否允许绑定（当@InitBinder注解的value值不为空时，判断value值是否包含传入的方法参数对应的名称）
+				Object returnValue = binderMethod.invokeForRequest(request, null, dataBinder); // 执行@InitBinder注解方法，设置WebDataBinder相关属性等（@InitBinder注解方法不能有返回值）
 				if (returnValue != null) {
 					throw new IllegalStateException(
 							"@InitBinder methods must not return a value (should be void): " + binderMethod);
@@ -79,7 +79,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	 * to initialize the given {@link WebDataBinder} instance. By default we
 	 * check the specified attribute names in the annotation value, if any.
 	 */
-	protected boolean isBinderMethodApplicable(HandlerMethod initBinderMethod, WebDataBinder dataBinder) {
+	protected boolean isBinderMethodApplicable(HandlerMethod initBinderMethod, WebDataBinder dataBinder) { // 判断是否允许绑定（当@InitBinder注解的value值不为空时，判断value值是否包含传入的方法参数对应的名称）
 		InitBinder ann = initBinderMethod.getMethodAnnotation(InitBinder.class);
 		Assert.state(ann != null, "No InitBinder annotation");
 		String[] names = ann.value();

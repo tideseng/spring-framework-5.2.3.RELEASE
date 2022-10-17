@@ -41,16 +41,16 @@ public class ModelMethodProcessor implements HandlerMethodArgumentResolver, Hand
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return Model.class.isAssignableFrom(parameter.getParameterType());
+		return Model.class.isAssignableFrom(parameter.getParameterType()); // 方法参数类型需要为Model类型
 	}
 
 	@Override
 	@Nullable
-	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer,
+	public Object resolveArgument(MethodParameter parameter, @Nullable ModelAndViewContainer mavContainer, // 解析方法参数
 			NativeWebRequest webRequest, @Nullable WebDataBinderFactory binderFactory) throws Exception {
 
 		Assert.state(mavContainer != null, "ModelAndViewContainer is required for model exposure");
-		return mavContainer.getModel();
+		return mavContainer.getModel(); // 从模型容器中获取ModelMap
 	}
 
 	@Override

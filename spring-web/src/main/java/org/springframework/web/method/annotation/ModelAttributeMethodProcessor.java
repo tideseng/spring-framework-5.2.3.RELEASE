@@ -75,7 +75,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler {
 
-	private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+	private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer(); // 创建DefaultParameterNameDiscoverer
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -100,7 +100,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	 */
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return (parameter.hasParameterAnnotation(ModelAttribute.class) ||
+		return (parameter.hasParameterAnnotation(ModelAttribute.class) || // 方法参数上需要有@ModelAttribute注解 或者 不需要强制注入且不为简单类型
 				(this.annotationNotRequired && !BeanUtils.isSimpleProperty(parameter.getParameterType())));
 	}
 
@@ -121,22 +121,22 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		Assert.state(mavContainer != null, "ModelAttributeMethodProcessor requires ModelAndViewContainer");
 		Assert.state(binderFactory != null, "ModelAttributeMethodProcessor requires WebDataBinderFactory");
 
-		String name = ModelFactory.getNameForParameter(parameter);
+		String name = ModelFactory.getNameForParameter(parameter);// 获取方法参数对应的名称，命名规则：优先取@ModelAttribute注解中的value值、参数类型的简单名且首字母小写
 		ModelAttribute ann = parameter.getParameterAnnotation(ModelAttribute.class);
 		if (ann != null) {
-			mavContainer.setBinding(name, ann.binding());
+			mavContainer.setBinding(name, ann.binding()); // 设置是否绑定
 		}
 
 		Object attribute = null;
 		BindingResult bindingResult = null;
 
-		if (mavContainer.containsAttribute(name)) {
+		if (mavContainer.containsAttribute(name)) { // 当模型容器中存在该属性时，获取器属性值
 			attribute = mavContainer.getModel().get(name);
 		}
 		else {
 			// Create attribute instance
 			try {
-				attribute = createAttribute(name, parameter, binderFactory, webRequest);
+				attribute = createAttribute(name, parameter, binderFactory, webRequest); // 当模型容器中不存在该属性时进行创建，先从请求的参数里拿（包括uri和表单参数），还不存在则调用默认的构造函数创建
 			}
 			catch (BindException ex) {
 				if (isBindExceptionRequired(parameter)) {
@@ -147,17 +147,17 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 				if (parameter.getParameterType() == Optional.class) {
 					attribute = Optional.empty();
 				}
-				bindingResult = ex.getBindingResult();
+				bindingResult = ex.getBindingResult(); // 记录绑定异常记过
 			}
 		}
 
-		if (bindingResult == null) {
+		if (bindingResult == null) { // 没有异常
 			// Bean property binding and validation;
 			// skipped in case of binding failure on construction.
-			WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
+			WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name); // 创建数据绑定器，注入方法参数对应的名称（会执行@InitBinder注解修饰的方法）
 			if (binder.getTarget() != null) {
 				if (!mavContainer.isBindingDisabled(name)) {
-					bindRequestParameters(binder, webRequest);
+					bindRequestParameters(binder, webRequest); // 绑定请求参数
 				}
 				validateIfApplicable(binder, parameter);
 				if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
@@ -174,7 +174,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		// Add resolved attribute and BindingResult at the end of the model
 		Map<String, Object> bindingResultModel = bindingResult.getModel();
 		mavContainer.removeAttributes(bindingResultModel);
-		mavContainer.addAllAttributes(bindingResultModel);
+		mavContainer.addAllAttributes(bindingResultModel); // 添加绑定结果
 
 		return attribute;
 	}
@@ -199,21 +199,21 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	 * @see #constructAttribute(Constructor, String, MethodParameter, WebDataBinderFactory, NativeWebRequest)
 	 * @see BeanUtils#findPrimaryConstructor(Class)
 	 */
-	protected Object createAttribute(String attributeName, MethodParameter parameter,
+	protected Object createAttribute(String attributeName, MethodParameter parameter, // 调用默认的构造函数进行创建
 			WebDataBinderFactory binderFactory, NativeWebRequest webRequest) throws Exception {
 
 		MethodParameter nestedParameter = parameter.nestedIfOptional();
-		Class<?> clazz = nestedParameter.getNestedParameterType();
+		Class<?> clazz = nestedParameter.getNestedParameterType(); // 获取参数类型
 
-		Constructor<?> ctor = BeanUtils.findPrimaryConstructor(clazz);
+		Constructor<?> ctor = BeanUtils.findPrimaryConstructor(clazz); // 默认为null
 		if (ctor == null) {
-			Constructor<?>[] ctors = clazz.getConstructors();
+			Constructor<?>[] ctors = clazz.getConstructors(); // 获取构造函数列表
 			if (ctors.length == 1) {
-				ctor = ctors[0];
+				ctor = ctors[0]; // 当只有一个构造函数时，则会调用改构造函数
 			}
 			else {
 				try {
-					ctor = clazz.getDeclaredConstructor();
+					ctor = clazz.getDeclaredConstructor(); // 获取无参构造函数
 				}
 				catch (NoSuchMethodException ex) {
 					throw new IllegalStateException("No primary or default constructor found for " + clazz, ex);
@@ -253,14 +253,14 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 		if (ctor.getParameterCount() == 0) {
 			// A single default constructor -> clearly a standard JavaBeans arrangement.
-			return BeanUtils.instantiateClass(ctor);
+			return BeanUtils.instantiateClass(ctor); // 当为无参构造函数时，直接反射调用，否则先解析构造函数的参数
 		}
 
 		// A single data class constructor -> resolve constructor arguments from request parameters.
 		ConstructorProperties cp = ctor.getAnnotation(ConstructorProperties.class);
-		String[] paramNames = (cp != null ? cp.value() : parameterNameDiscoverer.getParameterNames(ctor));
+		String[] paramNames = (cp != null ? cp.value() : parameterNameDiscoverer.getParameterNames(ctor)); // 获取参数名列表
 		Assert.state(paramNames != null, () -> "Cannot resolve parameter names for constructor " + ctor);
-		Class<?>[] paramTypes = ctor.getParameterTypes();
+		Class<?>[] paramTypes = ctor.getParameterTypes(); // 获取构造函数参数列表
 		Assert.state(paramNames.length == paramTypes.length,
 				() -> "Invalid number of parameter names: " + paramNames.length + " for constructor " + ctor);
 
@@ -271,9 +271,9 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		boolean bindingFailure = false;
 		Set<String> failedParams = new HashSet<>(4);
 
-		for (int i = 0; i < paramNames.length; i++) {
-			String paramName = paramNames[i];
-			Class<?> paramType = paramTypes[i];
+		for (int i = 0; i < paramNames.length; i++) { // 遍历参数名列表
+			String paramName = paramNames[i]; // 获取参数名
+			Class<?> paramType = paramTypes[i]; // 获取参数类型
 			Object value = webRequest.getParameterValues(paramName);
 			if (value == null) {
 				if (fieldDefaultPrefix != null) {
