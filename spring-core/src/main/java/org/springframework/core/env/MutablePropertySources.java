@@ -41,7 +41,7 @@ import org.springframework.lang.Nullable;
  */
 public class MutablePropertySources implements PropertySources { // PropertySources接口的默认实现
 
-	private final List<PropertySource<?>> propertySourceList = new CopyOnWriteArrayList<>(); // 维护所有的属性来源
+	private final List<PropertySource<?>> propertySourceList = new CopyOnWriteArrayList<>(); // 维护所有的属性来源，使用CopyOnWriteArrayList集合
 
 
 	/**
@@ -63,7 +63,7 @@ public class MutablePropertySources implements PropertySources { // PropertySour
 
 
 	@Override
-	public Iterator<PropertySource<?>> iterator() { // 实现Iterable的iterator方法，进行遍历
+	public Iterator<PropertySource<?>> iterator() { // 实现Iterable的iterator方法，借助CopyOnWriteArrayList对象的迭代器进行遍历
 		return this.propertySourceList.iterator();
 	}
 

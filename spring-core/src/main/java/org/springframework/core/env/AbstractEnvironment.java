@@ -106,11 +106,11 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment { /
 	private final Set<String> activeProfiles = new LinkedHashSet<>(); // 激活的profile列表
 
 	private final Set<String> defaultProfiles = new LinkedHashSet<>(getReservedDefaultProfiles()); // 默认的profile列表（默认有一个default元素）
-
-	private final MutablePropertySources propertySources = new MutablePropertySources(); // 属性源（维护所有的属性来源）
+	// 属性来源顺序见：https://docs.spring.io/spring-boot/docs/2.2.3.RELEASE/reference/html/spring-boot-features.html#boot-features-external-config
+	private final MutablePropertySources propertySources = new MutablePropertySources(); // 属性源（动态维护所有的属性来源）
 
 	private final ConfigurablePropertyResolver propertyResolver =
-			new PropertySourcesPropertyResolver(this.propertySources); // 属性解析器，通过注入的属性源解析属性
+			new PropertySourcesPropertyResolver(this.propertySources); // 属性解析器，通过注入的属性源解析属性，即将解析属性的功能委托给属性解析器PropertySourcesPropertyResolver
 
 
 	/**
