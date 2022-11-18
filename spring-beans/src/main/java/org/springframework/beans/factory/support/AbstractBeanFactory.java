@@ -346,7 +346,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
 				}
 
-				else { // 3.当Bean的为自定义scope时，应用自己进行管理
+				else { // 3.当Bean的为自定义scope时，应用自己进行管理（如：RefreshScope）
 					String scopeName = mbd.getScope();  // 获取scopeName
 					final Scope scope = this.scopes.get(scopeName); // 根据scopeName获取自定义Scope
 					if (scope == null) {
