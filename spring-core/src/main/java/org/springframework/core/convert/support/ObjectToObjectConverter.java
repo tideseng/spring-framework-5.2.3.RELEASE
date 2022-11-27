@@ -83,7 +83,7 @@ final class ObjectToObjectConverter implements ConditionalGenericConverter {
 
 	@Override
 	@Nullable
-	public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+	public Object convert(@Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) { // 数据绑定，通过相应的转换器类型进行数据绑定
 		if (source == null) {
 			return null;
 		}
@@ -105,7 +105,7 @@ final class ObjectToObjectConverter implements ConditionalGenericConverter {
 			else if (member instanceof Constructor) {
 				Constructor<?> ctor = (Constructor<?>) member;
 				ReflectionUtils.makeAccessible(ctor);
-				return ctor.newInstance(source);
+				return ctor.newInstance(source); // 通过反射调用有参构造函数
 			}
 		}
 		catch (InvocationTargetException ex) {
