@@ -43,7 +43,7 @@ public class InterceptingClientHttpRequestFactory extends AbstractClientHttpRequ
 	 * @param interceptors the interceptors that are to be applied (can be {@code null})
 	 */
 	public InterceptingClientHttpRequestFactory(ClientHttpRequestFactory requestFactory, // 初始化InterceptingClientHttpRequestFactory
-			@Nullable List<ClientHttpRequestInterceptor> interceptors) { // 将RestTemplate中的拦截器链进行注入
+			@Nullable List<ClientHttpRequestInterceptor> interceptors) { // 将请求工厂类SimpleClientHttpRequestFactory、RestTemplate中的拦截器链进行注入
 
 		super(requestFactory); // 调用父类构造方法，并传入请求工厂SimpleClientHttpRequestFactory
 		this.interceptors = (interceptors != null ? interceptors : Collections.emptyList());

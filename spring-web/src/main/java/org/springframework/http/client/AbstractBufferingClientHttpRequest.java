@@ -40,8 +40,8 @@ abstract class AbstractBufferingClientHttpRequest extends AbstractClientHttpRequ
 	}
 
 	@Override
-	protected ClientHttpResponse executeInternal(HttpHeaders headers) throws IOException {
-		byte[] bytes = this.bufferedOutput.toByteArray();
+	protected ClientHttpResponse executeInternal(HttpHeaders headers) throws IOException { // 执行请求
+		byte[] bytes = this.bufferedOutput.toByteArray(); // 缓冲区数组
 		if (headers.getContentLength() < 0) {
 			headers.setContentLength(bytes.length);
 		}

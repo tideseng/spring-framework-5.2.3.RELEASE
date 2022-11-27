@@ -95,7 +95,7 @@ class InterceptingClientHttpRequest extends AbstractBufferingClientHttpRequest {
 			else { // 当拦截器执行完毕之后会回到该execute方法中，走else逻辑，此时delegate类型是SimpleBufferingClientHttpRequest
 				HttpMethod method = request.getMethod();
 				Assert.state(method != null, "No standard HTTP method");
-				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method); // 重构url，获取真实的uri地址，再通过请求工厂SimpleClientHttpRequestFactory创建请求
+				ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), method); // 重构url，获取真实的uri地址，再通过请求工厂SimpleClientHttpRequestFactory/HttpComponentsClientHttpRequestFactory创建请求
 				request.getHeaders().forEach((key, value) -> delegate.getHeaders().addAll(key, value));
 				if (body.length > 0) {
 					if (delegate instanceof StreamingHttpOutputMessage) {

@@ -80,7 +80,7 @@ public abstract class InterceptingHttpAccessor extends HttpAccessor { // Http访
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setRequestFactory(ClientHttpRequestFactory requestFactory) {
+	public void setRequestFactory(ClientHttpRequestFactory requestFactory) { // 设置请求工厂（通过RestTemplateBuilder或RestTemplate设置）
 		super.setRequestFactory(requestFactory);
 		this.interceptingRequestFactory = null;
 	}
