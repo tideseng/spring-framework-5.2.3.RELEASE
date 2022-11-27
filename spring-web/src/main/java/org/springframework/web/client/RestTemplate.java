@@ -124,7 +124,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	}
 
 
-	private final List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+	private final List<HttpMessageConverter<?>> messageConverters = new ArrayList<>(); // 转换器列表
 
 	private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
 
