@@ -550,7 +550,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory); // 实例化Bean
 
 				// Last step: publish corresponding event.
-				finishRefresh(); // 完成刷新过程，发布相应事件
+				finishRefresh(); // 完成刷新过程，执行LifecycleProcessor、发布相应事件
 			}
 
 			catch (BeansException ex) {
@@ -883,7 +883,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * onRefresh() method and publishing the
 	 * {@link org.springframework.context.event.ContextRefreshedEvent}.
 	 */
-	protected void finishRefresh() {
+	protected void finishRefresh() { // 完成刷新过程，执行LifecycleProcessor、发布相应事件
 		// Clear context-level resource caches (such as ASM metadata from scanning).
 		clearResourceCaches(); // 清空缓存
 
