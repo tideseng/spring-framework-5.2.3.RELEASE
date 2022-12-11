@@ -126,7 +126,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 
 	private final List<HttpMessageConverter<?>> messageConverters = new ArrayList<>(); // 转换器列表
 
-	private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
+	private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler(); // 异常处理器
 
 	private UriTemplateHandler uriTemplateHandler;
 
@@ -138,7 +138,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Default {@link HttpMessageConverter HttpMessageConverters} are initialized.
 	 */
 	public RestTemplate() { // 初始化RestTemplate（不会自动注入Spring容器，需要手动申明注入），添加一系列HttpMessageConverter的实现类（将请求响应的文本转化为相应的Java对象）、初始化URI模板处理器（对URI做相关拼接等操作）
-		this.messageConverters.add(new ByteArrayHttpMessageConverter());
+		this.messageConverters.add(new ByteArrayHttpMessageConverter()); // 添加各种消息转换器
 		this.messageConverters.add(new StringHttpMessageConverter());
 		this.messageConverters.add(new ResourceHttpMessageConverter(false));
 		try {
@@ -178,7 +178,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 			this.messageConverters.add(new MappingJackson2CborHttpMessageConverter());
 		}
 
-		this.uriTemplateHandler = initUriTemplateHandler();
+		this.uriTemplateHandler = initUriTemplateHandler(); // 初始化uri模板处理器
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * @see org.springframework.http.client.SimpleClientHttpRequestFactory
 	 * @see org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 	 */
-	public RestTemplate(ClientHttpRequestFactory requestFactory) {
+	public RestTemplate(ClientHttpRequestFactory requestFactory) { // 指定请求工厂：SimpleClientHttpRequestFactory(无参构造函数的默认工厂)、HttpComponentsClientHttpRequestFactory(RestTemplateBuilder时的首选工厂)、OkHttp3ClientHttpRequestFactory(RestTemplateBuilder时的候选工厂)
 		this();
 		setRequestFactory(requestFactory);
 	}
@@ -205,7 +205,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	}
 
 
-	private static DefaultUriBuilderFactory initUriTemplateHandler() {
+	private static DefaultUriBuilderFactory initUriTemplateHandler() { // 初始化uri模板处理器
 		DefaultUriBuilderFactory uriFactory = new DefaultUriBuilderFactory();
 		uriFactory.setEncodingMode(EncodingMode.URI_COMPONENT);  // for backwards compatibility..
 		return uriFactory;
@@ -242,7 +242,7 @@ public class RestTemplate extends InterceptingHttpAccessor implements RestOperat
 	 * Set the error handler.
 	 * <p>By default, RestTemplate uses a {@link DefaultResponseErrorHandler}.
 	 */
-	public void setErrorHandler(ResponseErrorHandler errorHandler) {
+	public void setErrorHandler(ResponseErrorHandler errorHandler) { // 设置异常处理器
 		Assert.notNull(errorHandler, "ResponseErrorHandler must not be null");
 		this.errorHandler = errorHandler;
 	}
