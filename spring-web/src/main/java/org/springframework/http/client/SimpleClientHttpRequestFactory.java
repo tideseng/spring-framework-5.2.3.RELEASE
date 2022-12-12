@@ -38,7 +38,7 @@ import org.springframework.util.Assert;
  * @see HttpComponentsClientHttpRequestFactory
  */
 @SuppressWarnings("deprecation")
-public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory, AsyncClientHttpRequestFactory {
+public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory, AsyncClientHttpRequestFactory { // 简单请求工厂
 
 	private static final int DEFAULT_CHUNK_SIZE = 4096;
 
@@ -50,9 +50,9 @@ public class SimpleClientHttpRequestFactory implements ClientHttpRequestFactory,
 
 	private int chunkSize = DEFAULT_CHUNK_SIZE;
 
-	private int connectTimeout = -1;
+	private int connectTimeout = -1; // 默认连接超时不限制
 
-	private int readTimeout = -1;
+	private int readTimeout = -1; // 默认读取超时不限制
 
 	private boolean outputStreaming = true;
 
