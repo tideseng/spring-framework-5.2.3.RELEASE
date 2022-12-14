@@ -550,7 +550,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				finishBeanFactoryInitialization(beanFactory); // 实例化Bean
 
 				// Last step: publish corresponding event.
-				finishRefresh(); // 完成刷新过程，执行LifecycleProcessor、发布相应事件
+				finishRefresh(); // 完成刷新过程，执行LifecycleProcessor（是eureka客户端自动注册的入口）、发布相应事件（是nacos客户端自动注册的入口）
 			}
 
 			catch (BeansException ex) {
